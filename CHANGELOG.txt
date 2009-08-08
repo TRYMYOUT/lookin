@@ -1,0 +1,64 @@
+Program   Watcher
+          Passive Security Tool for Fiddler 
+Version   1.2.1
+Release   12-July-2009
+License   Custom Open Source
+Authors   Chris Weber, Samuel Bucholtz
+Testers   Noah Glassberg
+Contact   watcher@casabasecurity.com
+Website   http://websecuritytool.codeplex.com
+Company   http://www.casabasecurity.com       
+Copyright (c) 2009 Casaba Security, LLC.  All Rights Reserved.
+============================================================
+
+[CHANGELOG]
+
+  +++ major new feature
+    + minor new feature
+    * changed feature
+    % improved performance or quality
+    ! fixed minor bug
+  !!! fixed major bug
+
+
+v1.2.1 - 2009-07-12
+  !!! Fixed issue where response payloads greater than 200K caused the entire
+      session to be ignored.
+
+v1.2.0 - 2009-06-22
+  +++ Major refactoring.
+  +++ Including Majestic12 Html Parser (http://www.majestic12.co.uk/).
+  +++ Added MultiThreading to checks.
+    + Added mappings to OWASP ASVS compliance levels.
+    + Added checks for X-FRAME-OPTIONS HTTP header.
+    + Added checks for IE's X-XSS-Protection HTTP header.
+    + Added checks for X-CONTENT-TYPE-OPTIONS:nosniff HTTP header.
+    + Added search filter for finding checks.
+    * Improved check for user controlled attributes to look at all HTML attributes.
+    * Changed severity for Javascript eval() from Informational to Medium.
+    ! Fixed improper filtering of previously seen cookies.
+
+v1.1.2 - 2009-04-17
+    ! Trusted domains weren't working correctly, now fixed in IsTrustedDomain().  
+
+v1.1.1 - 2009-04-17
+  !!! Fixed memory consumption issue in session storage List used by SharePoint check.
+
+v1.1.0 - 2009-04-10
+    + Added AutoScroll to the results ListView.
+    + Added descriptions to each check.
+    + Added credit card and SSN detection to information disclosure checks.
+    + Added ability to configure cookie checks to ignore or look for specific cookies.
+    + New check to detect user-controlled javascript events.
+    + New check to detect charset mismatches.
+    + New (EXPERIMENTAL) check to detect insecure SharePoint Document Library.
+    % Implemented lazy-load in Fiddler (plugin doesn't start until tab is clicked).
+    % Some false positive reduction applied to cookie and user-controlled checks.
+    % Removed dependency on .Net Framework 3.5.
+    ! Fixed false negatives in Information disclosure checks.
+    ! Fixed false positive in User Controlled Cookie check.
+    ! Fixed User-Controlled Charset check to look at XML files.
+    ! Fixed bug that prevented the cookie filters from working as expected.
+
+v1.0.0 - 2009-03-19
+  +++ First public release.

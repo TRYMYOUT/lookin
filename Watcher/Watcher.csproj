@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3222DCBC-E412-4287-816A-1AFEC6E697E7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CasabaSecurity.Web.Watcher</RootNamespace>
+    <AssemblyName>CasabaSecurity.Web.Watcher</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>Resources\Casaba.ico</ApplicationIcon>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRules>-Microsoft.Naming#CA1702;-Microsoft.Naming#CA1700;-Microsoft.Naming#CA1712;-Microsoft.Naming#CA1713;-Microsoft.Naming#CA1714;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1704;-Microsoft.Naming#CA1708;-Microsoft.Naming#CA1715;-Microsoft.Naming#CA1710;-Microsoft.Naming#CA1720;-Microsoft.Naming#CA1707;-Microsoft.Naming#CA1722;-Microsoft.Naming#CA1711;-Microsoft.Naming#CA1716;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1725;-Microsoft.Naming#CA1719;-Microsoft.Naming#CA1721;-Microsoft.Naming#CA1701;-Microsoft.Naming#CA1703;-Microsoft.Naming#CA1724;-Microsoft.Naming#CA1726</CodeAnalysisRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Fiddler, Version=2.2.0.9, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\public\fiddler\Fiddler.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CheckManager.cs" />
+    <Compile Include="Collections.cs" />
+    <Compile Include="FiddlerExtension.cs" />
+    <Compile Include="ResultsManager.cs" />
+    <Compile Include="WatcherConfiguration.cs" />
+    <Compile Include="ExceptionLogger.cs" />
+    <Compile Include="Majestic12\DynaString.cs" />
+    <Compile Include="Majestic12\FastHash.cs" />
+    <Compile Include="Majestic12\HTMLchunk.cs" />
+    <Compile Include="Majestic12\HTMLentities.cs" />
+    <Compile Include="Majestic12\HTMLheuristics.cs" />
+    <Compile Include="Majestic12\HTMLparser.cs" />
+    <Compile Include="Majestic12\TagParser.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utility.cs" />
+    <Compile Include="UtilityHtmlParser.cs" />
+    <Compile Include="UpdateManager.cs" />
+    <Compile Include="WatcherCheck.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WatcherConfigControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WatcherConfigControl.designer.cs">
+      <DependentUpon>WatcherConfigControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WatcherControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WatcherControl.Designer.cs">
+      <DependentUpon>WatcherControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WatcherEngine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WatcherResultsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WatcherResultsControl.designer.cs">
+      <DependentUpon>WatcherResultsControl.cs</DependentUpon>
+    </Compile>
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WatcherControl.resx">
+      <DependentUpon>WatcherControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Casaba.ico" />
+    <EmbeddedResource Include="WatcherConfigControl.resx">
+      <DependentUpon>WatcherConfigControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WatcherResultsControl.resx">
+      <DependentUpon>WatcherResultsControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\casabamelon.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)\Bin\PostBuild_Watcher.bat "$(TargetPath)" "%25USERPROFILE%25\Documents\Fiddler2\Scripts\$(TargetFilename)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

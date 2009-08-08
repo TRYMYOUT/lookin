@@ -1,0 +1,11 @@
+
+
+TO BUILD:
+
+1. Fiddler needs to be installed.
+2. You'll need to add a Reference to your location of Fiddler.exe.
+
+TO DEBUG:
+
+1. Go into the Project Properties for the Watcher project.
+2. In the Debug tab, choose 'start external program' and set the path to your Fiddler.exe.
