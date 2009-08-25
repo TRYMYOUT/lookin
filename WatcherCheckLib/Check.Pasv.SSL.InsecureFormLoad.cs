@@ -15,7 +15,7 @@ using Fiddler;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
-    class CheckPasvSSLInsecureFormLoad : WatcherCheck
+    public class CheckPasvSSLInsecureFormLoad : WatcherCheck
     {
         private int findingnum;
 
@@ -27,7 +27,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         public override String GetDescription()
         {
             String desc = "This check looks for insecure HTTP pages that host HTTPS forms.  The issue is that " +
-                "an insecure HTTP page can be easily hijacked through MITM and the secure HTTPS form can be " +
+                "an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be " +
                 "replaced or spoofed.";
 
             return desc;
@@ -35,7 +35,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String context)
         {
-            String name = "HTTP/HTTPS Insecure Transition HTTPS Form Post";
+            String name = "HTTP to HTTPS insecure transition in form post";
             findingnum++;
             String text =
 

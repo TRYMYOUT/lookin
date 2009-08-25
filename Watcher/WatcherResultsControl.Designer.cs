@@ -191,76 +191,103 @@ namespace CasabaSecurity.Web.Watcher
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
+#if false
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WatcherResultsControl));
-            this.alertGroupBox = new System.Windows.Forms.GroupBox();
-            this.linkLabel = new System.Windows.Forms.LinkLabel();
+            this.resultPanel = new System.Windows.Forms.Panel();
+            this.alertTextBox = new System.Windows.Forms.TextBox();
+            this.lowerpanel = new System.Windows.Forms.Panel();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.alertListView = new System.Windows.Forms.ListView();
             this.severityColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.sessionIdColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.typeColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.urlColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.buttonpanel = new System.Windows.Forms.Panel();
+            this.btnClearResults = new System.Windows.Forms.Button();
+            this.FileSaveButton = new System.Windows.Forms.Button();
+            this.autoscrollcheckBox = new System.Windows.Forms.CheckBox();
             this.filterpanel = new System.Windows.Forms.Panel();
-            this.casabapictureBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.informationalcountlabel = new System.Windows.Forms.Label();
+            this.noiselabel = new System.Windows.Forms.Label();
             this.lowcountlabel = new System.Windows.Forms.Label();
+            this.noisereductioncomboBox = new System.Windows.Forms.ComboBox();
             this.mediumcountlabel = new System.Windows.Forms.Label();
             this.highcountlabel = new System.Windows.Forms.Label();
-            this.noiselabel = new System.Windows.Forms.Label();
-            this.noisereductioncomboBox = new System.Windows.Forms.ComboBox();
-            this.listviewbuttonpanel = new System.Windows.Forms.Panel();
-            this.autoscrollcheckBox = new System.Windows.Forms.CheckBox();
-            this.FileSaveButton = new System.Windows.Forms.Button();
-            this.btnClearResults = new System.Windows.Forms.Button();
-            this.resultPanel = new System.Windows.Forms.Panel();
-            this.alertTextBox = new System.Windows.Forms.TextBox();
-            this.lowerpanel = new System.Windows.Forms.Panel();
-            this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.alertGroupBox.SuspendLayout();
-            this.filterpanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.casabapictureBox)).BeginInit();
-            this.listviewbuttonpanel.SuspendLayout();
             this.resultPanel.SuspendLayout();
             this.lowerpanel.SuspendLayout();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            this.buttonpanel.SuspendLayout();
+            this.filterpanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // alertGroupBox
+            // resultPanel
             // 
-            this.alertGroupBox.AutoSize = true;
-            this.alertGroupBox.BackColor = System.Drawing.Color.LightGray;
-            this.alertGroupBox.Controls.Add(this.linkLabel);
-            this.alertGroupBox.Controls.Add(this.alertListView);
-            this.alertGroupBox.Controls.Add(this.filterpanel);
-            this.alertGroupBox.Controls.Add(this.listviewbuttonpanel);
-            this.alertGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.alertGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.alertGroupBox.Location = new System.Drawing.Point(0, 0);
-            this.alertGroupBox.Name = "alertGroupBox";
-            this.alertGroupBox.Size = new System.Drawing.Size(851, 298);
-            this.alertGroupBox.TabIndex = 0;
-            this.alertGroupBox.TabStop = false;
-            this.alertGroupBox.Text = "Watcher by ";
+            this.resultPanel.Controls.Add(this.alertTextBox);
+            this.resultPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.resultPanel.Location = new System.Drawing.Point(0, 0);
+            this.resultPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.resultPanel.Name = "resultPanel";
+            this.resultPanel.Size = new System.Drawing.Size(849, 300);
+            this.resultPanel.TabIndex = 3;
             // 
-            // linkLabel
+            // alertTextBox
             // 
-            this.linkLabel.AutoSize = true;
-            this.linkLabel.Location = new System.Drawing.Point(77, 0);
-            this.linkLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.linkLabel.Name = "linkLabel";
-            this.linkLabel.Size = new System.Drawing.Size(99, 13);
-            this.linkLabel.TabIndex = 0;
-            this.linkLabel.TabStop = true;
-            this.linkLabel.Text = "Casaba Security";
-            this.linkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
+            this.alertTextBox.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.alertTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.alertTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.alertTextBox.Location = new System.Drawing.Point(0, 0);
+            this.alertTextBox.Margin = new System.Windows.Forms.Padding(0);
+            this.alertTextBox.Multiline = true;
+            this.alertTextBox.Name = "alertTextBox";
+            this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.alertTextBox.Size = new System.Drawing.Size(849, 300);
+            this.alertTextBox.TabIndex = 0;
+            this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
+            // 
+            // lowerpanel
+            // 
+            this.lowerpanel.AutoSize = true;
+            this.lowerpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.lowerpanel.Controls.Add(this.splitContainer);
+            this.lowerpanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lowerpanel.Location = new System.Drawing.Point(0, 0);
+            this.lowerpanel.Margin = new System.Windows.Forms.Padding(0);
+            this.lowerpanel.Name = "lowerpanel";
+            this.lowerpanel.Size = new System.Drawing.Size(851, 653);
+            this.lowerpanel.TabIndex = 4;
+            // 
+            // splitContainer
+            // 
+            this.splitContainer.BackColor = System.Drawing.SystemColors.Window;
+            this.splitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer.Name = "splitContainer";
+            this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer.Panel1
+            // 
+            this.splitContainer.Panel1.Controls.Add(this.alertListView);
+            this.splitContainer.Panel1.Controls.Add(this.buttonpanel);
+            this.splitContainer.Panel1.Controls.Add(this.filterpanel);
+            this.splitContainer.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer_Panel1_Paint);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.Controls.Add(this.resultPanel);
+            this.splitContainer.Size = new System.Drawing.Size(851, 653);
+            this.splitContainer.SplitterDistance = 347;
+            this.splitContainer.TabIndex = 0;
             // 
             // alertListView
             // 
             this.alertListView.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.alertListView.AllowColumnReorder = true;
+            this.alertListView.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.alertListView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.alertListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.severityColumnHeader,
             this.sessionIdColumnHeader,
@@ -271,16 +298,16 @@ namespace CasabaSecurity.Web.Watcher
             this.alertListView.FullRowSelect = true;
             this.alertListView.GridLines = true;
             this.alertListView.HideSelection = false;
-            this.alertListView.Location = new System.Drawing.Point(3, 65);
+            this.alertListView.Location = new System.Drawing.Point(0, 42);
+            this.alertListView.Margin = new System.Windows.Forms.Padding(0);
             this.alertListView.Name = "alertListView";
-            this.alertListView.Size = new System.Drawing.Size(845, 181);
-            this.alertListView.TabIndex = 2;
+            this.alertListView.Size = new System.Drawing.Size(849, 261);
+            this.alertListView.TabIndex = 7;
             this.alertListView.UseCompatibleStateImageBehavior = false;
             this.alertListView.View = System.Windows.Forms.View.Details;
             this.alertListView.SelectedIndexChanged += new System.EventHandler(this.alertListView_SelectedIndexChanged);
             this.alertListView.DoubleClick += new System.EventHandler(this.alertListViewDoubleClick);
             this.alertListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.alertListView_ColumnClick);
-            this.alertListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.copyToClipboard);
             // 
             // severityColumnHeader
             // 
@@ -302,103 +329,110 @@ namespace CasabaSecurity.Web.Watcher
             this.urlColumnHeader.Text = "URL";
             this.urlColumnHeader.Width = 420;
             // 
+            // buttonpanel
+            // 
+            this.buttonpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.buttonpanel.Controls.Add(this.btnClearResults);
+            this.buttonpanel.Controls.Add(this.FileSaveButton);
+            this.buttonpanel.Controls.Add(this.autoscrollcheckBox);
+            this.buttonpanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonpanel.Location = new System.Drawing.Point(0, 303);
+            this.buttonpanel.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonpanel.Name = "buttonpanel";
+            this.buttonpanel.Size = new System.Drawing.Size(849, 42);
+            this.buttonpanel.TabIndex = 11;
+            // 
+            // btnClearResults
+            // 
+            this.btnClearResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClearResults.Location = new System.Drawing.Point(3, 5);
+            this.btnClearResults.Name = "btnClearResults";
+            this.btnClearResults.Size = new System.Drawing.Size(299, 29);
+            this.btnClearResults.TabIndex = 8;
+            this.btnClearResults.Text = "Clear Selected Results (All results if none selected)";
+            this.btnClearResults.UseVisualStyleBackColor = true;
+            this.btnClearResults.Click += new System.EventHandler(this.btnClearResults_Click);
+            // 
+            // FileSaveButton
+            // 
+            this.FileSaveButton.Location = new System.Drawing.Point(308, 5);
+            this.FileSaveButton.Name = "FileSaveButton";
+            this.FileSaveButton.Size = new System.Drawing.Size(130, 29);
+            this.FileSaveButton.TabIndex = 9;
+            this.FileSaveButton.Text = "Export to XML";
+            this.FileSaveButton.UseVisualStyleBackColor = true;
+            this.FileSaveButton.Click += new System.EventHandler(this.FileSaveButton_Click);
+            // 
+            // autoscrollcheckBox
+            // 
+            this.autoscrollcheckBox.AutoSize = true;
+            this.autoscrollcheckBox.Location = new System.Drawing.Point(772, 12);
+            this.autoscrollcheckBox.Name = "autoscrollcheckBox";
+            this.autoscrollcheckBox.Size = new System.Drawing.Size(74, 17);
+            this.autoscrollcheckBox.TabIndex = 10;
+            this.autoscrollcheckBox.Text = "AutoScroll";
+            this.autoscrollcheckBox.UseVisualStyleBackColor = true;
+            this.autoscrollcheckBox.CheckedChanged += new System.EventHandler(this.autoscrollcheckBox_CheckedChanged);
+            // 
             // filterpanel
             // 
-            this.filterpanel.AutoSize = true;
-            this.filterpanel.Controls.Add(this.casabapictureBox);
+            this.filterpanel.BackColor = System.Drawing.SystemColors.Window;
             this.filterpanel.Controls.Add(this.label1);
             this.filterpanel.Controls.Add(this.informationalcountlabel);
+            this.filterpanel.Controls.Add(this.noiselabel);
             this.filterpanel.Controls.Add(this.lowcountlabel);
+            this.filterpanel.Controls.Add(this.noisereductioncomboBox);
             this.filterpanel.Controls.Add(this.mediumcountlabel);
             this.filterpanel.Controls.Add(this.highcountlabel);
-            this.filterpanel.Controls.Add(this.noiselabel);
-            this.filterpanel.Controls.Add(this.noisereductioncomboBox);
             this.filterpanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.filterpanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.filterpanel.Location = new System.Drawing.Point(3, 16);
-            this.filterpanel.Margin = new System.Windows.Forms.Padding(0);
+            this.filterpanel.Location = new System.Drawing.Point(0, 0);
             this.filterpanel.Name = "filterpanel";
-            this.filterpanel.Size = new System.Drawing.Size(845, 49);
-            this.filterpanel.TabIndex = 1;
-            // 
-            // casabapictureBox
-            // 
-            this.casabapictureBox.Dock = System.Windows.Forms.DockStyle.Left;
-            this.casabapictureBox.Image = ((System.Drawing.Image)(resources.GetObject("casabapictureBox.Image")));
-            this.casabapictureBox.Location = new System.Drawing.Point(0, 0);
-            this.casabapictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 25, 3);
-            this.casabapictureBox.Name = "casabapictureBox";
-            this.casabapictureBox.Size = new System.Drawing.Size(50, 49);
-            this.casabapictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.casabapictureBox.TabIndex = 10;
-            this.casabapictureBox.TabStop = false;
-            this.casabapictureBox.Visible = false;
+            this.filterpanel.Size = new System.Drawing.Size(849, 42);
+            this.filterpanel.TabIndex = 2;
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(355, 4);
+            this.label1.Location = new System.Drawing.Point(710, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(155, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Totals (Alerts, Individual Issues)";
+            this.label1.Size = new System.Drawing.Size(123, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "(Alerts, Individual Issues)";
             // 
             // informationalcountlabel
             // 
             this.informationalcountlabel.AutoSize = true;
             this.informationalcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.informationalcountlabel.ForeColor = System.Drawing.Color.Green;
-            this.informationalcountlabel.Location = new System.Drawing.Point(522, 28);
+            this.informationalcountlabel.Location = new System.Drawing.Point(453, 12);
             this.informationalcountlabel.Name = "informationalcountlabel";
             this.informationalcountlabel.Size = new System.Drawing.Size(70, 13);
-            this.informationalcountlabel.TabIndex = 6;
+            this.informationalcountlabel.TabIndex = 5;
             this.informationalcountlabel.Text = "Informational:";
             this.informationalcountlabel.Click += new System.EventHandler(this.informationalcountlabel_Click);
+            // 
+            // noiselabel
+            // 
+            this.noiselabel.AutoSize = true;
+            this.noiselabel.Location = new System.Drawing.Point(3, 12);
+            this.noiselabel.Name = "noiselabel";
+            this.noiselabel.Size = new System.Drawing.Size(59, 13);
+            this.noiselabel.TabIndex = 0;
+            this.noiselabel.Text = " Alert Filter:";
             // 
             // lowcountlabel
             // 
             this.lowcountlabel.AutoSize = true;
             this.lowcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lowcountlabel.ForeColor = System.Drawing.Color.Blue;
-            this.lowcountlabel.Location = new System.Drawing.Point(451, 28);
+            this.lowcountlabel.Location = new System.Drawing.Point(373, 12);
             this.lowcountlabel.Name = "lowcountlabel";
             this.lowcountlabel.Size = new System.Drawing.Size(30, 13);
-            this.lowcountlabel.TabIndex = 5;
+            this.lowcountlabel.TabIndex = 4;
             this.lowcountlabel.Text = "Low:";
             this.lowcountlabel.Click += new System.EventHandler(this.lowcountlabel_Click);
-            // 
-            // mediumcountlabel
-            // 
-            this.mediumcountlabel.AutoSize = true;
-            this.mediumcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mediumcountlabel.ForeColor = System.Drawing.Color.Orange;
-            this.mediumcountlabel.Location = new System.Drawing.Point(365, 28);
-            this.mediumcountlabel.Name = "mediumcountlabel";
-            this.mediumcountlabel.Size = new System.Drawing.Size(47, 13);
-            this.mediumcountlabel.TabIndex = 4;
-            this.mediumcountlabel.Text = "Medium:";
-            this.mediumcountlabel.Click += new System.EventHandler(this.mediumcountlabel_Click);
-            // 
-            // highcountlabel
-            // 
-            this.highcountlabel.AutoSize = true;
-            this.highcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.highcountlabel.ForeColor = System.Drawing.Color.Red;
-            this.highcountlabel.Location = new System.Drawing.Point(294, 28);
-            this.highcountlabel.Name = "highcountlabel";
-            this.highcountlabel.Size = new System.Drawing.Size(35, 13);
-            this.highcountlabel.TabIndex = 3;
-            this.highcountlabel.Text = "High: ";
-            this.highcountlabel.Click += new System.EventHandler(this.highcountlabel_Click);
-            // 
-            // noiselabel
-            // 
-            this.noiselabel.AutoSize = true;
-            this.noiselabel.Location = new System.Drawing.Point(67, 28);
-            this.noiselabel.Name = "noiselabel";
-            this.noiselabel.Size = new System.Drawing.Size(59, 13);
-            this.noiselabel.TabIndex = 0;
-            this.noiselabel.Text = " Alert Filter:";
             // 
             // noisereductioncomboBox
             // 
@@ -409,84 +443,252 @@ namespace CasabaSecurity.Web.Watcher
             "Low",
             "Medium",
             "High"});
-            this.noisereductioncomboBox.Location = new System.Drawing.Point(133, 25);
+            this.noisereductioncomboBox.Location = new System.Drawing.Point(68, 9);
             this.noisereductioncomboBox.Name = "noisereductioncomboBox";
             this.noisereductioncomboBox.Size = new System.Drawing.Size(121, 21);
             this.noisereductioncomboBox.TabIndex = 1;
             this.noisereductioncomboBox.ValueMember = "Informational";
             this.noisereductioncomboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // listviewbuttonpanel
+            // mediumcountlabel
             // 
-            this.listviewbuttonpanel.Controls.Add(this.autoscrollcheckBox);
-            this.listviewbuttonpanel.Controls.Add(this.FileSaveButton);
-            this.listviewbuttonpanel.Controls.Add(this.btnClearResults);
-            this.listviewbuttonpanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.listviewbuttonpanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listviewbuttonpanel.Location = new System.Drawing.Point(3, 246);
-            this.listviewbuttonpanel.Name = "listviewbuttonpanel";
-            this.listviewbuttonpanel.Size = new System.Drawing.Size(845, 49);
-            this.listviewbuttonpanel.TabIndex = 3;
+            this.mediumcountlabel.AutoSize = true;
+            this.mediumcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mediumcountlabel.ForeColor = System.Drawing.Color.Orange;
+            this.mediumcountlabel.Location = new System.Drawing.Point(282, 12);
+            this.mediumcountlabel.Name = "mediumcountlabel";
+            this.mediumcountlabel.Size = new System.Drawing.Size(47, 13);
+            this.mediumcountlabel.TabIndex = 3;
+            this.mediumcountlabel.Text = "Medium:";
+            this.mediumcountlabel.Click += new System.EventHandler(this.mediumcountlabel_Click);
             // 
-            // autoscrollcheckBox
+            // highcountlabel
             // 
-            this.autoscrollcheckBox.AutoSize = true;
-            this.autoscrollcheckBox.Location = new System.Drawing.Point(537, 18);
-            this.autoscrollcheckBox.Name = "autoscrollcheckBox";
-            this.autoscrollcheckBox.Size = new System.Drawing.Size(74, 17);
-            this.autoscrollcheckBox.TabIndex = 2;
-            this.autoscrollcheckBox.Text = "AutoScroll";
-            this.autoscrollcheckBox.UseVisualStyleBackColor = true;
-            this.autoscrollcheckBox.CheckedChanged += new System.EventHandler(this.autoscrollcheckBox_CheckedChanged);
+            this.highcountlabel.AutoSize = true;
+            this.highcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.highcountlabel.ForeColor = System.Drawing.Color.Red;
+            this.highcountlabel.Location = new System.Drawing.Point(205, 12);
+            this.highcountlabel.Name = "highcountlabel";
+            this.highcountlabel.Size = new System.Drawing.Size(35, 13);
+            this.highcountlabel.TabIndex = 2;
+            this.highcountlabel.Text = "High: ";
+            this.highcountlabel.Click += new System.EventHandler(this.highcountlabel_Click);
             // 
-            // FileSaveButton
+            // WatcherResultsControl
             // 
-            this.FileSaveButton.Location = new System.Drawing.Point(352, 11);
-            this.FileSaveButton.Name = "FileSaveButton";
-            this.FileSaveButton.Size = new System.Drawing.Size(130, 29);
-            this.FileSaveButton.TabIndex = 1;
-            this.FileSaveButton.Text = "Export to XML";
-            this.FileSaveButton.UseVisualStyleBackColor = true;
-            this.FileSaveButton.Click += new System.EventHandler(this.FileSaveButton_Click);
-            // 
-            // btnClearResults
-            // 
-            this.btnClearResults.Location = new System.Drawing.Point(13, 11);
-            this.btnClearResults.Name = "btnClearResults";
-            this.btnClearResults.Size = new System.Drawing.Size(299, 29);
-            this.btnClearResults.TabIndex = 0;
-            this.btnClearResults.Text = "Clear Selected Results (All results if none selected)";
-            this.btnClearResults.UseVisualStyleBackColor = true;
-            this.btnClearResults.Click += new System.EventHandler(this.btnClearNoisyChecks_Click);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.lowerpanel);
+            this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Name = "WatcherResultsControl";
+            this.Size = new System.Drawing.Size(851, 653);
+            this.resultPanel.ResumeLayout(false);
+            this.resultPanel.PerformLayout();
+            this.lowerpanel.ResumeLayout(false);
+            this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            this.splitContainer.ResumeLayout(false);
+            this.buttonpanel.ResumeLayout(false);
+            this.buttonpanel.PerformLayout();
+            this.filterpanel.ResumeLayout(false);
+            this.filterpanel.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+#else
+        {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WatcherResultsControl));
+            this.resultPanel = new System.Windows.Forms.Panel();
+            this.pnlCopyright = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.rightslabel = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.pbCasaba = new System.Windows.Forms.PictureBox();
+            this.copyrightlabel = new System.Windows.Forms.Label();
+            this.alertTextBox = new System.Windows.Forms.TextBox();
+            this.lowerpanel = new System.Windows.Forms.Panel();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.alertListView = new System.Windows.Forms.ListView();
+            this.severityColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.sessionIdColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.typeColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.urlColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.buttonpanel = new System.Windows.Forms.Panel();
+            this.btnClearResults = new System.Windows.Forms.Button();
+            this.FileSaveButton = new System.Windows.Forms.Button();
+            this.autoscrollcheckBox = new System.Windows.Forms.CheckBox();
+            this.filterpanel = new System.Windows.Forms.Panel();
+            this.informationalcountlabel = new System.Windows.Forms.Label();
+            this.noiselabel = new System.Windows.Forms.Label();
+            this.lowcountlabel = new System.Windows.Forms.Label();
+            this.noisereductioncomboBox = new System.Windows.Forms.ComboBox();
+            this.mediumcountlabel = new System.Windows.Forms.Label();
+            this.highcountlabel = new System.Windows.Forms.Label();
+            this.toolTipResultsControl = new System.Windows.Forms.ToolTip(this.components);
+            this.resultPanel.SuspendLayout();
+            this.pnlCopyright.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).BeginInit();
+            this.lowerpanel.SuspendLayout();
+            this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
+            this.buttonpanel.SuspendLayout();
+            this.filterpanel.SuspendLayout();
+            this.SuspendLayout();
             // 
             // resultPanel
             // 
+            this.resultPanel.Controls.Add(this.pnlCopyright);
             this.resultPanel.Controls.Add(this.alertTextBox);
             this.resultPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.resultPanel.Location = new System.Drawing.Point(0, 0);
             this.resultPanel.Margin = new System.Windows.Forms.Padding(0);
             this.resultPanel.Name = "resultPanel";
-            this.resultPanel.Size = new System.Drawing.Size(851, 351);
+            this.resultPanel.Size = new System.Drawing.Size(851, 344);
             this.resultPanel.TabIndex = 3;
+            // 
+            // pnlCopyright
+            // 
+            this.pnlCopyright.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlCopyright.Controls.Add(this.panel1);
+            this.pnlCopyright.Controls.Add(this.rightslabel);
+            this.pnlCopyright.Controls.Add(this.linkLabel1);
+            this.pnlCopyright.Controls.Add(this.pbCasaba);
+            this.pnlCopyright.Controls.Add(this.copyrightlabel);
+            this.pnlCopyright.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlCopyright.Location = new System.Drawing.Point(0, 289);
+            this.pnlCopyright.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlCopyright.Name = "pnlCopyright";
+            this.pnlCopyright.Size = new System.Drawing.Size(851, 55);
+            this.pnlCopyright.TabIndex = 7;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.linkLabel2);
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(851, 55);
+            this.panel1.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(448, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "All rights reserved.";
+            // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.BackColor = System.Drawing.SystemColors.Window;
+            this.linkLabel2.Location = new System.Drawing.Point(333, 24);
+            this.linkLabel2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(112, 13);
+            this.linkLabel2.TabIndex = 1;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Casaba Security, LLC.";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(55, 55);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(61, 24);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(228, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Watcher Web Security Tool, Copyright © 2009";
+            // 
+            // rightslabel
+            // 
+            this.rightslabel.AutoSize = true;
+            this.rightslabel.Location = new System.Drawing.Point(413, 24);
+            this.rightslabel.Name = "rightslabel";
+            this.rightslabel.Size = new System.Drawing.Size(93, 13);
+            this.rightslabel.TabIndex = 6;
+            this.rightslabel.Text = "All rights reserved.";
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.BackColor = System.Drawing.SystemColors.Window;
+            this.linkLabel1.Location = new System.Drawing.Point(298, 24);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(112, 13);
+            this.linkLabel1.TabIndex = 1;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Casaba Security, LLC.";
+            // 
+            // pbCasaba
+            // 
+            this.pbCasaba.BackColor = System.Drawing.SystemColors.Window;
+            this.pbCasaba.Image = ((System.Drawing.Image)(resources.GetObject("pbCasaba.Image")));
+            this.pbCasaba.Location = new System.Drawing.Point(0, 0);
+            this.pbCasaba.Name = "pbCasaba";
+            this.pbCasaba.Size = new System.Drawing.Size(55, 55);
+            this.pbCasaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbCasaba.TabIndex = 5;
+            this.pbCasaba.TabStop = false;
+            // 
+            // copyrightlabel
+            // 
+            this.copyrightlabel.AutoSize = true;
+            this.copyrightlabel.Location = new System.Drawing.Point(61, 24);
+            this.copyrightlabel.Name = "copyrightlabel";
+            this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
+            this.copyrightlabel.TabIndex = 0;
+            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2009";
             // 
             // alertTextBox
             // 
-            this.alertTextBox.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.alertTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.alertTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.alertTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.alertTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.alertTextBox.Location = new System.Drawing.Point(0, 0);
+            this.alertTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.alertTextBox.Multiline = true;
             this.alertTextBox.Name = "alertTextBox";
             this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.alertTextBox.Size = new System.Drawing.Size(851, 351);
+            this.alertTextBox.Size = new System.Drawing.Size(851, 289);
             this.alertTextBox.TabIndex = 0;
             this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
             // 
             // lowerpanel
             // 
             this.lowerpanel.AutoSize = true;
+            this.lowerpanel.BackColor = System.Drawing.SystemColors.Window;
             this.lowerpanel.Controls.Add(this.splitContainer);
             this.lowerpanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lowerpanel.Location = new System.Drawing.Point(0, 0);
+            this.lowerpanel.Margin = new System.Windows.Forms.Padding(0);
             this.lowerpanel.Name = "lowerpanel";
             this.lowerpanel.Size = new System.Drawing.Size(851, 653);
             this.lowerpanel.TabIndex = 4;
@@ -500,14 +702,206 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.alertGroupBox);
+            this.splitContainer.Panel1.Controls.Add(this.alertListView);
+            this.splitContainer.Panel1.Controls.Add(this.buttonpanel);
+            this.splitContainer.Panel1.Controls.Add(this.filterpanel);
             // 
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.resultPanel);
             this.splitContainer.Size = new System.Drawing.Size(851, 653);
-            this.splitContainer.SplitterDistance = 298;
+            this.splitContainer.SplitterDistance = 305;
             this.splitContainer.TabIndex = 0;
+            // 
+            // alertListView
+            // 
+            this.alertListView.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.alertListView.AllowColumnReorder = true;
+            this.alertListView.BackColor = System.Drawing.SystemColors.Window;
+            this.alertListView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.alertListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.severityColumnHeader,
+            this.sessionIdColumnHeader,
+            this.typeColumnHeader,
+            this.urlColumnHeader});
+            this.alertListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.alertListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.alertListView.FullRowSelect = true;
+            this.alertListView.GridLines = true;
+            this.alertListView.HideSelection = false;
+            this.alertListView.Location = new System.Drawing.Point(0, 42);
+            this.alertListView.Margin = new System.Windows.Forms.Padding(0);
+            this.alertListView.Name = "alertListView";
+            this.alertListView.Size = new System.Drawing.Size(851, 221);
+            this.alertListView.TabIndex = 7;
+            this.alertListView.UseCompatibleStateImageBehavior = false;
+            this.alertListView.View = System.Windows.Forms.View.Details;
+            this.alertListView.SelectedIndexChanged += new System.EventHandler(this.alertListView_SelectedIndexChanged);
+            this.alertListView.DoubleClick += new System.EventHandler(this.alertListViewDoubleClick);
+            this.alertListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.alertListView_ColumnClick);
+            // 
+            // severityColumnHeader
+            // 
+            this.severityColumnHeader.Text = "Severity";
+            this.severityColumnHeader.Width = 100;
+            // 
+            // sessionIdColumnHeader
+            // 
+            this.sessionIdColumnHeader.Text = "Session ID";
+            this.sessionIdColumnHeader.Width = 125;
+            // 
+            // typeColumnHeader
+            // 
+            this.typeColumnHeader.Text = "Type";
+            this.typeColumnHeader.Width = 200;
+            // 
+            // urlColumnHeader
+            // 
+            this.urlColumnHeader.Text = "URL";
+            this.urlColumnHeader.Width = 420;
+            // 
+            // buttonpanel
+            // 
+            this.buttonpanel.Controls.Add(this.btnClearResults);
+            this.buttonpanel.Controls.Add(this.FileSaveButton);
+            this.buttonpanel.Controls.Add(this.autoscrollcheckBox);
+            this.buttonpanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonpanel.Location = new System.Drawing.Point(0, 263);
+            this.buttonpanel.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonpanel.Name = "buttonpanel";
+            this.buttonpanel.Size = new System.Drawing.Size(851, 42);
+            this.buttonpanel.TabIndex = 11;
+            // 
+            // btnClearResults
+            // 
+            this.btnClearResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClearResults.Location = new System.Drawing.Point(3, 7);
+            this.btnClearResults.Name = "btnClearResults";
+            this.btnClearResults.Size = new System.Drawing.Size(299, 29);
+            this.btnClearResults.TabIndex = 8;
+            this.btnClearResults.Text = "Clear Selected Results (All results if none selected)";
+            this.toolTipResultsControl.SetToolTip(this.btnClearResults, "Selected results will be removed. If none are selected all results will be remove" +
+                    "d.");
+            this.btnClearResults.UseVisualStyleBackColor = true;
+            this.btnClearResults.Click += new System.EventHandler(this.btnClearResults_Click);
+            // 
+            // FileSaveButton
+            // 
+            this.FileSaveButton.Location = new System.Drawing.Point(308, 7);
+            this.FileSaveButton.Name = "FileSaveButton";
+            this.FileSaveButton.Size = new System.Drawing.Size(130, 29);
+            this.FileSaveButton.TabIndex = 9;
+            this.FileSaveButton.Text = "Export to XML";
+            this.toolTipResultsControl.SetToolTip(this.FileSaveButton, "Export selected results to an XML format file.");
+            this.FileSaveButton.UseVisualStyleBackColor = true;
+            this.FileSaveButton.Click += new System.EventHandler(this.FileSaveButton_Click);
+            // 
+            // autoscrollcheckBox
+            // 
+            this.autoscrollcheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.autoscrollcheckBox.AutoSize = true;
+            this.autoscrollcheckBox.Location = new System.Drawing.Point(772, 14);
+            this.autoscrollcheckBox.Name = "autoscrollcheckBox";
+            this.autoscrollcheckBox.Size = new System.Drawing.Size(74, 17);
+            this.autoscrollcheckBox.TabIndex = 10;
+            this.autoscrollcheckBox.Text = "AutoScroll";
+            this.toolTipResultsControl.SetToolTip(this.autoscrollcheckBox, "When checked Watcher will place the latest alerts and the bottom of the displayed" +
+                    " list of results.");
+            this.autoscrollcheckBox.UseVisualStyleBackColor = true;
+            this.autoscrollcheckBox.CheckedChanged += new System.EventHandler(this.autoscrollcheckBox_CheckedChanged);
+            // 
+            // filterpanel
+            // 
+            this.filterpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.filterpanel.Controls.Add(this.informationalcountlabel);
+            this.filterpanel.Controls.Add(this.noiselabel);
+            this.filterpanel.Controls.Add(this.lowcountlabel);
+            this.filterpanel.Controls.Add(this.noisereductioncomboBox);
+            this.filterpanel.Controls.Add(this.mediumcountlabel);
+            this.filterpanel.Controls.Add(this.highcountlabel);
+            this.filterpanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filterpanel.Location = new System.Drawing.Point(0, 0);
+            this.filterpanel.Name = "filterpanel";
+            this.filterpanel.Size = new System.Drawing.Size(851, 42);
+            this.filterpanel.TabIndex = 2;
+            // 
+            // informationalcountlabel
+            // 
+            this.informationalcountlabel.AutoSize = true;
+            this.informationalcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.informationalcountlabel.ForeColor = System.Drawing.Color.Green;
+            this.informationalcountlabel.Location = new System.Drawing.Point(453, 12);
+            this.informationalcountlabel.Name = "informationalcountlabel";
+            this.informationalcountlabel.Size = new System.Drawing.Size(70, 13);
+            this.informationalcountlabel.TabIndex = 5;
+            this.informationalcountlabel.Text = "Informational:";
+            this.toolTipResultsControl.SetToolTip(this.informationalcountlabel, "(Alerts, Individual Issues)");
+            this.informationalcountlabel.Click += new System.EventHandler(this.informationalcountlabel_Click);
+            // 
+            // noiselabel
+            // 
+            this.noiselabel.AutoSize = true;
+            this.noiselabel.Location = new System.Drawing.Point(3, 12);
+            this.noiselabel.Name = "noiselabel";
+            this.noiselabel.Size = new System.Drawing.Size(59, 13);
+            this.noiselabel.TabIndex = 0;
+            this.noiselabel.Text = " Alert Filter:";
+            // 
+            // lowcountlabel
+            // 
+            this.lowcountlabel.AutoSize = true;
+            this.lowcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lowcountlabel.ForeColor = System.Drawing.Color.Blue;
+            this.lowcountlabel.Location = new System.Drawing.Point(373, 12);
+            this.lowcountlabel.Name = "lowcountlabel";
+            this.lowcountlabel.Size = new System.Drawing.Size(30, 13);
+            this.lowcountlabel.TabIndex = 4;
+            this.lowcountlabel.Text = "Low:";
+            this.toolTipResultsControl.SetToolTip(this.lowcountlabel, "(Alerts, Individual Issues)");
+            this.lowcountlabel.Click += new System.EventHandler(this.lowcountlabel_Click);
+            // 
+            // noisereductioncomboBox
+            // 
+            this.noisereductioncomboBox.DisplayMember = "Informational";
+            this.noisereductioncomboBox.FormattingEnabled = true;
+            this.noisereductioncomboBox.Items.AddRange(new object[] {
+            "Informational",
+            "Low",
+            "Medium",
+            "High"});
+            this.noisereductioncomboBox.Location = new System.Drawing.Point(68, 9);
+            this.noisereductioncomboBox.Name = "noisereductioncomboBox";
+            this.noisereductioncomboBox.Size = new System.Drawing.Size(121, 21);
+            this.noisereductioncomboBox.TabIndex = 1;
+            this.toolTipResultsControl.SetToolTip(this.noisereductioncomboBox, "Results of the selected value and higher only will be displayed.");
+            this.noisereductioncomboBox.ValueMember = "Informational";
+            this.noisereductioncomboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // mediumcountlabel
+            // 
+            this.mediumcountlabel.AutoSize = true;
+            this.mediumcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mediumcountlabel.ForeColor = System.Drawing.Color.Orange;
+            this.mediumcountlabel.Location = new System.Drawing.Point(282, 12);
+            this.mediumcountlabel.Name = "mediumcountlabel";
+            this.mediumcountlabel.Size = new System.Drawing.Size(47, 13);
+            this.mediumcountlabel.TabIndex = 3;
+            this.mediumcountlabel.Text = "Medium:";
+            this.toolTipResultsControl.SetToolTip(this.mediumcountlabel, "(Alerts, Individual Issues)");
+            this.mediumcountlabel.Click += new System.EventHandler(this.mediumcountlabel_Click);
+            // 
+            // highcountlabel
+            // 
+            this.highcountlabel.AutoSize = true;
+            this.highcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.highcountlabel.ForeColor = System.Drawing.Color.Red;
+            this.highcountlabel.Location = new System.Drawing.Point(205, 12);
+            this.highcountlabel.Name = "highcountlabel";
+            this.highcountlabel.Size = new System.Drawing.Size(35, 13);
+            this.highcountlabel.TabIndex = 2;
+            this.highcountlabel.Text = "High: ";
+            this.toolTipResultsControl.SetToolTip(this.highcountlabel, "(Alerts, Individual Issues)");
+            this.highcountlabel.Click += new System.EventHandler(this.highcountlabel_Click);
             // 
             // WatcherResultsControl
             // 
@@ -515,51 +909,61 @@ namespace CasabaSecurity.Web.Watcher
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "WatcherResultsControl";
             this.Size = new System.Drawing.Size(851, 653);
-            this.alertGroupBox.ResumeLayout(false);
-            this.alertGroupBox.PerformLayout();
-            this.filterpanel.ResumeLayout(false);
-            this.filterpanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.casabapictureBox)).EndInit();
-            this.listviewbuttonpanel.ResumeLayout(false);
-            this.listviewbuttonpanel.PerformLayout();
             this.resultPanel.ResumeLayout(false);
             this.resultPanel.PerformLayout();
+            this.pnlCopyright.ResumeLayout(false);
+            this.pnlCopyright.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).EndInit();
             this.lowerpanel.ResumeLayout(false);
             this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
             this.splitContainer.ResumeLayout(false);
+            this.buttonpanel.ResumeLayout(false);
+            this.buttonpanel.PerformLayout();
+            this.filterpanel.ResumeLayout(false);
+            this.filterpanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+#endif
 
         #endregion
 
-        public GroupBox alertGroupBox;
-        public ListView alertListView;
-        public ColumnHeader sessionIdColumnHeader;
-        public ColumnHeader severityColumnHeader;
-        public ColumnHeader typeColumnHeader;
-        public ColumnHeader urlColumnHeader;
         public Panel resultPanel;
-        public Button btnClearResults;
-        public Button FileSaveButton;
         private TextBox alertTextBox;
         private Panel lowerpanel;
         private SplitContainer splitContainer;
-        private Panel listviewbuttonpanel;
-        public ComboBox noisereductioncomboBox;
-        private Panel filterpanel;
-        private Label noiselabel;
-        private LinkLabel linkLabel;
-        private Label highcountlabel;
+        public ListView alertListView;
+        public ColumnHeader severityColumnHeader;
+        public ColumnHeader sessionIdColumnHeader;
+        public ColumnHeader typeColumnHeader;
+        public ColumnHeader urlColumnHeader;
         private Label informationalcountlabel;
         private Label lowcountlabel;
         private Label mediumcountlabel;
-        private Label label1;
-        private PictureBox casabapictureBox;
+        private Label highcountlabel;
         private CheckBox autoscrollcheckBox;
+        public Button FileSaveButton;
+        private Label noiselabel;
+        public Button btnClearResults;
+        public ComboBox noisereductioncomboBox;
+        private Panel filterpanel;
+        private Panel buttonpanel;
+        private ToolTip toolTipResultsControl;
+        private Panel pnlCopyright;
+        private Label rightslabel;
+        public LinkLabel linkLabel1;
+        private PictureBox pbCasaba;
+        private Label copyrightlabel;
+        private Panel panel1;
+        private Label label2;
+        public LinkLabel linkLabel2;
+        private PictureBox pictureBox1;
+        private Label label3;
        
         public class AlertListViewItem : ListViewItem
         {

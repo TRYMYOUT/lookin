@@ -41,7 +41,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Silverlight clientaccesspolicy.xml Insecure Domain Reference";
+            String name = "Silverlight clientaccesspolicy.xml insecure domain reference";
             String text =
 
                 name +

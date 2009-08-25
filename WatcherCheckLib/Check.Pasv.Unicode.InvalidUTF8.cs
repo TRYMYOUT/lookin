@@ -45,21 +45,21 @@ namespace CasabaSecurity.Web.Watcher.Checks
         
         public override String GetName()
         {
-            return "Unicode - Identify UTF-8 content for invalid Unicode byte streams.";
+            return "Unicode - Identify ill-formed Unicode UTF-8 content, and null bytes in HTML.";
         }
 
         public override String GetDescription()
         {
             String desc = "This check reviews the byte stream of an UTF-8 encoded HTML page, and identifies " +
-                    "ill-formed byte sequences.  For more information check out: \r\n\r\n" +
-                    "http://www.lookout.net/2009/03/25/detectingill-formed-utf-8-byte-sequences-in-html-content/";
+                    "ill-formed byte sequences as well as null bytes.  For more information see: \r\n\r\n" +
+                    "http://www.lookout.net/2009/03/25/detecting-ill-formed-utf-8-byte-sequences-in-html-content/";
 
             return desc;
         }
 
         private void AddAlert(Session session)
         {
-            string name = "Invalid Unicode ByteStream";
+            string name = "Ill-formed UTF-8 bytes";
             string text =
 
                 name +
@@ -77,7 +77,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert2(Session session)
         {
-            string name = "Null Bytes in ByteStream";
+            string name = "Null bytes in content";
             string text =
 
                 name +

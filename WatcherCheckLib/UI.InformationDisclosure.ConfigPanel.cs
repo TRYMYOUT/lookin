@@ -62,8 +62,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     this.stringchecklistBox.Text = "";
                 }
             }
-            groupBox1.Text = boxtitle;
-            stringcheckgroupBox.Text = entrytitle;
+            lblReplacementStrings.Text = boxtitle;
+            lblReplacementString.Text = entrytitle;
             this.stringchecklistBox.EndUpdate();
         }
 
@@ -106,7 +106,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             if (this.stringchecklistBox.SelectedItems.Count < 0)
             {
-                MessageBox.Show("You must select a domain to delete from the trusted domain list", "Error");
+                MessageBox.Show("You must select a domain to remove from the trusted domain list", "Error");
                 return;
             }
 

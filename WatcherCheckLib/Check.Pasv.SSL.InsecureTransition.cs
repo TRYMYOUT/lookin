@@ -31,7 +31,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String header)
         {
-            String name = "HTTPS/HTTP Insecure Transition Referer Header";
+            String name = "HTTPS to HTTP insecure transition referer header";
             findingnum++;
             String text =
                 name +

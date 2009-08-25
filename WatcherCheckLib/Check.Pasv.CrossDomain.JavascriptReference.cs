@@ -48,7 +48,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (Cross Domain) Javascript Reference";
+            String name = "Third-party (cross-domain) javascript reference";
             String text =
 
                 name +

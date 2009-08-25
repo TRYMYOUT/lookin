@@ -39,7 +39,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String header)
         {
-            string name = "Insecure Cache-Control Header";
+            string name = "Insecure Cache-Control header";
             findingnum++;
             string text =
 
@@ -69,7 +69,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (!session.HTTPMethodIs("CONNECT"))
                     {
-                        if (session.isHTTPS)
+                        if (session.isHTTPS && session.responseBodyBytes.Length > 0)
                         {
                             // if content type does not being w/ "image/"
                             if (!Utility.IsResponseContentType(session, "image/"))

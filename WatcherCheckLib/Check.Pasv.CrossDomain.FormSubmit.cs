@@ -31,14 +31,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             String desc = "This check identifies HTML forms that post data offsite to a domain other than " +
                     "the origin domain.  This would include subdomains if you didn't specify a wildcard or " +
-                    "a trusted domain in your configuration, e.g. *.lookout.net.";
+                    "a trusted domain in your configuration, e.g. *.nottrusted.com.";
 
             return desc;
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (Cross Domain) Form Submit";
+            String name = "Third-party (cross-domain) form submit";
             String text =
 
                 name +

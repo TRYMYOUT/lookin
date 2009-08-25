@@ -27,14 +27,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "SSL - SSLv2 Protocol Check.";
+            return "SSL - SSLv2 protocol check.";
         }
 
         public override String GetDescription()
         {
             String desc = "When an SSL connection is initiated, this check attempts to connect to the server " +
                     "using the insecure SSL v2 protocol.  If the server allows this, a finding is reported. " +
-                    "Most servers today should support SSL v3 and disallow the older versions.";
+                    "Most servers today should support SSL v3 and disallow the legacy versions of SSL.";
 
             return desc;
         }

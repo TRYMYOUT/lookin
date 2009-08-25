@@ -37,7 +37,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (Cross Domain) Style Sheet Import or Inclusion";
+            String name = "Third-party (cross-domain) style sheet import or inclusion";
             String text =
 
                 name +
@@ -101,7 +101,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
-                if (session.responseCode == 200)
+                if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                 {
                     if (Utility.IsResponseHtml(session))
                     {

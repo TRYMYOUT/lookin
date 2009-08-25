@@ -59,13 +59,13 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "SSL - SSL Certificate Validation.";
+            return "SSL - SSL certificate validation.";
         }
 
         public override String GetDescription()
         {
             String desc = "This check validates SSL certificates and reports a finding when validation errors " +
-                    "such as host name mis-match and expiration are found.  This check will also attempt to " +
+                    "such as host name mis-match and expiration are found.  If configured, this check will also attempt to " +
                     "walk the certificate chain and perform CRL revocation checking.";
 
             return desc;

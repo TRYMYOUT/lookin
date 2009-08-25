@@ -89,7 +89,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Set-Cookie Secure Attribute Not Set";
+            String name = "Cookie's secure flag was not set";
             String text =
 
                 name +

@@ -39,17 +39,21 @@ namespace CasabaSecurity.Web.Watcher
         {
             this.watchertabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.watcherConfig = new CasabaSecurity.Web.Watcher.WatcherConfigControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.watcherConfigTab = new CasabaSecurity.Web.Watcher.WatcherConfigControl();
+            this.watcherCheckTab = new CasabaSecurity.Web.Watcher.WatcherCheckControl();
             this.watcherResultsTab = new CasabaSecurity.Web.Watcher.WatcherResultsControl();
             this.watchertabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // watchertabControl
             // 
             this.watchertabControl.Controls.Add(this.tabPage1);
+            this.watchertabControl.Controls.Add(this.tabPage3);
             this.watchertabControl.Controls.Add(this.tabPage2);
             this.watchertabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.watchertabControl.Location = new System.Drawing.Point(0, 0);
@@ -57,64 +61,83 @@ namespace CasabaSecurity.Web.Watcher
             this.watchertabControl.Name = "watchertabControl";
             this.watchertabControl.Padding = new System.Drawing.Point(0, 0);
             this.watchertabControl.SelectedIndex = 0;
-            this.watchertabControl.Size = new System.Drawing.Size(881, 638);
+            this.watchertabControl.Size = new System.Drawing.Size(600, 600);
             this.watchertabControl.TabIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.LightGray;
-            this.tabPage1.Controls.Add(this.watcherConfig);
+            this.tabPage1.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage1.Controls.Add(this.watcherConfigTab);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(873, 612);
+            this.tabPage1.Size = new System.Drawing.Size(592, 574);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Configuration";
-            this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // watcherConfig
+            // tabPage3
             // 
-            this.watcherConfig.AutoScroll = true;
-            this.watcherConfig.BackColor = System.Drawing.Color.LightGray;
-            this.watcherConfig.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.watcherConfig.Location = new System.Drawing.Point(3, 3);
-            this.watcherConfig.Margin = new System.Windows.Forms.Padding(0);
-            this.watcherConfig.Name = "watcherConfig";
-            this.watcherConfig.Size = new System.Drawing.Size(867, 606);
-            this.watcherConfig.TabIndex = 0;
+            this.tabPage3.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage3.Controls.Add(this.watcherCheckTab);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(592, 574);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Checks";
             // 
             // tabPage2
             // 
-            this.tabPage2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
             this.tabPage2.Controls.Add(this.watcherResultsTab);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(873, 612);
+            this.tabPage2.Size = new System.Drawing.Size(592, 574);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Results";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // watcherConfigTab
+            // 
+            this.watcherConfigTab.AutoScroll = true;
+            this.watcherConfigTab.BackColor = System.Drawing.SystemColors.Window;
+            this.watcherConfigTab.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.watcherConfigTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.watcherConfigTab.Location = new System.Drawing.Point(0, 0);
+            this.watcherConfigTab.Margin = new System.Windows.Forms.Padding(0);
+            this.watcherConfigTab.Name = "watcherConfigTab";
+            this.watcherConfigTab.Size = new System.Drawing.Size(592, 574);
+            this.watcherConfigTab.TabIndex = 0;
+            // 
+            // watcherCheckTab
+            // 
+            this.watcherCheckTab.AutoScroll = true;
+            this.watcherCheckTab.BackColor = System.Drawing.SystemColors.Window;
+            this.watcherCheckTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.watcherCheckTab.Location = new System.Drawing.Point(0, 0);
+            this.watcherCheckTab.Name = "watcherCheckTab";
+            this.watcherCheckTab.Size = new System.Drawing.Size(592, 574);
+            this.watcherCheckTab.TabIndex = 0;
             // 
             // watcherResultsTab
             // 
-            this.watcherResultsTab.BackColor = System.Drawing.Color.LightGray;
+            this.watcherResultsTab.BackColor = System.Drawing.SystemColors.Window;
             this.watcherResultsTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.watcherResultsTab.Location = new System.Drawing.Point(3, 3);
+            this.watcherResultsTab.Location = new System.Drawing.Point(0, 0);
             this.watcherResultsTab.Margin = new System.Windows.Forms.Padding(0);
             this.watcherResultsTab.Name = "watcherResultsTab";
-            this.watcherResultsTab.Size = new System.Drawing.Size(867, 606);
+            this.watcherResultsTab.Size = new System.Drawing.Size(592, 574);
             this.watcherResultsTab.TabIndex = 0;
             // 
             // WatcherControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.watchertabControl);
             this.Name = "WatcherControl";
-            this.Size = new System.Drawing.Size(881, 638);
+            this.Size = new System.Drawing.Size(600, 600);
             this.watchertabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -123,9 +146,11 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         private System.Windows.Forms.TabControl watchertabControl;
-        public CasabaSecurity.Web.Watcher.WatcherConfigControl watcherConfig; 
-        private System.Windows.Forms.TabPage tabPage1;
+        public CasabaSecurity.Web.Watcher.WatcherConfigControl watcherConfigTab; 
+        public CasabaSecurity.Web.Watcher.WatcherCheckControl watcherCheckTab;
         public CasabaSecurity.Web.Watcher.WatcherResultsControl watcherResultsTab;
+        private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }

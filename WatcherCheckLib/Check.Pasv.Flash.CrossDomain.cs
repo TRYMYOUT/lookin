@@ -40,7 +40,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Flash crossdomain.xml Insecure Domain Reference";
+            String name = "Flash crossdomain.xml insecure domain reference";
             String text =
 
                 name +

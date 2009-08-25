@@ -25,7 +25,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "User Controlled - Find user controllable location header.";
+            return "User Controlled - Open redirect.";
         }
 
         public override String GetDescription()
@@ -41,7 +41,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String parm, String val, String context, bool ispost)
         {
-            String name = "User Controllable Location Header (Open Redirect)";
+            String name = "User controllable location header (Open Redirect)";
             if (!ispost)
             { 
                 String text =

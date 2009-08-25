@@ -37,9 +37,10 @@ namespace CasabaSecurity.Web.Watcher
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WatcherConfigControl));
             this.configGroupBox = new System.Windows.Forms.GroupBox();
-            this.regexlabel = new System.Windows.Forms.Label();
+            this.lblDomainsAcceptRegularExpressions = new System.Windows.Forms.Label();
             this.ClearDomainButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.trustedDomainListBox = new System.Windows.Forms.ListView();
@@ -48,33 +49,27 @@ namespace CasabaSecurity.Web.Watcher
             this.label1 = new System.Windows.Forms.Label();
             this.trustedDomainTextBox = new System.Windows.Forms.TextBox();
             this.originDomainTextBox = new System.Windows.Forms.TextBox();
-            this.enablegroupBox = new System.Windows.Forms.GroupBox();
-            this.casabapictureBox = new System.Windows.Forms.PictureBox();
-            this.saveconfigbutton = new System.Windows.Forms.Button();
-            this.CheckLatestButton = new System.Windows.Forms.Button();
-            this.linkLabel = new System.Windows.Forms.LinkLabel();
             this.enableCheckBox = new System.Windows.Forms.CheckBox();
-            this.checklistgroupBox = new System.Windows.Forms.GroupBox();
-            this.checklistsplitContainer = new System.Windows.Forms.SplitContainer();
-            this.enabledChecksListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.labelDisableAll = new System.Windows.Forms.LinkLabel();
-            this.FilterBox = new System.Windows.Forms.Label();
-            this.domainconfigButton = new System.Windows.Forms.Button();
-            this.labelEnableAll = new System.Windows.Forms.LinkLabel();
-            this.filtertextBox = new System.Windows.Forms.TextBox();
+            this.CheckLatestButton = new System.Windows.Forms.Button();
+            this.saveconfigbutton = new System.Windows.Forms.Button();
+            this.appgroupBox = new System.Windows.Forms.GroupBox();
+            this.autovercheckBox = new System.Windows.Forms.CheckBox();
+            this.autosavecheckBox = new System.Windows.Forms.CheckBox();
+            this.toolTipConfigControl = new System.Windows.Forms.ToolTip(this.components);
+            this.pnlCopyright = new System.Windows.Forms.Panel();
+            this.rightslabel = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.pbCasaba = new System.Windows.Forms.PictureBox();
+            this.copyrightlabel = new System.Windows.Forms.Label();
             this.configGroupBox.SuspendLayout();
-            this.enablegroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.casabapictureBox)).BeginInit();
-            this.checklistgroupBox.SuspendLayout();
-            this.checklistsplitContainer.Panel1.SuspendLayout();
-            this.checklistsplitContainer.SuspendLayout();
+            this.appgroupBox.SuspendLayout();
+            this.pnlCopyright.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).BeginInit();
             this.SuspendLayout();
             // 
             // configGroupBox
             // 
-            this.configGroupBox.Controls.Add(this.regexlabel);
+            this.configGroupBox.Controls.Add(this.lblDomainsAcceptRegularExpressions);
             this.configGroupBox.Controls.Add(this.ClearDomainButton);
             this.configGroupBox.Controls.Add(this.label3);
             this.configGroupBox.Controls.Add(this.trustedDomainListBox);
@@ -83,54 +78,55 @@ namespace CasabaSecurity.Web.Watcher
             this.configGroupBox.Controls.Add(this.label1);
             this.configGroupBox.Controls.Add(this.trustedDomainTextBox);
             this.configGroupBox.Controls.Add(this.originDomainTextBox);
-            this.configGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.configGroupBox.Location = new System.Drawing.Point(0, 72);
+            this.configGroupBox.Location = new System.Drawing.Point(3, 136);
             this.configGroupBox.Name = "configGroupBox";
-            this.configGroupBox.Size = new System.Drawing.Size(767, 183);
-            this.configGroupBox.TabIndex = 2;
+            this.configGroupBox.Size = new System.Drawing.Size(479, 183);
+            this.configGroupBox.TabIndex = 3;
             this.configGroupBox.TabStop = false;
-            this.configGroupBox.Text = "Domain(s)";
+            this.configGroupBox.Text = "Domains";
             // 
-            // regexlabel
+            // lblDomainsAcceptRegularExpressions
             // 
-            this.regexlabel.AutoSize = true;
-            this.regexlabel.Location = new System.Drawing.Point(22, 154);
-            this.regexlabel.Name = "regexlabel";
-            this.regexlabel.Size = new System.Drawing.Size(256, 13);
-            this.regexlabel.TabIndex = 8;
-            this.regexlabel.Text = "Note: Both Domain fields accept regular expressions.";
+            this.lblDomainsAcceptRegularExpressions.AutoSize = true;
+            this.lblDomainsAcceptRegularExpressions.Location = new System.Drawing.Point(6, 156);
+            this.lblDomainsAcceptRegularExpressions.Name = "lblDomainsAcceptRegularExpressions";
+            this.lblDomainsAcceptRegularExpressions.Size = new System.Drawing.Size(254, 13);
+            this.lblDomainsAcceptRegularExpressions.TabIndex = 8;
+            this.lblDomainsAcceptRegularExpressions.Text = "Note: Both domain fields accept regular expressions.";
             // 
             // ClearDomainButton
             // 
-            this.ClearDomainButton.Location = new System.Drawing.Point(410, 119);
+            this.ClearDomainButton.Location = new System.Drawing.Point(394, 121);
             this.ClearDomainButton.Name = "ClearDomainButton";
             this.ClearDomainButton.Size = new System.Drawing.Size(75, 23);
             this.ClearDomainButton.TabIndex = 7;
-            this.ClearDomainButton.Text = "Delete";
+            this.ClearDomainButton.Text = "Remove";
             this.ClearDomainButton.UseVisualStyleBackColor = true;
             this.ClearDomainButton.Click += new System.EventHandler(this.ClearDomainButton_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(225, 24);
+            this.label3.Location = new System.Drawing.Point(209, 26);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(96, 13);
+            this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Trusted Domain(s):";
+            this.label3.Text = "Trusted domains:";
+            this.toolTipConfigControl.SetToolTip(this.label3, "Domains listed are exempt from cross-domain checks.");
             // 
             // trustedDomainListBox
             // 
-            this.trustedDomainListBox.Location = new System.Drawing.Point(228, 42);
+            this.trustedDomainListBox.Location = new System.Drawing.Point(212, 44);
             this.trustedDomainListBox.Name = "trustedDomainListBox";
             this.trustedDomainListBox.Size = new System.Drawing.Size(257, 71);
             this.trustedDomainListBox.TabIndex = 6;
+            this.toolTipConfigControl.SetToolTip(this.trustedDomainListBox, "Domains listed are exempt from cross-domain checks.");
             this.trustedDomainListBox.UseCompatibleStateImageBehavior = false;
             this.trustedDomainListBox.View = System.Windows.Forms.View.List;
             // 
             // AddTrustedDomainButton
             // 
-            this.AddTrustedDomainButton.Location = new System.Drawing.Point(125, 119);
+            this.AddTrustedDomainButton.Location = new System.Drawing.Point(109, 121);
             this.AddTrustedDomainButton.Name = "AddTrustedDomainButton";
             this.AddTrustedDomainButton.Size = new System.Drawing.Size(75, 23);
             this.AddTrustedDomainButton.TabIndex = 4;
@@ -141,259 +137,200 @@ namespace CasabaSecurity.Web.Watcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(22, 75);
+            this.label2.Location = new System.Drawing.Point(6, 77);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.Size = new System.Drawing.Size(83, 13);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Trusted Domain:";
+            this.label2.Text = "Trusted domain:";
+            this.toolTipConfigControl.SetToolTip(this.label2, "Domains listed are exempt from cross-domain checks.");
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 24);
+            this.label1.Location = new System.Drawing.Point(6, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 13);
+            this.label1.Size = new System.Drawing.Size(74, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Origin Domain:";
+            this.label1.Text = "Origin domain:";
+            this.toolTipConfigControl.SetToolTip(this.label1, "Traffic from this domain is watched. Defaults to all. Cross-domain checks examine" +
+                    " interaction between external sites and the specified domain.");
             // 
             // trustedDomainTextBox
             // 
-            this.trustedDomainTextBox.Location = new System.Drawing.Point(25, 93);
+            this.trustedDomainTextBox.Location = new System.Drawing.Point(9, 95);
             this.trustedDomainTextBox.Name = "trustedDomainTextBox";
             this.trustedDomainTextBox.Size = new System.Drawing.Size(175, 20);
             this.trustedDomainTextBox.TabIndex = 3;
+            this.toolTipConfigControl.SetToolTip(this.trustedDomainTextBox, "Domains listed are exempt from cross-domain checks.");
             // 
             // originDomainTextBox
             // 
-            this.originDomainTextBox.Location = new System.Drawing.Point(25, 42);
+            this.originDomainTextBox.Location = new System.Drawing.Point(9, 44);
             this.originDomainTextBox.Name = "originDomainTextBox";
             this.originDomainTextBox.Size = new System.Drawing.Size(175, 20);
             this.originDomainTextBox.TabIndex = 1;
+            this.toolTipConfigControl.SetToolTip(this.originDomainTextBox, "Traffic from this domain is watched. Defaults to all. Cross-domain checks examine" +
+                    " interaction between external sites and the specified domain.");
             this.originDomainTextBox.TextChanged += new System.EventHandler(this.originDomainTextBox_TextChanged);
-            // 
-            // enablegroupBox
-            // 
-            this.enablegroupBox.Controls.Add(this.casabapictureBox);
-            this.enablegroupBox.Controls.Add(this.saveconfigbutton);
-            this.enablegroupBox.Controls.Add(this.CheckLatestButton);
-            this.enablegroupBox.Controls.Add(this.linkLabel);
-            this.enablegroupBox.Controls.Add(this.enableCheckBox);
-            this.enablegroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.enablegroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.enablegroupBox.Location = new System.Drawing.Point(0, 0);
-            this.enablegroupBox.Name = "enablegroupBox";
-            this.enablegroupBox.Size = new System.Drawing.Size(767, 72);
-            this.enablegroupBox.TabIndex = 1;
-            this.enablegroupBox.TabStop = false;
-            this.enablegroupBox.Text = "Watcher by   ";
-            // 
-            // casabapictureBox
-            // 
-            this.casabapictureBox.Dock = System.Windows.Forms.DockStyle.Left;
-            this.casabapictureBox.Image = ((System.Drawing.Image)(resources.GetObject("casabapictureBox.Image")));
-            this.casabapictureBox.Location = new System.Drawing.Point(3, 16);
-            this.casabapictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 100, 100);
-            this.casabapictureBox.Name = "casabapictureBox";
-            this.casabapictureBox.Size = new System.Drawing.Size(64, 53);
-            this.casabapictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.casabapictureBox.TabIndex = 5;
-            this.casabapictureBox.TabStop = false;
-            this.casabapictureBox.Visible = false;
-            // 
-            // saveconfigbutton
-            // 
-            this.saveconfigbutton.AutoSize = true;
-            this.saveconfigbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveconfigbutton.Location = new System.Drawing.Point(211, 30);
-            this.saveconfigbutton.Name = "saveconfigbutton";
-            this.saveconfigbutton.Size = new System.Drawing.Size(107, 23);
-            this.saveconfigbutton.TabIndex = 2;
-            this.saveconfigbutton.Text = "Save Configuration";
-            this.saveconfigbutton.UseVisualStyleBackColor = true;
-            this.saveconfigbutton.Click += new System.EventHandler(this.saveconfigbutton_Click);
-            // 
-            // CheckLatestButton
-            // 
-            this.CheckLatestButton.AutoSize = true;
-            this.CheckLatestButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CheckLatestButton.Location = new System.Drawing.Point(347, 30);
-            this.CheckLatestButton.Name = "CheckLatestButton";
-            this.CheckLatestButton.Size = new System.Drawing.Size(138, 23);
-            this.CheckLatestButton.TabIndex = 3;
-            this.CheckLatestButton.Text = "Check Latest Version";
-            this.CheckLatestButton.UseVisualStyleBackColor = true;
-            this.CheckLatestButton.Click += new System.EventHandler(this.CheckLatestButton_Click_1);
-            // 
-            // linkLabel
-            // 
-            this.linkLabel.AutoSize = true;
-            this.linkLabel.Location = new System.Drawing.Point(77, 0);
-            this.linkLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.linkLabel.Name = "linkLabel";
-            this.linkLabel.Size = new System.Drawing.Size(99, 13);
-            this.linkLabel.TabIndex = 0;
-            this.linkLabel.TabStop = true;
-            this.linkLabel.Text = "Casaba Security";
-            this.linkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
             // enableCheckBox
             // 
             this.enableCheckBox.AutoSize = true;
             this.enableCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.enableCheckBox.Location = new System.Drawing.Point(110, 34);
+            this.enableCheckBox.Location = new System.Drawing.Point(3, 5);
             this.enableCheckBox.Name = "enableCheckBox";
             this.enableCheckBox.Size = new System.Drawing.Size(59, 17);
-            this.enableCheckBox.TabIndex = 1;
+            this.enableCheckBox.TabIndex = 0;
             this.enableCheckBox.Text = "Enable";
+            this.toolTipConfigControl.SetToolTip(this.enableCheckBox, "Configured checks execute when this is checked.");
             this.enableCheckBox.UseVisualStyleBackColor = true;
             this.enableCheckBox.CheckedChanged += new System.EventHandler(this.enableCheckBox_CheckedChanged);
             // 
-            // checklistgroupBox
+            // CheckLatestButton
             // 
-            this.checklistgroupBox.AutoSize = true;
-            this.checklistgroupBox.Controls.Add(this.checklistsplitContainer);
-            this.checklistgroupBox.Controls.Add(this.labelDisableAll);
-            this.checklistgroupBox.Controls.Add(this.FilterBox);
-            this.checklistgroupBox.Controls.Add(this.domainconfigButton);
-            this.checklistgroupBox.Controls.Add(this.labelEnableAll);
-            this.checklistgroupBox.Controls.Add(this.filtertextBox);
-            this.checklistgroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checklistgroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checklistgroupBox.Location = new System.Drawing.Point(0, 255);
-            this.checklistgroupBox.Name = "checklistgroupBox";
-            this.checklistgroupBox.Padding = new System.Windows.Forms.Padding(0);
-            this.checklistgroupBox.Size = new System.Drawing.Size(767, 354);
-            this.checklistgroupBox.TabIndex = 0;
-            this.checklistgroupBox.TabStop = false;
-            this.checklistgroupBox.Text = "Check(s)";
+            this.CheckLatestButton.AutoSize = true;
+            this.CheckLatestButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CheckLatestButton.Location = new System.Drawing.Point(306, 47);
+            this.CheckLatestButton.Name = "CheckLatestButton";
+            this.CheckLatestButton.Size = new System.Drawing.Size(138, 23);
+            this.CheckLatestButton.TabIndex = 2;
+            this.CheckLatestButton.Text = "Check Latest Version";
+            this.toolTipConfigControl.SetToolTip(this.CheckLatestButton, "When clicked Watcher will check for newer versions of itself.");
+            this.CheckLatestButton.UseVisualStyleBackColor = true;
+            this.CheckLatestButton.Click += new System.EventHandler(this.CheckLatestButton_Click_1);
             // 
-            // checklistsplitContainer
+            // saveconfigbutton
             // 
-            this.checklistsplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.checklistsplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.checklistsplitContainer.Location = new System.Drawing.Point(6, 45);
-            this.checklistsplitContainer.Name = "checklistsplitContainer";
-            this.checklistsplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.saveconfigbutton.AutoSize = true;
+            this.saveconfigbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveconfigbutton.Location = new System.Drawing.Point(306, 18);
+            this.saveconfigbutton.Name = "saveconfigbutton";
+            this.saveconfigbutton.Size = new System.Drawing.Size(138, 23);
+            this.saveconfigbutton.TabIndex = 1;
+            this.saveconfigbutton.Text = "Save Configuration";
+            this.toolTipConfigControl.SetToolTip(this.saveconfigbutton, "When clicked the current Watcher configuration state is saved.");
+            this.saveconfigbutton.UseVisualStyleBackColor = true;
+            this.saveconfigbutton.Click += new System.EventHandler(this.saveconfigbutton_Click);
             // 
-            // checklistsplitContainer.Panel1
+            // appgroupBox
             // 
-            this.checklistsplitContainer.Panel1.AutoScroll = true;
-            this.checklistsplitContainer.Panel1.Controls.Add(this.enabledChecksListView);
+            this.appgroupBox.Controls.Add(this.autovercheckBox);
+            this.appgroupBox.Controls.Add(this.autosavecheckBox);
+            this.appgroupBox.Controls.Add(this.saveconfigbutton);
+            this.appgroupBox.Controls.Add(this.CheckLatestButton);
+            this.appgroupBox.Location = new System.Drawing.Point(3, 41);
+            this.appgroupBox.Name = "appgroupBox";
+            this.appgroupBox.Size = new System.Drawing.Size(479, 80);
+            this.appgroupBox.TabIndex = 4;
+            this.appgroupBox.TabStop = false;
+            this.appgroupBox.Text = "Options";
             // 
-            // checklistsplitContainer.Panel2
+            // autovercheckBox
             // 
-            this.checklistsplitContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
-            this.checklistsplitContainer.Size = new System.Drawing.Size(755, 306);
-            this.checklistsplitContainer.SplitterDistance = 134;
-            this.checklistsplitContainer.TabIndex = 6;
+            this.autovercheckBox.AutoSize = true;
+            this.autovercheckBox.Location = new System.Drawing.Point(9, 51);
+            this.autovercheckBox.Name = "autovercheckBox";
+            this.autovercheckBox.Size = new System.Drawing.Size(185, 17);
+            this.autovercheckBox.TabIndex = 4;
+            this.autovercheckBox.Text = "Check for new version on start-up";
+            this.toolTipConfigControl.SetToolTip(this.autovercheckBox, "When checked Watcher will check for a newer version every time it is started.");
+            this.autovercheckBox.UseVisualStyleBackColor = true;
+            this.autovercheckBox.CheckedChanged += new System.EventHandler(this.autovercheckbox_CheckedChanged);
             // 
-            // enabledChecksListView
+            // autosavecheckBox
             // 
-            this.enabledChecksListView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.enabledChecksListView.CheckBoxes = true;
-            this.enabledChecksListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.enabledChecksListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.enabledChecksListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.enabledChecksListView.FullRowSelect = true;
-            this.enabledChecksListView.GridLines = true;
-            this.enabledChecksListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.enabledChecksListView.Location = new System.Drawing.Point(0, 0);
-            this.enabledChecksListView.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.enabledChecksListView.MultiSelect = false;
-            this.enabledChecksListView.Name = "enabledChecksListView";
-            this.enabledChecksListView.Size = new System.Drawing.Size(753, 132);
-            this.enabledChecksListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.enabledChecksListView.TabIndex = 0;
-            this.enabledChecksListView.UseCompatibleStateImageBehavior = false;
-            this.enabledChecksListView.View = System.Windows.Forms.View.Details;
-            this.enabledChecksListView.SelectedIndexChanged += new System.EventHandler(this.enabledChecksListView_SelectedIndexChanged);
+            this.autosavecheckBox.AutoSize = true;
+            this.autosavecheckBox.Location = new System.Drawing.Point(9, 22);
+            this.autosavecheckBox.Name = "autosavecheckBox";
+            this.autosavecheckBox.Size = new System.Drawing.Size(179, 17);
+            this.autosavecheckBox.TabIndex = 3;
+            this.autosavecheckBox.Text = "Save configuration automatically";
+            this.toolTipConfigControl.SetToolTip(this.autosavecheckBox, "When checked all configuration options are automatically saved and will remain wh" +
+                    "en Watcher is restarted.");
+            this.autosavecheckBox.UseVisualStyleBackColor = true;
+            this.autosavecheckBox.CheckedChanged += new System.EventHandler(this.autosavecheckBox_CheckedChanged);
             // 
-            // columnHeader1
+            // pnlCopyright
             // 
-            this.columnHeader1.Text = "Description";
-            this.columnHeader1.Width = 150;
+            this.pnlCopyright.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlCopyright.Controls.Add(this.rightslabel);
+            this.pnlCopyright.Controls.Add(this.linkLabel1);
+            this.pnlCopyright.Controls.Add(this.pbCasaba);
+            this.pnlCopyright.Controls.Add(this.copyrightlabel);
+            this.pnlCopyright.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlCopyright.Location = new System.Drawing.Point(0, 545);
+            this.pnlCopyright.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlCopyright.Name = "pnlCopyright";
+            this.pnlCopyright.Size = new System.Drawing.Size(600, 55);
+            this.pnlCopyright.TabIndex = 7;
             // 
-            // columnHeader2
+            // rightslabel
             // 
-            this.columnHeader2.Text = "Standards Compliance";
-            this.columnHeader2.Width = 150;
+            this.rightslabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.rightslabel.AutoSize = true;
+            this.rightslabel.Location = new System.Drawing.Point(448, 24);
+            this.rightslabel.Margin = new System.Windows.Forms.Padding(1);
+            this.rightslabel.Name = "rightslabel";
+            this.rightslabel.Size = new System.Drawing.Size(93, 13);
+            this.rightslabel.TabIndex = 6;
+            this.rightslabel.Text = "All rights reserved.";
             // 
-            // labelDisableAll
+            // linkLabel1
             // 
-            this.labelDisableAll.AutoSize = true;
-            this.labelDisableAll.Location = new System.Drawing.Point(78, 19);
-            this.labelDisableAll.Name = "labelDisableAll";
-            this.labelDisableAll.Size = new System.Drawing.Size(64, 13);
-            this.labelDisableAll.TabIndex = 1;
-            this.labelDisableAll.TabStop = true;
-            this.labelDisableAll.Text = "Disable all...";
-            this.labelDisableAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelDisableAll_LinkClicked);
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.BackColor = System.Drawing.SystemColors.Window;
+            this.linkLabel1.Location = new System.Drawing.Point(333, 24);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(1);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(112, 13);
+            this.linkLabel1.TabIndex = 1;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Casaba Security, LLC.";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
-            // FilterBox
+            // pbCasaba
             // 
-            this.FilterBox.AutoSize = true;
-            this.FilterBox.Location = new System.Drawing.Point(148, 19);
-            this.FilterBox.Name = "FilterBox";
-            this.FilterBox.Size = new System.Drawing.Size(44, 13);
-            this.FilterBox.TabIndex = 2;
-            this.FilterBox.Text = "Search:";
+            this.pbCasaba.BackColor = System.Drawing.SystemColors.Window;
+            this.pbCasaba.Image = ((System.Drawing.Image)(resources.GetObject("pbCasaba.Image")));
+            this.pbCasaba.Location = new System.Drawing.Point(0, 0);
+            this.pbCasaba.Name = "pbCasaba";
+            this.pbCasaba.Size = new System.Drawing.Size(55, 55);
+            this.pbCasaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbCasaba.TabIndex = 5;
+            this.pbCasaba.TabStop = false;
             // 
-            // domainconfigButton
+            // copyrightlabel
             // 
-            this.domainconfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.domainconfigButton.AutoSize = true;
-            this.domainconfigButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.domainconfigButton.Location = new System.Drawing.Point(637, 16);
-            this.domainconfigButton.Name = "domainconfigButton";
-            this.domainconfigButton.Size = new System.Drawing.Size(124, 23);
-            this.domainconfigButton.TabIndex = 4;
-            this.domainconfigButton.Text = "Restore Previous View";
-            this.domainconfigButton.UseVisualStyleBackColor = true;
-            this.domainconfigButton.Visible = false;
-            this.domainconfigButton.Click += new System.EventHandler(this.domainconfigButton_Click);
-            // 
-            // labelEnableAll
-            // 
-            this.labelEnableAll.AutoSize = true;
-            this.labelEnableAll.Location = new System.Drawing.Point(10, 19);
-            this.labelEnableAll.Name = "labelEnableAll";
-            this.labelEnableAll.Size = new System.Drawing.Size(62, 13);
-            this.labelEnableAll.TabIndex = 0;
-            this.labelEnableAll.TabStop = true;
-            this.labelEnableAll.Text = "Enable all...";
-            this.labelEnableAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelEnableAll_LinkClicked);
-            // 
-            // filtertextBox
-            // 
-            this.filtertextBox.Location = new System.Drawing.Point(198, 16);
-            this.filtertextBox.Name = "filtertextBox";
-            this.filtertextBox.Size = new System.Drawing.Size(107, 20);
-            this.filtertextBox.TabIndex = 3;
-            this.filtertextBox.TextChanged += new System.EventHandler(this.filtertextBox_TextChanged);
+            this.copyrightlabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.copyrightlabel.AutoSize = true;
+            this.copyrightlabel.Location = new System.Drawing.Point(61, 24);
+            this.copyrightlabel.Name = "copyrightlabel";
+            this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
+            this.copyrightlabel.TabIndex = 0;
+            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2009";
             // 
             // WatcherConfigControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.Controls.Add(this.checklistgroupBox);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.pnlCopyright);
+            this.Controls.Add(this.appgroupBox);
             this.Controls.Add(this.configGroupBox);
-            this.Controls.Add(this.enablegroupBox);
+            this.Controls.Add(this.enableCheckBox);
             this.Name = "WatcherConfigControl";
-            this.Size = new System.Drawing.Size(767, 609);
+            this.Size = new System.Drawing.Size(600, 600);
             this.configGroupBox.ResumeLayout(false);
             this.configGroupBox.PerformLayout();
-            this.enablegroupBox.ResumeLayout(false);
-            this.enablegroupBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.casabapictureBox)).EndInit();
-            this.checklistgroupBox.ResumeLayout(false);
-            this.checklistgroupBox.PerformLayout();
-            this.checklistsplitContainer.Panel1.ResumeLayout(false);
-            this.checklistsplitContainer.ResumeLayout(false);
+            this.appgroupBox.ResumeLayout(false);
+            this.appgroupBox.PerformLayout();
+            this.pnlCopyright.ResumeLayout(false);
+            this.pnlCopyright.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -410,22 +347,18 @@ namespace CasabaSecurity.Web.Watcher
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.TextBox trustedDomainTextBox;
         public System.Windows.Forms.TextBox originDomainTextBox;
-        private System.Windows.Forms.Label regexlabel;
-        public System.Windows.Forms.GroupBox enablegroupBox;
-        private System.Windows.Forms.Button saveconfigbutton;
-        public System.Windows.Forms.Button CheckLatestButton;
-        public System.Windows.Forms.LinkLabel linkLabel;
+        private System.Windows.Forms.Label lblDomainsAcceptRegularExpressions;
         public System.Windows.Forms.CheckBox enableCheckBox;
-        private System.Windows.Forms.GroupBox checklistgroupBox;
-        private System.Windows.Forms.SplitContainer checklistsplitContainer;
-        private System.Windows.Forms.PictureBox casabapictureBox;
-        private System.Windows.Forms.LinkLabel labelDisableAll;
-        public System.Windows.Forms.ListView enabledChecksListView;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Label FilterBox;
-        private System.Windows.Forms.Button domainconfigButton;
-        private System.Windows.Forms.LinkLabel labelEnableAll;
-        private System.Windows.Forms.TextBox filtertextBox;
+        public System.Windows.Forms.Button CheckLatestButton;
+        private System.Windows.Forms.Button saveconfigbutton;
+        private System.Windows.Forms.GroupBox appgroupBox;
+        private System.Windows.Forms.CheckBox autovercheckBox;
+        private System.Windows.Forms.CheckBox autosavecheckBox;
+        private System.Windows.Forms.ToolTip toolTipConfigControl;
+        private System.Windows.Forms.Panel pnlCopyright;
+        private System.Windows.Forms.Label rightslabel;
+        public System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.PictureBox pbCasaba;
+        private System.Windows.Forms.Label copyrightlabel;
     }
 }

@@ -91,7 +91,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Set-Cookie HTTPOnly Attribute Not Set";
+            String name = "Cookie's HTTPOnly flag was not set";
             String text =
 
                 name +

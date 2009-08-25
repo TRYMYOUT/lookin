@@ -23,7 +23,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "User Controlled - Find user controllable Javascript References.";
+            return "User Controlled - Javascript references.";
         }
 
         public override String GetDescription()
@@ -31,16 +31,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
             String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
                     "identify where URL's in certain javascript properties (e.g. createElement src) might be" +
                     "controlled.  This provides hot-spot " +
-                    "detection that will require further review by a security analyst to determine exploitability.  " +
-                    "Typical vulnerabilities associated with this phenomena include XSS, but testing will be " +
-                    "required to determine if that's possible or not.";
+                    "detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.  ";
 
             return desc;
         }
 
         private void AddAlert(Session session)
         {
-            String name = "User Controllable Javascript Reference";
+            String name = "User controllable javascript reference (XSS)";
             String text =
 
                 name +

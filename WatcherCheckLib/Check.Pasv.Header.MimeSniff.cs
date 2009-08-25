@@ -21,16 +21,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Header - Checks to see if the 'nosniff' MIME-Sniffing defense has been specified in the response.";
+            return "Header - Checks that the X-CONTENT-TYPE-OPTIONS defense against MIME-sniffing has been declared.";
         }
 
         public override String GetDescription()
         {
             //TODO: Beef this up.
             String desc = "This check is specific to Internet Explorer 8 and Google Chrome.  " +
-                        "It flags HTTP responses which don't set the 'nosniff' header in responses. This HTTP header is used by " +
+                        "It flags HTTP responses which don't set the X-CONTENT-TYPE-OPTIONS header in responses. This 'nosniff' HTTP header is used by " +
                         "certain browsers such as IE8 and Chrome to reduce the potential for vulnerability that can " +
-                        "occur when an attacker can trigger and manipulate a browser's MIME-sniffing behavior. ";
+                        "occur when an attacker can trigger and manipulate a browser's MIME-sniffing behavior. " +
+                        "For more information see: \r\n\r\n" +
+                        "http://blogs.msdn.com/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx";
             return desc;
         }
 
@@ -74,7 +76,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
                 {
-                    if (session.responseCode == 200)
+                    if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                     {
                         // If Content-Type header doesn't exist, or if it's null/empty, or if it's text/plain
                         if (!session.oResponse.headers.Exists("Content-Type") || String.IsNullOrEmpty(session.oResponse.headers["Content-Type"].Trim().ToLower()) || Utility.IsResponsePlain(session) )

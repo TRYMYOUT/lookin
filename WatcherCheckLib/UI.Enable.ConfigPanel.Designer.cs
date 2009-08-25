@@ -28,19 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.enablefiltercheckBox = new System.Windows.Forms.CheckBox();
             this.cookiecheckgroupBox = new System.Windows.Forms.GroupBox();
+            this.toolTipEnableConfigUI = new System.Windows.Forms.ToolTip(this.components);
             this.cookiecheckgroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // enablefiltercheckBox
             // 
             this.enablefiltercheckBox.AutoSize = true;
-            this.enablefiltercheckBox.Location = new System.Drawing.Point(28, 41);
+            this.enablefiltercheckBox.Location = new System.Drawing.Point(6, 19);
             this.enablefiltercheckBox.Name = "enablefiltercheckBox";
-            this.enablefiltercheckBox.Size = new System.Drawing.Size(215, 17);
+            this.enablefiltercheckBox.Size = new System.Drawing.Size(212, 17);
             this.enablefiltercheckBox.TabIndex = 0;
-            this.enablefiltercheckBox.Text = "Enable filter for previously seen cookies.";
+            this.enablefiltercheckBox.Text = "Enable filter for previously seen cookies";
             this.enablefiltercheckBox.UseVisualStyleBackColor = true;
             this.enablefiltercheckBox.CheckedChanged += new System.EventHandler(this.enablefiltercheckBox_CheckedChanged);
             // 
@@ -51,9 +53,9 @@
             this.cookiecheckgroupBox.Location = new System.Drawing.Point(0, 0);
             this.cookiecheckgroupBox.Name = "cookiecheckgroupBox";
             this.cookiecheckgroupBox.Size = new System.Drawing.Size(472, 178);
-            this.cookiecheckgroupBox.TabIndex = 1;
+            this.cookiecheckgroupBox.TabIndex = 0;
             this.cookiecheckgroupBox.TabStop = false;
-            this.cookiecheckgroupBox.Text = "Cookie Check Config:";
+            this.cookiecheckgroupBox.Text = "Check Configuration";
             // 
             // EnableCheckConfigPanel
             // 
@@ -72,5 +74,6 @@
 
         public System.Windows.Forms.CheckBox enablefiltercheckBox;
         private System.Windows.Forms.GroupBox cookiecheckgroupBox;
+        private System.Windows.Forms.ToolTip toolTipEnableConfigUI;
     }
 }

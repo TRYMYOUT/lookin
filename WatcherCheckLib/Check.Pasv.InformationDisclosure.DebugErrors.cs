@@ -49,14 +49,13 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Information Disclosure - Check for common debugging type error messages returned from platforms such as ASP.NET and IIS.";
+            return "Information Disclosure - Check for common debugging error messages.";
         }
 
         public override String GetDescription()
         {
-            String desc = "This check looks for common error messages returned by Web Servers such as IIS and Apache.  " +
-                    "Even though these messages can sometimes be hidden in the " +
-                    "HTML or comments, this check will search them out.You can configure the list of common debug messages " +
+            String desc = "This check will search HTML content, including comments, for common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache.  " +
+                    "You can configure the list of common debug messages " +
                     "to look for below.";
 
             return desc;
@@ -89,7 +88,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Debug Error Message";
+            String name = "Debug error message";
             String text =
 
                 name +

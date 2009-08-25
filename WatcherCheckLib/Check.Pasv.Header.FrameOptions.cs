@@ -22,20 +22,22 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Header - Checks that the 'X-FRAME-OPTIONS' header for IE8's ClickJacking defense is being set by the server. ";
+            return "Header - Checks that the 'X-FRAME-OPTIONS' header is being set for defense against 'ClickJacking' attacks. ";
         }
 
         public override String GetDescription()
         {
             //TODO: Beef this up.
-            String desc = "This check is specific to Internet Explorer 8. " +
-                    "It flags HTTP responses which don't set the header to protect against ClickJacking attacks.";
+            String desc = "Including the X-FRAME-OPTIONS header in the server HTTP response instructs the browser to prevent the web page " +
+                    "from being displaed in a subframe of the page.  This check flags HTTP responses which don't set this header."  +
+                    "For more information see:  \r\n\r\n" +
+                    "http://blogs.msdn.com/ie/archive/2009/01/27/ie8-security-part-vii-clickjacking-defenses.aspx";
             return desc;
         }
 
         private void AddAlert(Session session)
         {
-            string name = "IE8 anti-ClickJacking header was not set.";
+            string name = "X-FRAME-OPTIONS header was not set.";
             string url = session.url.Split('?')[0];
             findingnum++;
             string text =
@@ -52,7 +54,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, string value)
         {
-            string name = "IE8 anti-Clickjacking not set to Deny";
+            string name = "X-FRAME-OPTIONS header was not set to 'Deny'";
             string url = session.url.Split('?')[0];
             findingnum++;
             string text =
@@ -74,12 +76,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
                 {
-                    if (session.responseCode == 200)
-                    {
-                        // Only look at HTML responses.
-                        if (Utility.IsResponseHtml(session))
+                    if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
+                    {     
+                        if (!session.HTTPMethodIs("CONNECT")) 
                         {
-                            if (!session.HTTPMethodIs("CONNECT"))
+                            // Only look at HTML responses.
+                            if (Utility.IsResponseHtml(session))
                             {
                                 if (!session.oResponse.headers.Exists("X-FRAME-OPTIONS"))
                                 {

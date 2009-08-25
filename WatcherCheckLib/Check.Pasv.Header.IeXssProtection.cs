@@ -22,7 +22,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Header - Checks that IE8's XSS protection filter has not been disabled by a Web-application. ";
+            return "Header - Checks that IE8's XSS protection filter has not been disabled by the Web-application. ";
         }
 
         public override String GetDescription()
@@ -30,7 +30,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
             //TODO: Beef this up.
             String desc = "This check is specific to Internet Explorer 8. " +
                     "It flags when an HTTP response " +
-                    "sets the 'X-XSS-Protection' header to a value of 0, which disables IE8's XSS protection.";
+                    "sets the 'X-XSS-Protection' header to a value of 0, which disables IE8's XSS protection filter." +
+                    "For more information see: \r\n\r\n" +
+                    "http://blogs.msdn.com/ie/archive/2008/07/01/ie8-security-part-iv-the-xss-filter.aspx";
             return desc;
         }
 
@@ -59,7 +61,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
                 {
-                    if (session.responseCode == 200)
+                    if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                     {
                         // Only look at HTML responses.
                         if (Utility.IsResponseHtml(session) || Utility.IsResponsePlain(session))

@@ -83,7 +83,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             urls = new List<String>();
         }
 
-        private void CheckContentTypeCharset(String cont, String place)
+        private bool IsCharsetUTF8(String cont, String place)
         {
             cont = cont.Trim().ToLower();
             switch (place)
@@ -101,7 +101,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     if (String.IsNullOrEmpty(cont))
                     {
                         findingnum++;
-                        alertbody = alertbody + findingnum.ToString() + ") No charset was specified in " + place + ".\r\n\r\n";  
+                        alertbody = alertbody + findingnum.ToString() + ") No charset was specified in " + place + ".\r\n\r\n";
+
+                        return false;
                     }
                     else
                     {
@@ -109,14 +111,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         {
                             findingnum++;
                             alertbody = alertbody + findingnum.ToString() + ") The charset specified was not utf-8 in " + place + ": \"" + cont + "\".\r\n\r\n";
+
+                            return false;
                         }
                     }
-                    break;
+                    // The charset was set to UTF-8, there's no issue.
+                    return true;
                 default:
                     if (cont.IndexOf("charset=") < 0)
                     {
                         alertbody = alertbody + findingnum.ToString() + ") No charset was specified in " + place + ".\r\n\r\n";
                         findingnum++;
+                        return false;
                     }
                     else
                     {
@@ -125,9 +131,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         {
                             alertbody = alertbody + findingnum.ToString() + ") The charset specified was not utf-8 in " + place + ": \"" + cont + "\".\r\n\r\n";
                             findingnum++;
+                            return false;
                         }
                     }
-                    break;
+                    // The charset was set to UTF-8, there's no issue.
+                    return true;
             }
         }
 
@@ -150,62 +158,79 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     //
                     if (Utility.IsResponseHtml(session))
                     {
-                        // IsResponse* functions fail if no content-type header, so, if here, we know we have content-type header value (either html or xml).
-                        CheckContentTypeCharset(session.oResponse.headers["content-type"], "header");
+                        // IsResponse* functions fail if no content-type header, 
+                        // so, if here, we know we have content-type header value (either html or xml).
 
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        // First check the HTTP Content-Type header.
+                        // If it's set to UTF8 then we're happy.  We don't care if the
+                        // meta tag charset is set at this point - the HTTP header is more important.
+                        // And, there's a separate check to detect a mismatch.
+                        if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
                         {
-                            foreach (Match m in Utility.GetHtmlTags(body, "meta"))
-                            {
-                                hteq = Utility.GetHtmlTagAttribute(m.ToString(), "http-equiv");
-                                if (hteq != null)
-                                {
-                                    if (hteq.Trim().ToLower(CultureInfo.InvariantCulture) == "content-type")
-                                    {
-                                        cont = Utility.GetHtmlTagAttribute(m.ToString(), "content");
-                                        if (cont != null)
-                                        {
-                                            CheckContentTypeCharset(cont, "html");
+                            body = Utility.GetResponseText(session);
 
-                                            flag = true;
+                            // Ignore empty response body
+                            if (!String.IsNullOrEmpty(body))
+                            {
+                                foreach (Match m in Utility.GetHtmlTags(body, "meta"))
+                                {
+                                    hteq = Utility.GetHtmlTagAttribute(m.ToString(), "http-equiv");
+                                    if (hteq != null)
+                                    {
+                                        if (hteq.Trim().ToLower(CultureInfo.InvariantCulture) == "content-type")
+                                        {
+                                            cont = Utility.GetHtmlTagAttribute(m.ToString(), "content");
+                                            if (cont != null)
+                                            {
+                                                IsCharsetUTF8(cont, "html");
+
+                                                flag = true;
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            if (!flag)
-                            {
-                                //AddAlert(watcher, session, "Content type and/or charset not defined in meta tag.");
-                                alertbody = alertbody + findingnum.ToString() + ") Content type and/or charset not defined in meta tag.\r\n";
-                                findingnum++;
+                                if (!flag)
+                                {
+                                    //AddAlert(watcher, session, "Content type and/or charset not defined in meta tag.");
+                                    alertbody = alertbody + findingnum.ToString() + ") A content type and/or charset was not defined in the meta tag.\r\n";
+                                    findingnum++;
+                                }
                             }
                         }
                     }
                     else if (Utility.IsResponseXml(session))
                     {
                         // IsResponse* functions fail if no content-type header, so, if here, we know we have content-type header value (either html or xml).
-                        CheckContentTypeCharset(session.oResponse.headers["content-type"], "header");
 
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        // First check the HTTP Content-Type header.
+                        // If it's set to UTF8 then we're happy.  We don't care if the
+                        // XML encoding value is set at this point - the HTTP header is more important.
+                        // And, there's a separate check to detect a mismatch.
+                        if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
                         {
-                            // need to escape the ? for the regex in GetHtmlTags()
-                            foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
-                            {
-                                enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
-                                if (enc != null)
-                                {
-                                    CheckContentTypeCharset(enc, "xml");
-                                    flag = true;
-                                }
-                            }
+                            body = Utility.GetResponseText(session);
 
-                            if (!flag)
+                            // Ignore empty response body
+                            if (!String.IsNullOrEmpty(body))
                             {
-                                //AddAlert(watcher, session, "Content type and/or charset not defined in <?xml version=\"1.0\" encoding=\"utf-8\" ?>.");
-                                alertbody = alertbody + findingnum.ToString() + ") Content type and/or charset not defined as <?xml version =\"1.0\" encoding=\"utf-8\" ?>.\r\n";
-                                findingnum++;
+                                // need to escape the ? for the regex in GetHtmlTags()
+                                foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
+                                {
+                                    enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
+                                    if (enc != null)
+                                    {
+                                        IsCharsetUTF8(enc, "xml");
+                                        flag = true;
+                                    }
+                                }
+
+                                if (!flag)
+                                {
+                                    //AddAlert(watcher, session, "Content type and/or charset not defined in <?xml version=\"1.0\" encoding=\"utf-8\" ?>.");
+                                    alertbody = alertbody + findingnum.ToString() + ") Content type and/or charset not defined as <?xml version =\"1.0\" encoding=\"utf-8\" ?>.\r\n";
+                                    findingnum++;
+                                }
                             }
                         }
                     }

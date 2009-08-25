@@ -73,12 +73,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
             if (configstring == "Inclusive Filter")
             {
                 this.filtertypecomboBox.SelectedItem = configstring;
-                this.cookiegroupBox.Text = "Cookies to check:";
+                this.lblCookies.Text = "Cookies to analyze:";
             }
             else
             {
                 this.filtertypecomboBox.SelectedItem = configstring;
-                this.cookiegroupBox.Text = "Cookies to ignore:";
+                this.lblCookies.Text = "Cookies to ignore:";
             }
         }
 
@@ -134,7 +134,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             if (this.cookiechecklistBox.SelectedItems.Count < 0)
             {
-                MessageBox.Show("You must select a cookie to delete from the cookie list", "Error");
+                MessageBox.Show("You must select a cookie to remove from the cookie list", "Error");
                 return;
             }
 
@@ -159,11 +159,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
             string selection = this.filtertypecomboBox.SelectedItem.ToString();
             if (selection == "Inclusive Filter")
             {
-                this.cookiegroupBox.Text = "Cookies to check:";
+                this.lblCookies.Text = "Cookies to analyze:";
             }
             else
             {
-                this.cookiegroupBox.Text = "Cookies to ignore:";
+                this.lblCookies.Text = "Cookies to ignore:";
             }
             WatcherEngine.Configuration.SetCheckConfig(watchercheck, "CookieFilterType", selection); 
         }

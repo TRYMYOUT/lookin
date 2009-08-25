@@ -36,148 +36,124 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// </summary>
         private void InitializeComponent()
         {
-            this.enablefiltercheckBox = new System.Windows.Forms.CheckBox();
+            this.components = new System.ComponentModel.Container();
             this.cookiecheckgroupBox = new System.Windows.Forms.GroupBox();
-            this.cookiegroupBox = new System.Windows.Forms.GroupBox();
             this.cookiechecklistBox = new System.Windows.Forms.ListView();
-            this.deletebuttonpanel = new System.Windows.Forms.Panel();
-            this.deletebutton = new System.Windows.Forms.Button();
-            this.stringcheckgroupBox = new System.Windows.Forms.GroupBox();
-            this.addbutton = new System.Windows.Forms.Button();
             this.cookiecheckentrytextBox = new System.Windows.Forms.TextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.addbutton = new System.Windows.Forms.Button();
+            this.enablefiltercheckBox = new System.Windows.Forms.CheckBox();
             this.filtertypecomboBox = new System.Windows.Forms.ComboBox();
+            this.lblCookies = new System.Windows.Forms.Label();
+            this.deletebutton = new System.Windows.Forms.Button();
+            this.toolTipCookieConfigUI = new System.Windows.Forms.ToolTip(this.components);
             this.cookiecheckgroupBox.SuspendLayout();
-            this.cookiegroupBox.SuspendLayout();
-            this.deletebuttonpanel.SuspendLayout();
-            this.stringcheckgroupBox.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // enablefiltercheckBox
-            // 
-            this.enablefiltercheckBox.AutoSize = true;
-            this.enablefiltercheckBox.Location = new System.Drawing.Point(3, 8);
-            this.enablefiltercheckBox.Name = "enablefiltercheckBox";
-            this.enablefiltercheckBox.Size = new System.Drawing.Size(194, 17);
-            this.enablefiltercheckBox.TabIndex = 0;
-            this.enablefiltercheckBox.Text = "Filter cookies seen more than once.";
-            this.enablefiltercheckBox.UseVisualStyleBackColor = true;
-            this.enablefiltercheckBox.CheckedChanged += new System.EventHandler(this.enablefiltercheckBox_CheckedChanged);
             // 
             // cookiecheckgroupBox
             // 
             this.cookiecheckgroupBox.AutoSize = true;
-            this.cookiecheckgroupBox.Controls.Add(this.cookiegroupBox);
-            this.cookiecheckgroupBox.Controls.Add(this.stringcheckgroupBox);
-            this.cookiecheckgroupBox.Controls.Add(this.panel1);
+            this.cookiecheckgroupBox.Controls.Add(this.cookiechecklistBox);
+            this.cookiecheckgroupBox.Controls.Add(this.cookiecheckentrytextBox);
+            this.cookiecheckgroupBox.Controls.Add(this.label2);
+            this.cookiecheckgroupBox.Controls.Add(this.addbutton);
+            this.cookiecheckgroupBox.Controls.Add(this.enablefiltercheckBox);
+            this.cookiecheckgroupBox.Controls.Add(this.filtertypecomboBox);
+            this.cookiecheckgroupBox.Controls.Add(this.lblCookies);
+            this.cookiecheckgroupBox.Controls.Add(this.deletebutton);
             this.cookiecheckgroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cookiecheckgroupBox.Location = new System.Drawing.Point(0, 0);
             this.cookiecheckgroupBox.Name = "cookiecheckgroupBox";
             this.cookiecheckgroupBox.Size = new System.Drawing.Size(472, 283);
-            this.cookiecheckgroupBox.TabIndex = 1;
+            this.cookiecheckgroupBox.TabIndex = 0;
             this.cookiecheckgroupBox.TabStop = false;
-            this.cookiecheckgroupBox.Text = "Cookie Check Config";
-            // 
-            // cookiegroupBox
-            // 
-            this.cookiegroupBox.Controls.Add(this.cookiechecklistBox);
-            this.cookiegroupBox.Controls.Add(this.deletebuttonpanel);
-            this.cookiegroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cookiegroupBox.Location = new System.Drawing.Point(3, 53);
-            this.cookiegroupBox.Name = "cookiegroupBox";
-            this.cookiegroupBox.Padding = new System.Windows.Forms.Padding(6);
-            this.cookiegroupBox.Size = new System.Drawing.Size(466, 159);
-            this.cookiegroupBox.TabIndex = 5;
-            this.cookiegroupBox.TabStop = false;
-            this.cookiegroupBox.Text = "Cookies to check:";
+            this.cookiecheckgroupBox.Text = "Check Configuration";
             // 
             // cookiechecklistBox
             // 
             this.cookiechecklistBox.AllowDrop = true;
-            this.cookiechecklistBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cookiechecklistBox.Location = new System.Drawing.Point(6, 19);
+            this.cookiechecklistBox.Location = new System.Drawing.Point(6, 140);
             this.cookiechecklistBox.Name = "cookiechecklistBox";
-            this.cookiechecklistBox.Size = new System.Drawing.Size(454, 111);
-            this.cookiechecklistBox.TabIndex = 0;
+            this.cookiechecklistBox.Size = new System.Drawing.Size(460, 75);
+            this.cookiechecklistBox.TabIndex = 7;
             this.cookiechecklistBox.UseCompatibleStateImageBehavior = false;
             this.cookiechecklistBox.View = System.Windows.Forms.View.List;
             // 
-            // deletebuttonpanel
+            // cookiecheckentrytextBox
             // 
-            this.deletebuttonpanel.Controls.Add(this.deletebutton);
-            this.deletebuttonpanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.deletebuttonpanel.Location = new System.Drawing.Point(6, 130);
-            this.deletebuttonpanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this.deletebuttonpanel.Name = "deletebuttonpanel";
-            this.deletebuttonpanel.Size = new System.Drawing.Size(454, 23);
-            this.deletebuttonpanel.TabIndex = 3;
+            this.cookiecheckentrytextBox.Location = new System.Drawing.Point(6, 64);
+            this.cookiecheckentrytextBox.Name = "cookiecheckentrytextBox";
+            this.cookiecheckentrytextBox.Size = new System.Drawing.Size(463, 20);
+            this.cookiecheckentrytextBox.TabIndex = 3;
             // 
-            // deletebutton
+            // label2
             // 
-            this.deletebutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.deletebutton.Location = new System.Drawing.Point(0, 1);
-            this.deletebutton.Name = "deletebutton";
-            this.deletebutton.Size = new System.Drawing.Size(75, 23);
-            this.deletebutton.TabIndex = 2;
-            this.deletebutton.Text = "Delete";
-            this.deletebutton.UseVisualStyleBackColor = true;
-            this.deletebutton.Click += new System.EventHandler(this.deletebutton_Click);
-            // 
-            // stringcheckgroupBox
-            // 
-            this.stringcheckgroupBox.Controls.Add(this.addbutton);
-            this.stringcheckgroupBox.Controls.Add(this.cookiecheckentrytextBox);
-            this.stringcheckgroupBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.stringcheckgroupBox.Location = new System.Drawing.Point(3, 212);
-            this.stringcheckgroupBox.Name = "stringcheckgroupBox";
-            this.stringcheckgroupBox.Size = new System.Drawing.Size(466, 68);
-            this.stringcheckgroupBox.TabIndex = 4;
-            this.stringcheckgroupBox.TabStop = false;
-            this.stringcheckgroupBox.Text = "Cookie name to add:";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Cookie name to add:";
             // 
             // addbutton
             // 
-            this.addbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.addbutton.Location = new System.Drawing.Point(3, 40);
+            this.addbutton.Location = new System.Drawing.Point(6, 90);
             this.addbutton.Name = "addbutton";
             this.addbutton.Size = new System.Drawing.Size(75, 23);
-            this.addbutton.TabIndex = 1;
+            this.addbutton.TabIndex = 4;
             this.addbutton.Text = "Add";
+            this.toolTipCookieConfigUI.SetToolTip(this.addbutton, "Adds the cookie in the text box to the non-duplicate filter. ");
             this.addbutton.UseVisualStyleBackColor = true;
             this.addbutton.Click += new System.EventHandler(this.addbutton_Click);
             // 
-            // cookiecheckentrytextBox
+            // enablefiltercheckBox
             // 
-            this.cookiecheckentrytextBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.cookiecheckentrytextBox.Location = new System.Drawing.Point(3, 16);
-            this.cookiecheckentrytextBox.Name = "cookiecheckentrytextBox";
-            this.cookiecheckentrytextBox.Size = new System.Drawing.Size(460, 20);
-            this.cookiecheckentrytextBox.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.filtertypecomboBox);
-            this.panel1.Controls.Add(this.enablefiltercheckBox);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(3, 16);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(466, 37);
-            this.panel1.TabIndex = 1;
+            this.enablefiltercheckBox.AutoSize = true;
+            this.enablefiltercheckBox.Location = new System.Drawing.Point(6, 19);
+            this.enablefiltercheckBox.Name = "enablefiltercheckBox";
+            this.enablefiltercheckBox.Size = new System.Drawing.Size(191, 17);
+            this.enablefiltercheckBox.TabIndex = 0;
+            this.enablefiltercheckBox.Text = "Filter cookies seen more than once";
+            this.toolTipCookieConfigUI.SetToolTip(this.enablefiltercheckBox, "Filters out duplicate cookies. For example, cookies that are set to a new value e" +
+                    "very request will only be reported the first time seen..");
+            this.enablefiltercheckBox.UseVisualStyleBackColor = true;
             // 
             // filtertypecomboBox
             // 
-            this.filtertypecomboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.filtertypecomboBox.FormattingEnabled = true;
             this.filtertypecomboBox.Items.AddRange(new object[] {
             "Inclusive Filter",
             "Exclusive Filter"});
-            this.filtertypecomboBox.Location = new System.Drawing.Point(339, 6);
+            this.filtertypecomboBox.Location = new System.Drawing.Point(345, 19);
             this.filtertypecomboBox.Name = "filtertypecomboBox";
             this.filtertypecomboBox.Size = new System.Drawing.Size(121, 21);
             this.filtertypecomboBox.TabIndex = 1;
             this.filtertypecomboBox.Text = "Inclusive Filter";
+            this.toolTipCookieConfigUI.SetToolTip(this.filtertypecomboBox, "Specifies whether the non-duplicate filter is inclusive or exclusive. Inclusive a" +
+                    "nalyzes only the cookies listed (must be at least one). Exclusive analyzes all c" +
+                    "ookies except those listed.");
             this.filtertypecomboBox.SelectedIndexChanged += new System.EventHandler(this.filtertypecomboBox_SelectedIndexChanged);
+            // 
+            // lblCookies
+            // 
+            this.lblCookies.AutoSize = true;
+            this.lblCookies.BackColor = System.Drawing.Color.Transparent;
+            this.lblCookies.Location = new System.Drawing.Point(3, 124);
+            this.lblCookies.Name = "lblCookies";
+            this.lblCookies.Size = new System.Drawing.Size(99, 13);
+            this.lblCookies.TabIndex = 6;
+            this.lblCookies.Text = "Cookies to analyze:";
+            // 
+            // deletebutton
+            // 
+            this.deletebutton.Location = new System.Drawing.Point(87, 90);
+            this.deletebutton.Name = "deletebutton";
+            this.deletebutton.Size = new System.Drawing.Size(75, 23);
+            this.deletebutton.TabIndex = 5;
+            this.deletebutton.Text = "Remove";
+            this.toolTipCookieConfigUI.SetToolTip(this.deletebutton, "Removes selected cookies from the cookie list.");
+            this.deletebutton.UseVisualStyleBackColor = true;
+            this.deletebutton.Click += new System.EventHandler(this.deletebutton_Click);
             // 
             // CookieCheckConfigPanel
             // 
@@ -187,12 +163,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             this.Name = "CookieCheckConfigPanel";
             this.Size = new System.Drawing.Size(472, 283);
             this.cookiecheckgroupBox.ResumeLayout(false);
-            this.cookiegroupBox.ResumeLayout(false);
-            this.deletebuttonpanel.ResumeLayout(false);
-            this.stringcheckgroupBox.ResumeLayout(false);
-            this.stringcheckgroupBox.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.cookiecheckgroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -200,16 +171,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         #endregion
 
-        public System.Windows.Forms.CheckBox enablefiltercheckBox;
         private System.Windows.Forms.GroupBox cookiecheckgroupBox;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.GroupBox stringcheckgroupBox;
         private System.Windows.Forms.Button addbutton;
-        private System.Windows.Forms.TextBox cookiecheckentrytextBox;
-        private System.Windows.Forms.GroupBox cookiegroupBox;
-        public System.Windows.Forms.ListView cookiechecklistBox;
-        private System.Windows.Forms.Panel deletebuttonpanel;
-        private System.Windows.Forms.Button deletebutton;
         private System.Windows.Forms.ComboBox filtertypecomboBox;
+        public System.Windows.Forms.ListView cookiechecklistBox;
+        private System.Windows.Forms.Button deletebutton;
+        private System.Windows.Forms.Label lblCookies;
+        private System.Windows.Forms.TextBox cookiecheckentrytextBox;
+        public System.Windows.Forms.CheckBox enablefiltercheckBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolTip toolTipCookieConfigUI;
     }
 }

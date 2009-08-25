@@ -37,7 +37,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "User Controllable Cookie (cookie poisoning attack)";
+            String name = "User controllable cookie (cookie poisoning attack)";
             if (!isPost)
             {
                 String text =

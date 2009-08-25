@@ -59,7 +59,7 @@ namespace CasabaSecurity.Web.Watcher
         {
             // Instantiate the Watcher UI tab in preparation to be added to the Fiddler UI
             _watcherTab.AutoScroll = false;
-            _watcherTab.BackColor = Color.LightGray;
+            _watcherTab.BackColor = Color.Transparent;
 
             // Add our custom icon
             FiddlerApplication.UI.imglSessionIcons.Images.Add(Properties.Resources.Casaba);
@@ -69,7 +69,7 @@ namespace CasabaSecurity.Web.Watcher
             FiddlerApplication.UI.tabsViews.TabPages.Add(_watcherTab);
 
             // Initialize the control
-            this.BackColor = Color.LightGray;
+            this.BackColor = Color.Transparent;
             this.AutoSize = true;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;

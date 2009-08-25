@@ -33,6 +33,8 @@ namespace CasabaSecurity.Web.Watcher
         private Configuration _configuration = null;                                        // System configuration object
         private String _originDomain = String.Empty;                                        // Domain to be analyzed
         private Boolean _watcherEnabled = false;                                            // Is the Watcher enabled?
+        private Boolean _autosave = false;
+        private Boolean _autocheck = false;
         #endregion
 
         #region Ctor(s)
@@ -49,7 +51,14 @@ namespace CasabaSecurity.Web.Watcher
         public String OriginDomain
         {
             get { return _originDomain; }
-            set { _originDomain = value; }
+            set
+            {
+                _originDomain = value; 
+                if (_autosave)
+                { 
+                    Save(); 
+                }
+            }
         }
 
         /// <summary>
@@ -67,7 +76,37 @@ namespace CasabaSecurity.Web.Watcher
         public Boolean Enabled
         {
             get { return _watcherEnabled; }
-            set { _watcherEnabled = value; }
+            set { 
+                _watcherEnabled = value;
+                if (_autosave)
+                {
+                    Save();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns True if Watcher AutoSaves its config, False otherwise.
+        /// </summary>
+        public Boolean AutoSave
+        {
+            get { return _autosave; }
+            set { _autosave = value; }
+        }
+
+        /// <summary>
+        /// Returns True if Watcher is set to check for the latest version on start-up, False otherwise.
+        /// </summary>
+        public Boolean AutoVerCheck
+        {
+            get { return _autocheck; }
+            set { 
+                _autocheck = value;
+                if (_autosave)
+                {
+                    Save();
+                }
+            }
         }
 
         #endregion
@@ -94,6 +133,8 @@ namespace CasabaSecurity.Web.Watcher
                 PersistOriginDomain();
                 PersistTrustedDomains();
                 PersistWatcherEnabled();
+                PersistAutoSave();
+                PersistAutoVerCheck();
 
                 // Save the configuration file.
                 lock (_lock)
@@ -125,7 +166,7 @@ namespace CasabaSecurity.Web.Watcher
             // Instance members of the Configuration class are not guaranteed thread-safe
             lock (_lock)
             {
-                _configuration.AppSettings.Settings.Add(key, value);
+                _configuration.AppSettings.Settings.Add(key, value);   
             }
         }
 
@@ -138,9 +179,10 @@ namespace CasabaSecurity.Web.Watcher
             // Instance members of the Configuration class are not guaranteed thread-safe
             lock (_lock)
             {
-                _configuration.AppSettings.Settings.Remove(key);
+                _configuration.AppSettings.Settings.Remove(key);  
             }
         }
+
 
         /// <summary>
         /// Get a configuration item with no default value set.
@@ -248,9 +290,17 @@ namespace CasabaSecurity.Web.Watcher
             // Determine the name of the check entry from its type
             String[] configurationName = GetCheckNameTokens(check);
 
+            String checkstate = check.Enabled ? "True" : "False";
             // Store the check enabled/disabled state
-            Remove(configurationName[configurationName.Length - 1]);
-            Add(configurationName[configurationName.Length - 1], check.Enabled ? "True" : "False");
+            if (Get(configurationName[configurationName.Length - 1]) != checkstate)
+            {
+                Remove(configurationName[configurationName.Length - 1]);
+                Add(configurationName[configurationName.Length - 1], check.Enabled ? "True" : "False");
+                if (_autosave)
+                {
+                    Save();
+                }
+            }
         }
 
         /// <summary>
@@ -269,6 +319,10 @@ namespace CasabaSecurity.Web.Watcher
                 {
                     Remove(checkOptionName);
                     Add(checkOptionName, value);
+                    if (_autosave)
+                    {
+                        Save();
+                    }
                 }
             }
             // TODO: return a bool for success
@@ -316,6 +370,20 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         #region Private Method(s)
+
+        /// <summary>
+        /// This method returns an string containing config value
+        /// </summary>
+        /// <param name="check">The Watcher check whose name is to be split.</param>
+        /// <returns>The config value specified by a string.</returns>
+        private String Get(String configname)
+        {
+            // Instance members of the Configuration class are not guaranteed thread-safe
+            lock (_lock)
+            {
+                return _configuration.AppSettings.Settings[configname].Value;
+            }
+        }
 
         /// <summary>
         /// This method returns an array of strings representing each level in the fully-qualified
@@ -386,6 +454,8 @@ namespace CasabaSecurity.Web.Watcher
         private void LoadConfigurationSettings()
         {
             LoadWatcherEnabled();
+            LoadWatcherAutoSave();
+            LoadWatcherAutoVerCheck();
             LoadOriginDomain();
             LoadTrustedDomains();
         }
@@ -488,6 +558,50 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
+        /// This method determines if AutoSave is enabled in the application
+        /// configuration and caches the result.
+        /// </summary>
+        private void LoadWatcherAutoSave()
+        {
+            try
+            {
+                // Set the "AutoSave" flag if it is set in the configuration
+                String setting = ConfigurationManager.AppSettings["AutoSave"];
+                _autosave = (setting == "True");
+            }
+
+            catch (ConfigurationErrorsException e)
+            {
+                // Thrown if a failure occurs when reading the application configuration
+                String errorMessage = String.Format("ConfigurationErrorsException: {0}", e.Message);
+                Trace.TraceError("Error: {0}", errorMessage);
+                Debug.Assert(false, errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// This method determines if AutoSave is enabled in the application
+        /// configuration and caches the result.
+        /// </summary>
+        private void LoadWatcherAutoVerCheck()
+        {
+            try
+            {
+                // Set the "AutoVerCheck" flag if it is set in the configuration
+                String setting = ConfigurationManager.AppSettings["AutoVerCheck"];
+                _autocheck = (setting == "True");
+            }
+
+            catch (ConfigurationErrorsException e)
+            {
+                // Thrown if a failure occurs when reading the application configuration
+                String errorMessage = String.Format("ConfigurationErrorsException: {0}", e.Message);
+                Trace.TraceError("Error: {0}", errorMessage);
+                Debug.Assert(false, errorMessage);
+            }
+        }
+
+        /// <summary>
         /// This method adds the cached TrustedDomains list to the application configuration.
         /// </summary>
         /// <remarks>TODO: This is a somewhat inefficient, i.e. the entire list may not need to be removed/re-added</remarks>
@@ -521,6 +635,24 @@ namespace CasabaSecurity.Web.Watcher
         {
             Remove("Enable");
             Add("Enable", _watcherEnabled ? "True" : "False");
+        }
+
+        /// <summary>
+        /// This method adds the cached AutoSave property to the application configuration.
+        /// </summary>
+        private void PersistAutoSave()
+        {
+            Remove("AutoSave");
+            Add("Autosave", _autosave ? "True" : "False");
+        }
+
+        /// <summary>
+        /// This method adds the cached AutoVerCheck property to the application configuration.
+        /// </summary>
+        private void PersistAutoVerCheck()
+        {
+            Remove("AutoVerCheck");
+            Add("AutoVerCheck", _autocheck ? "True" : "False");
         }
 
         #endregion

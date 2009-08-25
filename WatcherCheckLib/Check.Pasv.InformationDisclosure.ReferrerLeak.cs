@@ -38,7 +38,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             StandardsCompliance = WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel2;
 
             configpanel = new StringCheckConfigPanel(this);
-            configpanel.Init(defaultstrings, "Sensitive Header values:", "Enter new Words for the Sensitive Header value check here:");
+            configpanel.Init(defaultstrings, "Sensitive Header values:", "Enter new words to watch for here:");
             UpdateWordList();
         }
 
@@ -66,7 +66,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// <param name="context"></param>
         private void AddAlert(Session session, bool equal)
         {
-            string name = "Information Leak in HTTP Referrer";
+            string name = "Information leak in HTTP referrer";
             if (!equal)
             {
                 string text =
@@ -218,9 +218,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                 {
                                     // means that a parameter value was null, so let's check the parameter names instead
                                     // e.g. it might be a URL like:
-                                    // http://www.lookout.net/?abc&def&ghi
+                                    // http://www.nottrusted.com/?abc&def&ghi
                                     // Instead of the expected name=value pairs like:
-                                    // http://www.lookout.net/?a=b&c=d&e=f
+                                    // http://www.nottrusted.com/?a=b&c=d&e=f
                                     //
                                     // TODO: We need to implement similar logic throughout Watcher wherever query string params are parsed
                                     string p = parameters.ToString().ToLower();

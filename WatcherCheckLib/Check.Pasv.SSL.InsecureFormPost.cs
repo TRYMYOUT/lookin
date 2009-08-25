@@ -25,16 +25,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetDescription()
         {
-            String desc = "This check looks for secure HTTPS pages that host insecure HTTP forms.  The issue is that " +
+            String desc = "This check identifies secure HTTPS pages that host insecure HTTP forms.  The issue is that " +
                 "a secure page is transitioning to an insecure page when data is uploaded through a form. " +
-                "If the data is sensitive then an issue exists.";
+                "The user may think they're submitting data to a secure page when in fact they are not.  ";
 
             return desc;
         }
 
         private void AddAlert(Session session)
         {
-            String name = "HTTPS/HTTP Insecure Transition HTTP Form Post";
+            String name = "HTTPS to HTTP insecure transition in form post";
             String text =
                 name +
                 "\r\n\r\n" +

@@ -39,7 +39,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (Cross Domain) Script Inclusion";
+            String name = "Third-party (cross-domain) script inclusion";
             String text =
 
                 name +
@@ -75,7 +75,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
-                if (session.responseCode == 200)
+                if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                 {
                     if (Utility.IsResponseHtml(session))
                     {

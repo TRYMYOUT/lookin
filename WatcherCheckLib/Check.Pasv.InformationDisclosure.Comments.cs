@@ -34,7 +34,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         public CheckPasvInformationDisclosureComments()
         {
             configpanel = new StringCheckConfigPanel(this);
-            configpanel.Init(defaultstrings, "Curious Comment Words:", "Enter new Words for the Curious Comment Check here:");
+            configpanel.Init(defaultstrings, "Dubious Comment Words:", "Enter new words to watch for here:");
             UpdateWordList();
         }
 
@@ -61,7 +61,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Curious comments were found.";
+            String name = "Dubious comments were found.";
             String text =
 
                 name +

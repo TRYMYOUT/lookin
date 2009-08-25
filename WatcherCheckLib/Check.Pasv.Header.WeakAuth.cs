@@ -24,7 +24,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Header - Look for weakly authenticated HTTP methods.";
+            return "Header - Look for weak authentication protocols.";
         }
 
         public override String GetDescription()

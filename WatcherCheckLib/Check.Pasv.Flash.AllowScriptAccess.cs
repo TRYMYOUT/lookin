@@ -46,7 +46,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, WatcherResultSeverity severity, String context)
         {
-            String name = "Flash allowScriptAccess Value";
+            String name = "Flash allowScriptAccess ";
             String text =
 
                 name +

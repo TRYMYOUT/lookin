@@ -33,15 +33,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Cookie - Look for cookies with loosly scoped domain restrictions.";
+            return "Cookie - Look for cookies with loosely scoped domain restrictions.";
         }
 
         public override String GetDescription()
         {
             String desc = "Cookies can be scoped by domain or path.  This check is only concerned with domain scope." +
                     "The domain scope applied to a cookie determines which domains can access it.  For example, " +
-                    "a cookie can be scoped strictly to a subdomain e.g. www.lookout.net, or loosely scoped to " +
-                    "a parent domain e.g. lookout.net.  In the latter case, any subdomain of lookout.net can access the cookie" +
+                    "a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to " +
+                    "a parent domain e.g. nottrusted.com.  In the latter case, any subdomain of nottrusted.com can access the cookie" +
                     "Loosely scoped cookies are common in mega-applications like google.com and live.com.\r\n\r\n" +
                     "Because Watcher can't distinguish between the important and unimportant " +
                     "cookies, you can configure an inclusive or exclusive list of cookie names to watch below.";
@@ -84,7 +84,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String org)
         {
-            String name = "Set-Cookie Loosely Scoped Domain";
+            String name = "Cookie's domain was loosely scoped";
             String text =
 
                 name +

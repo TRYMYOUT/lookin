@@ -37,7 +37,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            string name = "No Content-Type Header";
+            string name = "No Content-Type header";
             findingnum++;
             string text =
 
@@ -53,7 +53,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert2(Session session)
         {
-            string name = "Blank Content-Type Header";
+            string name = "Empty Content-Type header";
             findingnum++;
             string text =
 
@@ -72,7 +72,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             findingnum = 0;
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
                 if (session.responseCode == 200 || session.responseCode == 401)
-                    if (!session.HTTPMethodIs("CONNECT"))
+                    if (!session.HTTPMethodIs("CONNECT") && session.responseBodyBytes.Length > 0)
                         if (!session.oResponse.headers.Exists("Content-Type"))
                             AddAlert(session);
                         else if (String.IsNullOrEmpty(session.oResponse.headers["Content-Type"].Trim().ToLower()))

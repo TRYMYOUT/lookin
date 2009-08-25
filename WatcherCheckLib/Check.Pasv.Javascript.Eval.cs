@@ -21,7 +21,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "Javascript - Examine Javascript code for use of dangerous eval() methods.";
+            return "Javascript - Examine javascript code for use of dangerous eval() methods.";
         }
 
         public override String GetDescription()
@@ -36,7 +36,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Javascript eval() Usage";
+            String name = "Javascript eval() usage";
             String text =
 
                 name +

@@ -88,6 +88,9 @@ namespace CasabaSecurity.Web.Watcher
                     string temp = ConfigurationSettings.AppSettings["AutoScroll"];
                     this.autoscrollcheckBox.Checked = Boolean.Parse(temp);
                 }
+                int index = this.label3.Text.IndexOf(",");
+                Version currentver = new UpdateManager().CurrentVersionEngine;
+                this.label3.Text = this.label3.Text.Insert(index, " v" + currentver.ToString());
             }
 
  	        base.OnLoad(e);
@@ -247,6 +250,9 @@ namespace CasabaSecurity.Web.Watcher
             this.alertListView.Sort();
         }
 
+        /// <summary>
+        /// This event handler method is called when the Clear Results button is clicked.
+        /// </summary>
         private void btnClearResults_Click(object sender, EventArgs e)
         {
             int count = 0;
@@ -303,6 +309,13 @@ namespace CasabaSecurity.Web.Watcher
                     this.alerts.Remove(item);
                     this.alertTextBox.Clear();
                 }
+                // Some of the noisy checks keep lists to reduce output,
+                // we need to clear their lists when the user clears the 
+                // results window.
+                foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
+                {
+                    check.Clear();
+                }
             }
 
             RenderCount();
@@ -315,20 +328,6 @@ namespace CasabaSecurity.Web.Watcher
             this.mediumcountlabel.Text = "Medium: " + mediumcount.ToString() + " , " + mediumissues.ToString();
             this.lowcountlabel.Text = "Low: " + lowcount.ToString() + " , " + lowissues.ToString();
             this.informationalcountlabel.Text = "Informational: " + informationalcount.ToString() + " , " + informationalissues.ToString();
-        }
-
-        private void btnClearNoisyChecks_Click(object sender, EventArgs e)
-        {
-            // Hack to access the watcher checks from our button click
-            btnClearResults_Click(sender, e);
-            
-            // Some of the noisy checks keep lists to reduce output,
-            // we need to clear their lists when the user clears the 
-            // results window.
-            foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
-            {
-                check.Clear();
-            }
         }
 
         private void copyToClipboard(object sender, KeyEventArgs e)
@@ -368,6 +367,9 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+        /// <summary>
+        /// This event handler method is called when an item in the Alert List View is double-clicked.
+        /// </summary>
         private void alertListViewDoubleClick(object o, EventArgs e)
         {
             try
@@ -393,7 +395,9 @@ namespace CasabaSecurity.Web.Watcher
 
                 FiddlerApplication.UI.lvSessions.Items[index].Focused = true;
                 FiddlerApplication.UI.lvSessions.Items[index].Selected = true;
-                FiddlerApplication.UI.actInspectSession();  // This is the correct call
+                // Active the Raw request/response inspector for this session
+                FiddlerApplication.UI.ActivateRequestInspector("Raw");
+                FiddlerApplication.UI.ActivateResponseInspector("Raw");
             }
 
             catch (ArgumentOutOfRangeException)
@@ -404,6 +408,9 @@ namespace CasabaSecurity.Web.Watcher
             base.OnDoubleClick(e);
         }
 
+        /// <summary>
+        /// This event handler method is called when the user selects an item from the results list.
+        /// </summary>
         private void alertListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.alertListView.SelectedItems.Count == 1)
@@ -458,6 +465,9 @@ namespace CasabaSecurity.Web.Watcher
             return doc;
         }
 
+        /// <summary>
+        /// This event handler method is called when the user clicks on the Export to XML button.
+        /// </summary>
         private void FileSaveButton_Click(object sender, EventArgs e)
         {            
             SaveFileDialog sfd = new SaveFileDialog();
@@ -486,6 +496,9 @@ namespace CasabaSecurity.Web.Watcher
             base.OnClick(e);
         }
 
+        /// <summary>
+        /// This event handler method is called when the Alert Filter combobox is changed.
+        /// </summary>
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selection = this.noisereductioncomboBox.SelectedItem.ToString();
@@ -554,26 +567,41 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+        /// <summary>
+        /// This event handler method is called when the High alert count label is clicked.
+        /// </summary>
         private void highcountlabel_Click(object sender, EventArgs e)
         {
             this.noisereductioncomboBox.SelectedItem = "High";
         }
 
+        /// <summary>
+        /// This event handler method is called when the Medium alert count label is clicked.
+        /// </summary>
         private void mediumcountlabel_Click(object sender, EventArgs e)
         {
             this.noisereductioncomboBox.SelectedItem = "Medium";
         }
 
+        /// <summary>
+        /// This event handler method is called when the Low alert count label is clicked.
+        /// </summary>
         private void lowcountlabel_Click(object sender, EventArgs e)
         {
             this.noisereductioncomboBox.SelectedItem = "Low";
         }
 
+        /// <summary>
+        /// This event handler method is called when the Informational count label is clicked.
+        /// </summary>
         private void informationalcountlabel_Click(object sender, EventArgs e)
         {
             this.noisereductioncomboBox.SelectedItem = "Informational";
         }
 
+        /// <summary>
+        /// This event handler method is called when the AutoScroll checkbox is clicked.
+        /// </summary>
         private void autoscrollcheckBox_CheckedChanged(object sender, EventArgs e)
         {
             WatcherEngine.Configuration.Remove("AutoScroll");
@@ -582,5 +610,6 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         #endregion
+
     }
 }

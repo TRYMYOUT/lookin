@@ -14,7 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Casaba.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>Watcher.snk.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -131,7 +132,6 @@
       <DependentUpon>UI.Enable.ConfigPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Check.Pasv.SharePoint.DocLib.cs" />
-    <None Include="Watcher.snk.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

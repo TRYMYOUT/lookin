@@ -60,9 +60,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetDescription()
         {
-            String desc = "This check looks for common error messages returned by database providers such as MSSQL, MySQL, and Oracle.  " +
-                    "Even though these messages can sometimes be hidden in the " +
-                    "HTML or comments, this check will search them out.  You can configure the list of common error messages " +
+            String desc = "This check will review HTML content, including comments, for common error messages returned by database providers such as MSSQL, MySQL, and Oracle.  " +
+                    "If found, this may indicate SQL injection potential, which will need to be tested separately. You can configure the list of common error messages " +
                     "to look for below.";
 
             return desc;
@@ -79,7 +78,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Database Error Message";
+            String name = "Database error message";
             String text =
 
                 name +

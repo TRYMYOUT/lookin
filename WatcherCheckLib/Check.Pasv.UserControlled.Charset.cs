@@ -21,14 +21,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override String GetName()
         {
-            return "User Controlled - Find user controllable charset values in Headers or Meta tags.";
+            return "User Controlled - Charset values.";
         }
 
         public override String GetDescription()
         {
             String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where Content-Type or meta tag charset declarations might be controlled.  " +
-                    "Such charset declarations should always be force-set by the application.  If an attacker " +
+                    "identify where Content-Type or meta tag charset declarations might be user-controlled.  " +
+                    "Such charset declarations should always be declared by the application.  If an attacker " +
                     "can control the response charset, they could manipulate the HTML to perform XSS or " +
                     "other attacks.";
 
@@ -37,7 +37,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            string name = "User Controllable Charset";
+            string name = "User controllable charset";
             string text =
 
                 name +
