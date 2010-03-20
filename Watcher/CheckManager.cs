@@ -3,7 +3,7 @@
 // CheckManager.cs
 // Implements types responsible for managing discovery and invocation of Watcher checks.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 

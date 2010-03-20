@@ -3,7 +3,7 @@
 // WatcherControl.cs
 // Main implementation of WatcherControl UI.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -48,6 +48,19 @@ namespace CasabaSecurity.Web.Watcher
             get { return this.watcherResultsTab; }
         }
 
+        /// <summary>
+        /// Set BackColor for Watcher.
+        /// </summary>
+        public Color WatcherResultsControlColor
+        {
+            get { return this.BackColor; }
+            set { this.BackColor = value;
+            this.tabPage1.BackColor = value;
+            this.tabPage2.BackColor = value;
+            this.tabPage3.BackColor = value;
+            }
+        }
+
         #endregion
 
         #region Private Method(s)
@@ -57,15 +70,15 @@ namespace CasabaSecurity.Web.Watcher
         /// </summary>
         private void InitializeTabPages()
         {
-            // Instantiate the Watcher UI tab in preparation to be added to the Fiddler UI
+            // Initialize the Watcher UI tab in preparation to be added to Fiddler
             _watcherTab.AutoScroll = false;
             _watcherTab.BackColor = Color.Transparent;
 
-            // Add our custom icon
-            FiddlerApplication.UI.imglSessionIcons.Images.Add(Properties.Resources.Casaba);
-            _watcherTab.ImageIndex = (FiddlerApplication.UI.imglSessionIcons.Images.Count) - 1;
+            // Add the Watcher icon to the Fiddler tab
+            FiddlerApplication.UI.imglSessionIcons.Images.Add(Properties.Resources.Watcher);
+            _watcherTab.ImageIndex = FiddlerApplication.UI.imglSessionIcons.Images.Count - 1;
 
-            // Add the tab to the Fiddler UI
+            // Add the tab to Fiddler
             FiddlerApplication.UI.tabsViews.TabPages.Add(_watcherTab);
 
             // Initialize the control
@@ -75,7 +88,7 @@ namespace CasabaSecurity.Web.Watcher
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.Dock = DockStyle.Fill;
 
-            // Add the control to the Fiddler tab
+            // Add the tab control Fiddler
             _watcherTab.Controls.Add(this);
         }
 

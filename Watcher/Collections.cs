@@ -3,7 +3,7 @@
 // Collections.cs
 // Implements the Watcher collections.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -292,4 +292,224 @@ namespace CasabaSecurity.Web.Watcher.Collections
         #endregion
     }
     #endregion
+
+    #region WatcherOuputPluginCollection
+
+    /// <summary>
+    /// A collection of Watcher Output Plugins.
+    /// </summary>
+    /// <remarks>
+    /// This class hides the "public" use of a List<>, per the Framework Guidelines.
+    /// </remarks>
+    public sealed class WatcherOutputPluginCollection : List<WatcherOutputPlugin>
+    {
+        #region Fields
+        private String _errorMessage = String.Empty;    // Error message to display to user, if any.
+        #endregion
+
+        #region Ctor(s)
+
+        public WatcherOutputPluginCollection()
+        {
+        }
+
+        public WatcherOutputPluginCollection(int capacity)
+            : base(capacity)
+        {
+        }
+
+        public WatcherOutputPluginCollection(IEnumerable<WatcherOutputPlugin> collection)
+            : base(collection)
+        {
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Returns any error message resulting from loading the plugins.
+        /// </summary>
+        public String ErrorMessage
+        {
+            get { return _errorMessage; }
+        }
+
+        #endregion
+
+        #region Public Method(s)
+
+        /// <summary>
+        /// This method retrieves a list of Watcher output plugins.
+        /// </summary>
+        /// <returns>The list of available Plugins.</returns>
+        public void Load()
+        {
+            try
+            {
+                Trace.TraceInformation("Populating the list of available Output Plugins.");
+
+                // Path where the application was spawned
+                String currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                Trace.TraceInformation("Using directory {0}.", currentDirectory);
+
+                // Examine the DLLs in the application directory, and add valid checks contained
+                // in the assemblies to the list of available checks.
+                String[] availableAssemblies = Directory.GetFiles(currentDirectory, "*.dll");
+                foreach (String file in availableAssemblies)
+                {
+                    Trace.TraceInformation("Examining file {0}.", file);
+                    LoadOutputPluginsFromAssembly(file);
+                }
+
+                Trace.TraceInformation("Found {0} output plugins.", this.Count);
+            }
+
+            catch (ArgumentException e)
+            {
+                // Thrown if there are invalid parameters to one of the methods
+                Trace.TraceError("Error: ArgumentException: {0}", e.Message);
+            }
+
+            catch (PathTooLongException e)
+            {
+                // Thrown if the path exceeds the system defined maximum
+                Trace.TraceError("Error: PathTooLongException: {0}", e.Message);
+            }
+
+            catch (UnauthorizedAccessException e)
+            {
+                // Thrown if there is an operating system error
+                Trace.TraceError("Error: UnauthorizedAccessException: {0}", e.Message);
+            }
+
+            catch (DirectoryNotFoundException e)
+            {
+                // Thrown when the path cannot be found
+                Trace.TraceError("Error: DirectoryNotFoundException: {0}", e.Message);
+            }
+        }
+
+        #endregion
+
+        #region Private Method(s)
+
+        /// <summary>
+        /// Examine the specified file for Watcher output plugins and add them to the list of available checks.
+        /// </summary>
+        /// <remarks>If one error occurs, skip the entire assembly.</remarks>
+        /// <param name="file">Assembly to examine for checks.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
+        private void LoadOutputPluginsFromAssembly(String file)
+        {
+            try
+            {
+                // Load the assembly into the current application domain and search for Watcher checks
+                // TODO: Load checks in separate AppDomain
+                Assembly assembly = Assembly.LoadFrom(file);
+                foreach (Type type in assembly.GetExportedTypes())
+                {
+                    if (type.IsSubclassOf(typeof(WatcherOutputPlugin)))
+                    {
+                        // Instantiate and store the type instance if derived from the WatcherCheck
+                        WatcherOutputPlugin pluginInstance = (WatcherOutputPlugin)Activator.CreateInstance(type);
+                        this.Add(pluginInstance);
+
+                        Trace.TraceInformation("Found Watcher output plugin \"{0}\"", pluginInstance.GetName());
+                    }
+                }
+            }
+
+            catch (ArgumentException e)
+            {
+                // Thrown if there are invalid parameters to one of the methods
+                Trace.TraceError("Error: ArgumentException: {0}", e.Message);
+            }
+
+            catch (PathTooLongException e)
+            {
+                // Thrown if the path exceeds the system defined maximum
+                Trace.TraceError("Error: PathTooLongException: {0}", e.Message);
+            }
+
+            catch (FileNotFoundException e)
+            {
+                // Thrown when the file does not exist
+                Trace.TraceError("Error: FileNotFoundException: {0}", e.Message);
+            }
+
+            catch (FileLoadException e)
+            {
+                // Thrown when the assembly is found but cannot be loaded
+                Trace.TraceError("Error: FileLoadException: {0}", e.Message);
+            }
+
+            catch (BadImageFormatException e)
+            {
+                // Thrown when the file image is invalid
+                Trace.TraceError("Error: BadImageFormatException: {0}", e.Message);
+
+                String fileName = Path.GetFileName(file);
+                if (fileName != null && fileName.ToUpperInvariant().Contains("TFS"))
+                {
+                    _errorMessage = "The TFS plugin is not compatible with Fiddler x64.  Fiddler must be run in x86 mode to enable TFS.  See the Watcher documentation for more information.\r\n";
+                }
+            }
+
+            catch (SecurityException e)
+            {
+                // Thrown when a security error is detected
+                Trace.TraceError("Error: SecurityException: {0}", e.Message);
+            }
+
+            catch (TargetInvocationException e)
+            {
+                // Thrown by the constructor of the instantiated type
+                Trace.TraceError("Error: TargetInvocationException: {0}", e.Message);
+                _errorMessage = "Make sure any necessary assemblies for plugin are available.\r\n";
+            }
+
+            catch (MethodAccessException e)
+            {
+                // Thrown when the instance constructor cannot be invoked
+                Trace.TraceError("Error: MethodAccessException: {0}", e.Message);
+            }
+
+            catch (TypeLoadException e)
+            {
+                // Thrown when a type load error occurs
+                Trace.TraceError("Error: TypeLoadException: {0}", e.Message);
+            }
+        }
+
+        #endregion
+    }
+    #endregion
+
+    #region WatcherResultCollection
+
+    /// <summary>
+    /// A collection of Trusted Domain names.
+    /// </summary>
+    /// <remarks>
+    /// This class hides the "public" use of a List, per the Framework Guidelines.
+    /// </remarks>
+    public sealed class WatcherResultCollection : List<WatcherResult>
+    {
+        public WatcherResultCollection()
+        {
+        }
+
+        public WatcherResultCollection(int capacity)
+            : base(capacity)
+        {
+        }
+
+        public WatcherResultCollection(IEnumerable<WatcherResult> collection)
+            : base(collection)
+        {
+        }
+    }
+    #endregion
 }
+

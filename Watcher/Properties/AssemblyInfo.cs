@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Casaba Security, LLC")]
 [assembly: AssemblyProduct("Watcher Web Security Extension for Fiddler Web Debugging Proxy")]
-[assembly: AssemblyCopyright("Copyright © 2009 Casaba Security, LLC")]
+[assembly: AssemblyCopyright("Copyright © 2010 Casaba Security, LLC")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.2.*")]
+[assembly: AssemblyVersion("1.3.0.*")]
 [assembly: Fiddler.RequiredVersion("2.1.3.1")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

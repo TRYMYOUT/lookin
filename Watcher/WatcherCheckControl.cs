@@ -3,7 +3,7 @@
 // WatcherConfig.cs
 // Main implementation of WatcherConfig UI.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -140,38 +140,54 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             domainconfigButton.Visible = true;
-            //checklistgroupBox.Dock = DockStyle.Fill;
-
-            checklistsplitContainer.Panel2.Controls.Clear();
             checklistsplitContainer.Panel2.SuspendLayout();
-
+            checklistsplitContainer.Panel2.Controls.Clear();
+           
             // Retrieve the check object from the user-data associated with the item
             WatcherCheck check = (WatcherCheck)enabledChecksListView.SelectedItems[0].Tag;
 
             RichTextBox description = new RichTextBox();
+
             description.SuspendLayout();
             //description.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            description.BackColor = System.Drawing.SystemColors.Control;
+            //description.BackColor = System.Drawing.SystemColors.Control;
+            description.BackColor = WatcherEngine.UI.watcherResultsTab.BackColor;
             description.BorderStyle = BorderStyle.None;
             description.Multiline = true;
             description.Margin = new System.Windows.Forms.Padding(3, 10, 3, 10);
-            description.Dock = DockStyle.Top;
+            description.Dock = DockStyle.Fill;  // Default to filling the entire panel (in the event that there is no configuration)
             description.DetectUrls = true;
-            description.Height = 80;
             description.ScrollBars = RichTextBoxScrollBars.Vertical;
             description.Text = check.GetDescription();
             description.WordWrap = true;
             description.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //description.Height = description.GetLineFromCharIndex(description.Text.Length) + 1 * description.Font.Height + 1 + description.Margin.Vertical;
+            description.Height = 130;
+            // Display the configuration options for this check if they exist
+            Panel panelCheckConfiguration = check.GetConfigPanel();
+            if (panelCheckConfiguration != null)
+            {
+                // Prepare to display the check configuration
+                panelCheckConfiguration.SuspendLayout();
+                panelCheckConfiguration.Dock = DockStyle.Fill;
+                panelCheckConfiguration.AutoScroll = true;
+                // Setup scroll bars for when the display is too small
+                panelCheckConfiguration.AutoScrollMinSize = new System.Drawing.Size(500, 250);
+                panelCheckConfiguration.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+
+                // Add the configuration options to the bottom panel of the check list tab
+                checklistsplitContainer.Panel2.Controls.Add(panelCheckConfiguration);
+                panelCheckConfiguration.ResumeLayout();
+
+                // Since a configuration panel exists, we'll need to adjust the location of the description
+                description.Dock = DockStyle.Top;
+            }
+
+            // Add the check description to the bottom panel of the check list tab
+            checklistsplitContainer.Panel2.Controls.Add(description);
             description.ResumeLayout();
 
-            Panel checkpanel = check.GetConfigPanel();
-            checkpanel.Dock = DockStyle.Fill;
-            checkpanel.AutoScroll = true;
-            checkpanel.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-
-            checklistsplitContainer.Panel2.Controls.Add(checkpanel);
-            checklistsplitContainer.Panel2.Controls.Add(description);
-
+            // Display the check's description/configuration panel
             checklistsplitContainer.Panel2.ResumeLayout();
             checklistsplitContainer.Panel2.Show();
         }
@@ -306,5 +322,11 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         #endregion
+
+        private void checklistsplitContainer_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
     }
 }

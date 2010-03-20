@@ -57,7 +57,7 @@
             // 
             // checklistsplitContainer
             // 
-            this.checklistsplitContainer.BackColor = System.Drawing.SystemColors.Window;
+            this.checklistsplitContainer.BackColor = System.Drawing.Color.Transparent;
             this.checklistsplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.checklistsplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checklistsplitContainer.Location = new System.Drawing.Point(0, 40);
@@ -71,8 +71,9 @@
             // checklistsplitContainer.Panel2
             // 
             this.checklistsplitContainer.Panel2.AutoScroll = true;
-            this.checklistsplitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.checklistsplitContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.checklistsplitContainer.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.checklistsplitContainer.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.checklistsplitContainer_Panel2_Paint);
             this.checklistsplitContainer.Size = new System.Drawing.Size(600, 524);
             this.checklistsplitContainer.SplitterDistance = 234;
             this.checklistsplitContainer.TabIndex = 4;
@@ -177,6 +178,7 @@
             // 
             // label1
             // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 23);
@@ -184,7 +186,7 @@
             // 
             // selectionpanel
             // 
-            this.selectionpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.selectionpanel.BackColor = System.Drawing.Color.Transparent;
             this.selectionpanel.Controls.Add(this.labelEnableAll);
             this.selectionpanel.Controls.Add(this.filtertextBox);
             this.selectionpanel.Controls.Add(this.labelDisableAll);
@@ -197,7 +199,7 @@
             // 
             // pnlCopyright
             // 
-            this.pnlCopyright.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlCopyright.BackColor = System.Drawing.Color.Transparent;
             this.pnlCopyright.Controls.Add(this.rightslabel);
             this.pnlCopyright.Controls.Add(this.linkLabel1);
             this.pnlCopyright.Controls.Add(this.pbCasaba);
@@ -212,7 +214,7 @@
             // rightslabel
             // 
             this.rightslabel.AutoSize = true;
-            this.rightslabel.Location = new System.Drawing.Point(448, 24);
+            this.rightslabel.Location = new System.Drawing.Point(500, 20);
             this.rightslabel.Name = "rightslabel";
             this.rightslabel.Size = new System.Drawing.Size(93, 13);
             this.rightslabel.TabIndex = 6;
@@ -221,8 +223,8 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.SystemColors.Window;
-            this.linkLabel1.Location = new System.Drawing.Point(333, 24);
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel1.Location = new System.Drawing.Point(385, 20);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(112, 13);
@@ -232,11 +234,11 @@
             // 
             // pbCasaba
             // 
-            this.pbCasaba.BackColor = System.Drawing.SystemColors.Window;
+            this.pbCasaba.BackColor = System.Drawing.Color.Transparent;
             this.pbCasaba.Image = ((System.Drawing.Image)(resources.GetObject("pbCasaba.Image")));
             this.pbCasaba.Location = new System.Drawing.Point(0, 0);
             this.pbCasaba.Name = "pbCasaba";
-            this.pbCasaba.Size = new System.Drawing.Size(55, 55);
+            this.pbCasaba.Size = new System.Drawing.Size(111, 55);
             this.pbCasaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbCasaba.TabIndex = 5;
             this.pbCasaba.TabStop = false;
@@ -244,16 +246,17 @@
             // copyrightlabel
             // 
             this.copyrightlabel.AutoSize = true;
-            this.copyrightlabel.Location = new System.Drawing.Point(61, 24);
+            this.copyrightlabel.Location = new System.Drawing.Point(113, 20);
             this.copyrightlabel.Name = "copyrightlabel";
             this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
             this.copyrightlabel.TabIndex = 0;
-            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2009";
+            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2010";
             // 
             // WatcherCheckControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.checklistsplitContainer);
             this.Controls.Add(this.pnlCopyright);
             this.Controls.Add(this.selectionpanel);

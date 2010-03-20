@@ -3,7 +3,7 @@
 // WatcherConfig.cs
 // Main implementation of WatcherConfig UI.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -55,6 +55,11 @@ namespace CasabaSecurity.Web.Watcher
                 this.autosavecheckBox.Checked = WatcherEngine.Configuration.AutoSave;
                 this.autovercheckBox.Checked = WatcherEngine.Configuration.AutoVerCheck;
 
+                //Set Background Color as configured
+                WatcherEngine.UI.watcherConfigTab.BackColor = WatcherEngine.Configuration.BackGroundColor;
+                WatcherEngine.UI.watcherCheckTab.BackColor = WatcherEngine.Configuration.BackGroundColor;
+                WatcherEngine.UI.watcherResultsTab.BackColor = WatcherEngine.Configuration.BackGroundColor;
+
                 // Add the Trusted Domains from the configuration to the TD list view.
                 InitializeTrustedDomainList();
 
@@ -63,11 +68,13 @@ namespace CasabaSecurity.Web.Watcher
                 {
                     _versionCheck.CheckForUpdate(false);
                 }
-                int index = this.copyrightlabel.Text.IndexOf(",");
+                int index = copyrightlabel.Text.IndexOf(",");
                 Version currentver = new UpdateManager().CurrentVersionEngine;
-                this.copyrightlabel.Text = this.copyrightlabel.Text.Insert(index, " v" + currentver.ToString());
+                this.copyrightlabel.Text = copyrightlabel.Text.Insert(index, " v" + currentver.ToString());
                 // Add the available checks to the list box and set their enabled/disabled status accordingly.
-//                InitializeCheckListBox();
+                //InitializeCheckListBox();
+
+                InitializeOutputPlugins();
             }
 
             //this.enabledChecksListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -79,6 +86,32 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         #region Private Method(s)
+
+        /// <summary>
+        /// This method loads the available output plugins, presents any configuration panels, and
+        /// displays any errors that occurred during the load.
+        /// </summary>
+        private void InitializeOutputPlugins()
+        {
+            // Load the output plugins and add any associated configuration panel to the Watcher
+            // configuration tab.
+            foreach (WatcherOutputPlugin plugin in WatcherEngine.OutputPluginManager.OutputPlugins)
+            {
+                pluginPanel.Controls.Add(plugin.GetConfigPanel());
+            }
+
+            // Display any error message associated with loading the plugins
+            // TODO: allow multiple error messages; currently, last error message will overwrite all previous
+            if (WatcherEngine.OutputPluginManager.ErrorMessage.Length > 0)
+            {
+                WarningDialog dlg = new WarningDialog();
+                dlg.Text = WatcherEngine.OutputPluginManager.ErrorMessage;
+                dlg.ShowDialog(this);
+            }
+
+            // Automatically size the panel based on the configuration panels added
+            pluginPanel.AutoSize = true;
+        }
 
         /// <summary>
         /// This method clears the Trusted Domain list view and populates it with the Trusted Domains
@@ -98,130 +131,6 @@ namespace CasabaSecurity.Web.Watcher
 
             trustedDomainListBox.EndUpdate();
         }
-
-//        /// <summary>
-//        /// Add each available check to the list box and enable/disable it accordingly.
-//        /// </summary>
-//        private void InitializeCheckListBox()
-//        {
-//            enabledChecksListView.BeginUpdate();
-
-//            // Enumerate the available checks
-//            foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
-//            {
-//                ListViewItem item = new ListViewItem();
-
-//                // Create a new list item for each check
-//                item.Tag = check;
-//                item.Text = check.ToString();
-//                item.Checked = check.Enabled;
-
-//                // Add the display-worthy (and globalizable) list of standards of which the current check complies, to the 
-//                // appropriate column of the item.
-//                item.SubItems.Add(check.GetStandardsComplianceString());
-
-//                // Add the item to the list of checks
-//                //enabledChecksListView.Items.Add(item);
-//            }
-
-//            enabledChecksListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-//            enabledChecksListView.EndUpdate();
-//        }
-
-        ///// <summary>
-        ///// Scan through each check after a click and update the enabled/disabled state.
-        ///// </summary>
-        //private void checkenableListBox_ItemCheck(object sender, EventArgs e)
-        //{
-        //    bool isCheckEnabled;
-        //    for (int i = 0; i < enabledChecksListView.Items.Count; i++)
-        //    {
-        //        isCheckEnabled = enabledChecksListView.Items[i].Checked;
-
-        //        // Cast the List Box item to a Watcher Check
-        //        WatcherCheck check = enabledChecksListView.Items[i].Tag as WatcherCheck;
-        //        if (check == null)
-        //        {
-        //            String errorMessage = "ListView item referenced is not a WatcherCheck.";
-        //            Trace.TraceError("Error: {0}", errorMessage);
-        //            Debug.Assert(false, errorMessage);
-        //            return;
-        //        }
-
-        //        // TODO: Have the configuration persist the check Enabled settings
-        //        // Update the check configuration
-        //        ((WatcherCheck)enabledChecksListView.Items[i].Tag).Enabled = isCheckEnabled;
-        //        WatcherEngine.Configuration.SetCheckEnabledConfig(check);
-
-        //        int index = WatcherEngine.CheckManager.Checks.IndexOf(check);
-        //        WatcherEngine.CheckManager.Checks[index]._enabled = isCheckEnabled;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Updates UI when a check is clicked on.
-        ///// </summary>
-        //private void enabledChecksListView_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    // No need to continue processing this event if there are no items selected
-        //    if (enabledChecksListView.SelectedItems.Count < 1)
-        //    {
-        //        Debug.Print("EnabledChecksListView_SelectedIndexChanged event fired, but no items were selected.");
-        //        return;
-        //    }
-
-        //    configGroupBox.Visible = false;
-        //    enablegroupBox.Visible = false;
-        //    domainconfigButton.Visible = true;
-        //    checklistgroupBox.Dock = DockStyle.Fill;
-
-        //    checklistsplitContainer.Panel2.Controls.Clear();
-        //    checklistsplitContainer.Panel2.SuspendLayout();
-
-        //    // Retrieve the check object from the user-data associated with the item
-        //    WatcherCheck check = (WatcherCheck)enabledChecksListView.SelectedItems[0].Tag;
-            
-        //    RichTextBox description = new RichTextBox();
-        //    description.SuspendLayout();
-        //    description.BackColor = Control.DefaultBackColor;
-        //    description.BorderStyle = BorderStyle.Fixed3D;
-        //    description.Multiline = true;
-        //    description.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-        //    description.Dock = DockStyle.Top;
-        //    description.DetectUrls = true;
-        //    description.Height = 80;
-        //    description.ScrollBars = RichTextBoxScrollBars.Vertical;
-        //    description.Text = check.GetDescription();
-        //    description.LinkClicked += new LinkClickedEventHandler(this.richTextBox1_LinkClicked);
-        //    description.WordWrap = true;
-        //    description.ResumeLayout();
-
-        //    Panel checkpanel = check.GetConfigPanel();
-        //    checkpanel.Dock = DockStyle.Fill;
-
-        //    checklistsplitContainer.Panel2.Controls.Add(checkpanel);
-        //    checklistsplitContainer.Panel2.Controls.Add(description);
-            
-        //    checklistsplitContainer.Panel2.ResumeLayout();
-        //    checklistsplitContainer.Panel2.Show();
-        //}
-
-        ///// <summary>
-        ///// This event is triggered when the Origin Domain text box is modified.
-        ///// </summary>
-        //private void originDomainTextBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    WatcherEngine.Configuration.OriginDomain = this.originDomainTextBox.Text;
-
-        //    if (this.originDomainTextBox.Text.Contains("casabasecurity.com") || this.originDomainTextBox.Text.Contains("nottrusted.com"))
-        //    {
-        //        this.casabapictureBox.Visible = true;
-        //    }
-        //    else
-        //    {
-        //        this.casabapictureBox.Visible = false;
-        //    }
-        //}
 
         /// <summary>
         /// This method adds the specified Trusted Domain to the Trusted Domain List View.
@@ -311,12 +220,14 @@ done:
             {
                 this.configGroupBox.Enabled = true;
                 this.appgroupBox.Enabled = true;
+                this.pluginPanel.Enabled = true;
 //                this.checklistgroupBox.Enabled = true;
             }
             else
             {
                 this.configGroupBox.Enabled = false;
                 this.appgroupBox.Enabled = false;
+                this.pluginPanel.Enabled = false;
 //                this.checklistgroupBox.Enabled = false;
             }
         }
@@ -381,38 +292,6 @@ done:
             }
         }
 
-        ///// <summary>
-        ///// Display subset of checks based on text provided by users
-        ///// </summary>
-        //private void filtertextBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    enabledChecksListView.BeginUpdate();
-        //    enabledChecksListView.Items.Clear();
-
-        //    foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
-        //    {
-        //        String checkName = check.GetName();
-
-        //        if (checkName.IndexOf(filtertextBox.Text, StringComparison.CurrentCultureIgnoreCase) > -1)
-        //        {
-        //            ListViewItem item = new ListViewItem();
-
-        //            // Create a new list item for each check
-        //            item.Tag = check;
-        //            item.Text = check.ToString();
-        //            item.Checked = check.Enabled;
-
-        //            // Add the display-worthy (and globalizable) list of standards of which the current check complies, to the 
-        //            // appropriate column of the item.
-        //            item.SubItems.Add(check.GetStandardsComplianceString());
-
-        //            // Add the item to the list of checks
-        //            enabledChecksListView.Items.Add(item);
-        //        }
-        //    }
-        //    enabledChecksListView.EndUpdate();
-        //}
-
         /// <summary>
         /// TODO:.
         /// </summary>
@@ -444,64 +323,16 @@ done:
             WatcherEngine.Configuration.OriginDomain = originDomainTextBox.Text;
         }
 
-
-        ///// <summary>
-        ///// Enable all checks.
-        ///// </summary>
-        //private void labelEnableAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        //{
-        //    for (int i = 0; i < enabledChecksListView.Items.Count; i++)
-        //    {
-        //        // Cast the List Box item to a Watcher Check
-        //        WatcherCheck check = enabledChecksListView.Items[i].Tag as WatcherCheck;
-        //        if (check == null)
-        //        {
-        //            String errorMessage = "ListView item referenced is not a WatcherCheck.";
-        //            Trace.TraceError("Error: {0}", errorMessage);
-        //            Debug.Assert(false, errorMessage);
-        //            return;
-        //        }
-
-        //        // TODO: Have the configuration persist the check Enabled settings
-        //        // Update the check configuration
-        //        ((WatcherCheck)enabledChecksListView.Items[i].Tag).Enabled = true;
-        //        enabledChecksListView.Items[i].Checked = true;
-        //        WatcherEngine.Configuration.SetCheckEnabledConfig(check);
-
-        //        int index = WatcherEngine.CheckManager.Checks.IndexOf(check);
-        //        WatcherEngine.CheckManager.Checks[index]._enabled = true;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Disable all checks
-        ///// </summary>
-        //private void labelDisableAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        //{
-        //    for (int i = 0; i < enabledChecksListView.Items.Count; i++)
-        //    {
-        //        // Cast the List Box item to a Watcher Check
-        //        WatcherCheck check = enabledChecksListView.Items[i].Tag as WatcherCheck;
-        //        if (check == null)
-        //        {
-        //            String errorMessage = "ListView item referenced is not a WatcherCheck.";
-        //            Trace.TraceError("Error: {0}", errorMessage);
-        //            Debug.Assert(false, errorMessage);
-        //            return;
-        //        }
-
-        //        // TODO: Have the configuration persist the check Enabled settings
-        //        // Update the check configuration
-        //        ((WatcherCheck)enabledChecksListView.Items[i].Tag).Enabled = false;
-        //        enabledChecksListView.Items[i].Checked = false;
-        //        WatcherEngine.Configuration.SetCheckEnabledConfig(check);
-
-        //        int index = WatcherEngine.CheckManager.Checks.IndexOf(check);
-        //        WatcherEngine.CheckManager.Checks[index]._enabled = false;
-        //    }
-        //    this.enableCheckBox.Checked = false;
-        //    domainconfigButton_Click(sender, e);
-        //}
+        private void button1_Click(object sender, EventArgs e)
+        {
+            colorDialog.ShowDialog();
+            //WatcherEngine.UI.BackColor = colorDialog.Color;
+            WatcherEngine.UI.watcherConfigTab.BackColor = colorDialog.Color;
+            WatcherEngine.UI.watcherCheckTab.BackColor = colorDialog.Color;
+            WatcherEngine.UI.watcherResultsTab.BackColor = colorDialog.Color;
+            WatcherEngine.Configuration.BackGroundColor = colorDialog.Color;
+            
+        }
 
         #endregion
     }

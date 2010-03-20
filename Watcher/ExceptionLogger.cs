@@ -5,7 +5,7 @@
 // 
 // Portions borrowed from www.doogal.co.uk.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -30,6 +30,7 @@ namespace CasabaSecurity.Web.Watcher
     {
         #region Fields
         private static string filename;
+        private static bool displayerror = false;
         private static Object objLock = new Object();
         #endregion
 
@@ -53,37 +54,50 @@ namespace CasabaSecurity.Web.Watcher
 
                 List<string> data = new List<string>();
 
-                lock (filename)
+                try
                 {
-                    if (File.Exists(filename))
+                    lock (filename)
                     {
-                        using (StreamReader reader = new StreamReader(filename))
+                        if (File.Exists(filename))
                         {
-                            string line = null;
-                            do
+                            using (StreamReader reader = new StreamReader(filename))
                             {
-                                line = reader.ReadLine();
-                                data.Add(line);
+                                string line = null;
+                                do
+                                {
+                                    line = reader.ReadLine();
+                                    data.Add(line);
+                                }
+                                while (line != null);
                             }
-                            while (line != null);
                         }
-                    }
 
-                    // truncate the file if it's too long
-                    int writeStart = 0;
-                    if (data.Count > 5000)
-                        writeStart = data.Count - 5000;
+                        // truncate the file if it's too long
+                        int writeStart = 0;
+                        if (data.Count > 5000)
+                            writeStart = data.Count - 5000;
 
-                    using (StreamWriter stream = new StreamWriter(filename, false))
-                    {
-                        for (int i = writeStart; i < data.Count; i++)
+                        using (StreamWriter stream = new StreamWriter(filename, false))
                         {
-                            stream.WriteLine(data[i]);
-                        }
+                            for (int i = writeStart; i < data.Count; i++)
+                            {
+                                stream.WriteLine(data[i]);
+                            }
 
-                        stream.Write(LogException(e));
+                            stream.Write(LogException(e));
+                        }
                     }
                 }
+
+                catch(Exception)
+                {
+                    if (!displayerror)
+                    {
+                        MessageBox.Show("An error occurred attempting to record an exception that has occurred. This most likely means you do not have write permissions for the directory the Watcher plugin is running from.");
+                        displayerror = true;
+                    }
+                }
+
             }
         }
 

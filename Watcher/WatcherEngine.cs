@@ -3,7 +3,7 @@
 // WatcherEngine.cs
 // Implements a fascade for Watcher operations management.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -28,13 +28,15 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         #region Private fields
-        private static Object _lock = new Object();                                             // Use this object to provide synchronization
-        private static CheckManager _CheckManager = new CheckManager();                         // Instance of the Watcher Check Manager
-        private static WatcherConfiguration _Configuration = new WatcherConfiguration();        // Instance of the Watcher Configuration Manager
-        private static ResultsManager _Results = new ResultsManager();                          // Instance of the Watcher Results Manager
-        private static FiddlerSessionCollection _Sessions = new FiddlerSessionCollection();     // Keep a fixed list of sessions so checks can reference a referrer or past session if needed.
-        private static WatcherControl _WatcherControl = null;                                   // The Casaba Security Auditor tab in Fiddler
-        private static Boolean _Initialized = false;                                            // True when the engine has been initialized (e.g. checks loaded, configuration read).
+        private static Object _lock = new Object();                                          // Use this object to provide synchronization
+        private static CheckManager _CheckManager = new CheckManager();                      // Instance of the Watcher Check Manager
+        private static OutputPluginManager _OutputPluginManager = new OutputPluginManager(); // Instance of the Watcher Output Plugin Manager
+        private static WatcherConfiguration _Configuration = new WatcherConfiguration();     // Instance of the Watcher Configuration Manager
+        private static ResultsManager _Results = new ResultsManager();                       // Instance of the Watcher Results Manager
+        private static FiddlerSessionCollection _Sessions = new FiddlerSessionCollection();  // Keep a fixed list of sessions so checks can reference a referrer or past session if needed.
+        private static WatcherControl _WatcherControl = null;                                // The Casaba Security Auditor tab in Fiddler
+        private static WatcherProgressDialog _ProgressDialog = new WatcherProgressDialog();  // Instance of the Watcher Progress Dialog (e.g., used in result export)
+        private static Boolean _Initialized = false;                                         // True when the engine has been initialized (e.g., checks loaded, configuration read).
         #endregion
 
         #region Ctor(s)
@@ -87,6 +89,20 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
+        /// This property returns the Watcher Output Plugin Manager.
+        /// </summary>
+        /// TODO: CheckManager->WatcherOutputPluginManager
+        internal static OutputPluginManager OutputPluginManager
+        {
+            get
+            {
+                AssertInitialized();
+                return _OutputPluginManager;
+            }
+        }
+
+
+        /// <summary>
         /// This property returns the Watcher Configuration Manager.
         /// </summary>
         /// TODO: WatcherConfiguration->WatcherConfigurationManager
@@ -105,6 +121,18 @@ namespace CasabaSecurity.Web.Watcher
         public static Boolean Initialized
         {
             get { return _Initialized; }
+        }
+
+        /// <summary>
+        /// This property returns the Watcher Progress Dialog.
+        /// </summary>
+        public static WatcherProgressDialog ProgressDialog
+        {
+            get
+            {
+                AssertInitialized();
+                return _ProgressDialog;
+            }
         }
 
         /// <summary>
@@ -136,6 +164,9 @@ namespace CasabaSecurity.Web.Watcher
         /// <summary>
         /// This property returns a reference to the Casaba Security Auditor tab in Fiddler.
         /// </summary>
+        /// <remarks>
+        /// TODO: Don't allow direct access to the UI, i.e., make this private or internal.
+        /// </remarks>
         public static WatcherControl UI
         {
             get

@@ -3,7 +3,7 @@
 // WatcherConfiguration.cs
 // Implements a wrapper for Watcher configuration operations.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -15,8 +15,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Reflection;
 
 using CasabaSecurity.Web.Watcher.Collections;
 
@@ -31,10 +33,12 @@ namespace CasabaSecurity.Web.Watcher
         private static Object _lock = new Object();                                         // Use this to synchronize operations
         private TrustedDomainCollection _trustedDomains = new TrustedDomainCollection();    // Domains that are considered friendly
         private Configuration _configuration = null;                                        // System configuration object
+        private ConfigurationElement[] _copyconfig = null;
         private String _originDomain = String.Empty;                                        // Domain to be analyzed
         private Boolean _watcherEnabled = false;                                            // Is the Watcher enabled?
         private Boolean _autosave = false;
         private Boolean _autocheck = false;
+        private System.Drawing.Color _backgroundcolor = System.Drawing.SystemColors.ControlLight;
         #endregion
 
         #region Ctor(s)
@@ -57,6 +61,22 @@ namespace CasabaSecurity.Web.Watcher
                 if (_autosave)
                 { 
                     Save(); 
+                }
+            }
+        }
+
+        /// <summary>
+        /// The background color for Watcher UI.
+        /// </summary>
+        public System.Drawing.Color BackGroundColor
+        {
+            get { return _backgroundcolor; }
+            set
+            {
+                _backgroundcolor = value;
+                if (_autosave)
+                {
+                    Save();
                 }
             }
         }
@@ -135,6 +155,7 @@ namespace CasabaSecurity.Web.Watcher
                 PersistWatcherEnabled();
                 PersistAutoSave();
                 PersistAutoVerCheck();
+                PersistBackGroundColor();
 
                 // Save the configuration file.
                 lock (_lock)
@@ -144,6 +165,8 @@ namespace CasabaSecurity.Web.Watcher
 
                 // Force a reload of a changed section.   
                 ConfigurationManager.RefreshSection("appSettings");
+                _copyconfig = new KeyValueConfigurationElement[_configuration.AppSettings.Settings.Count];
+                _configuration.AppSettings.Settings.CopyTo(_copyconfig, 0);
             }
 
             catch (ConfigurationErrorsException e)
@@ -166,7 +189,9 @@ namespace CasabaSecurity.Web.Watcher
             // Instance members of the Configuration class are not guaranteed thread-safe
             lock (_lock)
             {
-                _configuration.AppSettings.Settings.Add(key, value);   
+                _configuration.AppSettings.Settings.Add(key, value);
+                _copyconfig = new KeyValueConfigurationElement[_configuration.AppSettings.Settings.Count];
+                _configuration.AppSettings.Settings.CopyTo(_copyconfig, 0);
             }
         }
 
@@ -179,9 +204,12 @@ namespace CasabaSecurity.Web.Watcher
             // Instance members of the Configuration class are not guaranteed thread-safe
             lock (_lock)
             {
-                _configuration.AppSettings.Settings.Remove(key);  
+                _configuration.AppSettings.Settings.Remove(key);
+                _copyconfig = new KeyValueConfigurationElement[_configuration.AppSettings.Settings.Count];
+                _configuration.AppSettings.Settings.CopyTo(_copyconfig, 0);
             }
         }
+
 
 
         /// <summary>
@@ -190,9 +218,21 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="check">The Watcher check whose configuration option is to be retrieved.</param>
         /// <param name="configOption">The configuration option to retrieve.</param>
         /// <returns>The value of the specified option.</returns>
-        public String GetCheckConfig(WatcherCheck check, String configOption)
+        public String GetConfigItem(WatcherCheck check, String configOption)
         {
-            return GetCheckConfig(check, configOption, String.Empty);
+            return GetConfigItem(check, configOption, String.Empty);
+        }
+
+
+        /// <summary>
+        /// Get a configuration item with no default value set.
+        /// </summary>
+        /// <param name="check">The Watcher plugin whose configuration option is to be retrieved.</param>
+        /// <param name="configOption">The configuration option to retrieve.</param>
+        /// <returns>The value of the specified option.</returns>
+        public String GetConfigItem(WatcherOutputPlugin plugin, String configOption)
+        {
+            return GetConfigItem(plugin, configOption, String.Empty);
         }
 
         /// <summary>
@@ -202,7 +242,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="configOption">The configuration option to retrieve.</param>
         /// <param name="defaultValue">The value to return if not already set in the configuration.</param>
         /// <returns>The value of the specified check's configuration option.</returns>
-        public String GetCheckConfig(WatcherCheck check, String configOption, String defaultValue)
+        public String GetConfigItem(WatcherCheck check, String configOption, String defaultValue)
         {
             // The name of the check as it is stored in the application configuration
             String[] configurationName = GetCheckNameTokens(check);
@@ -217,7 +257,7 @@ namespace CasabaSecurity.Web.Watcher
                     try
                     {
                         // Load the check configuration from the application configuration
-                        setting = ConfigurationManager.AppSettings[checkOptionName];
+                        setting = Get(checkOptionName);// ConfigurationManager.AppSettings[checkOptionName];
                     }
 
                     catch (ConfigurationErrorsException e)
@@ -234,7 +274,60 @@ namespace CasabaSecurity.Web.Watcher
                         // Set the default value if it was specified
                         if (!String.IsNullOrEmpty(defaultValue))
                         {
-                            SetCheckConfig(check, configOption, defaultValue);
+                            SetConfigItem(check, configOption, defaultValue);
+                        }
+
+                        return defaultValue;
+                    }
+
+                    // Note: checking a second time does not get an updated setting
+                    return setting;
+                }
+            }
+
+            return String.Empty;
+        }
+
+        /// <summary>
+        /// Get a configuration item and return the specified default value if not already present.
+        /// </summary>
+        /// <param name="check">The Watcher check whose configuration option is to be retrieved.</param>
+        /// <param name="configOption">The configuration option to retrieve.</param>
+        /// <param name="defaultValue">The value to return if not already set in the configuration.</param>
+        /// <returns>The value of the specified check's configuration option.</returns>
+        public String GetConfigItem(WatcherOutputPlugin plugin, String configOption, String defaultValue)
+        {
+            // The name of the check as it is stored in the application configuration
+            String configurationName = plugin.GetName();
+            if (configurationName.Length > 0)
+            {
+                // Prepend Plugin Class to KeyName
+                String pluginOptionName = configurationName + '\\' + configOption;
+                if (!String.IsNullOrEmpty(configurationName))
+                {
+                    String setting = String.Empty;
+
+                    try
+                    {
+                        // Load the check configuration from the application configuration
+                        setting = Get(pluginOptionName);// ConfigurationManager.AppSettings[checkOptionName];
+                    }
+
+                    catch (ConfigurationErrorsException e)
+                    {
+                        // Thrown if a failure occurs when reading the application configuration
+                        String errorMessage = String.Format("Error: ConfigurationErrorsException: {0}", e.Message);
+                        Trace.TraceError("Error: {0}", errorMessage);
+                        Debug.Assert(false, errorMessage);
+                    }
+
+                    // If the configuration entry for the check does not exist, use the default value
+                    if (String.IsNullOrEmpty(setting))
+                    {
+                        // Set the default value if it was specified
+                        if (!String.IsNullOrEmpty(defaultValue))
+                        {
+                            SetConfigItem(plugin, configOption, defaultValue);
                         }
 
                         return defaultValue;
@@ -265,7 +358,7 @@ namespace CasabaSecurity.Web.Watcher
             Boolean enabled = check.Enabled;
 
             // Determine the check's value from the configuration, if it has been set
-            String configurationValue = ConfigurationManager.AppSettings[configurationName[configurationName.Length - 1]];
+            String configurationValue = Get(configurationName[configurationName.Length - 1]);//ConfigurationManager.AppSettings[configurationName[configurationName.Length - 1]];
             if (String.IsNullOrEmpty(configurationValue))
             {
                 // TODO: Trace addition of configuration option
@@ -309,7 +402,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="check">The Watcher check whose configuration option is to be set.</param>
         /// <param name="configOption">The configuration option to set.</param>
         /// <param name="value">The configuration value to set.</param>
-        public void SetCheckConfig(WatcherCheck check, String configOption, String value)
+        public void SetConfigItem(WatcherCheck check, String configOption, String value)
         {
             String[] configurationName = GetCheckNameTokens(check);
             if (configurationName.Length > 0)
@@ -319,6 +412,31 @@ namespace CasabaSecurity.Web.Watcher
                 {
                     Remove(checkOptionName);
                     Add(checkOptionName, value);
+                    if (_autosave)
+                    {
+                        Save();
+                    }
+                }
+            }
+            // TODO: return a bool for success
+        }
+
+        /// <summary>
+        /// Set a configuration option for the specified check.  An entry will be created if it doesn't already exist.
+        /// </summary>
+        /// <param name="check">The Watcher check whose configuration option is to be set.</param>
+        /// <param name="configOption">The configuration option to set.</param>
+        /// <param name="value">The configuration value to set.</param>
+        public void SetConfigItem(WatcherOutputPlugin plugin, String configOption, String value)
+        {
+            String configurationName = plugin.GetName();
+            if (configurationName.Length > 0)
+            {
+                String pluginOptionName = configurationName + "\\" + configOption;
+                if (!String.IsNullOrEmpty(configurationName))
+                {
+                    Remove(pluginOptionName);
+                    Add(pluginOptionName, value);
                     if (_autosave)
                     {
                         Save();
@@ -367,23 +485,61 @@ namespace CasabaSecurity.Web.Watcher
             return Regex.IsMatch(domain, regex);
         }
 
-        #endregion
+        /// <summary>
+        /// This overload checks if the domain name passed in matches the origin domain configured by
+        /// the user.  If an origin domain was not configured, then this check's allows an origin domain
+        /// to be assumed by Watcher, specified through the two parameters.  Expected use:
+        ///           IsOriginDomain(session.hostname, session.hostname)
+        /// </summary>
+        /// <param name="domain">The session hostname of the response.</param>
+        /// <param name="responsedomain">Also the session hostname of the response.</param>
+        /// <returns>True if the two parameters match, false otherwise.</returns>
+        public Boolean IsOriginDomain(String domain, String responsedomain )
+        {
+            if (String.IsNullOrEmpty(OriginDomain))
+            {
+                String _responsedomain = responsedomain.Trim().ToLower();
+                String _domain = domain.Trim().ToLower();
+                return (Regex.IsMatch(_domain, _responsedomain));
+            }
 
-        #region Private Method(s)
+            String regex = OriginDomain.Trim().ToLower().Replace(".", "\\.").Replace("*", ".*");
+            return Regex.IsMatch(domain, regex);
+        }
+
+        #endregion
 
         /// <summary>
         /// This method returns an string containing config value
         /// </summary>
         /// <param name="check">The Watcher check whose name is to be split.</param>
         /// <returns>The config value specified by a string.</returns>
-        private String Get(String configname)
+        public String Get(String configname)
         {
             // Instance members of the Configuration class are not guaranteed thread-safe
             lock (_lock)
             {
-                return _configuration.AppSettings.Settings[configname].Value;
+                if (!String.IsNullOrEmpty(configname))
+                {
+                    foreach (KeyValueConfigurationElement element in _copyconfig)
+                    {
+                        if (element.Key == configname)
+                        {
+                            return element.Value;
+                        }
+                    }
+                    /*
+                    KeyValueConfigurationElement config = _configuration.AppSettings.Settings[configname];
+                    if (config != null)
+                    {
+                        return config.Value;
+                    }*/
+                }
+                return String.Empty;
             }
         }
+
+        #region Private Method(s)
 
         /// <summary>
         /// This method returns an array of strings representing each level in the fully-qualified
@@ -432,10 +588,12 @@ namespace CasabaSecurity.Web.Watcher
                     {
                         try
                         {
+                            String path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location + "\\");
                             // Retrieve a configuration object so that our settings can be saved
-                            _configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                            _configuration = ConfigurationManager.OpenExeConfiguration(path);
+                            _copyconfig = new KeyValueConfigurationElement[_configuration.AppSettings.Settings.Count];
+                            _configuration.AppSettings.Settings.CopyTo(_copyconfig, 0);
                         }
-
                         catch (ConfigurationErrorsException e)
                         {
                             // Thrown if a failure occurs when reading the application configuration
@@ -458,6 +616,7 @@ namespace CasabaSecurity.Web.Watcher
             LoadWatcherAutoVerCheck();
             LoadOriginDomain();
             LoadTrustedDomains();
+            LoadWatcherBackGroundColor();
         }
 
         /// <summary>
@@ -471,7 +630,7 @@ namespace CasabaSecurity.Web.Watcher
             try
             {
                 // Decode the Trusted Domains stored in the configuration and add them to the Trusted Domain list
-                setting = ConfigurationManager.AppSettings["TrustedDomains"];
+                setting = Get("TrustedDomains");
                 if (String.IsNullOrEmpty(setting))
                 {
                     Trace.TraceWarning("Warning: Trusted Domains list not found in the configuration.");
@@ -518,8 +677,9 @@ namespace CasabaSecurity.Web.Watcher
         {
             try
             {
+                
                 // Set the Origin Domain if it exists in the configuration
-                String setting = ConfigurationManager.AppSettings["OriginDomain"];
+                String setting = Get("OriginDomain"); //ConfigurationManager.AppSettings["OriginDomain"];
                 if (setting != null)
                 {
                     _originDomain = Utility.Base64Decode(setting);
@@ -544,8 +704,33 @@ namespace CasabaSecurity.Web.Watcher
             try
             {
                 // Set the "Watcher Enabled" flag if it is set in the configuration
-                String setting = ConfigurationManager.AppSettings["Enable"];
+                String setting = Get("Enable");//ConfigurationManager.AppSettings["Enable"];
                 _watcherEnabled = (setting == "True");
+            }
+
+            catch (ConfigurationErrorsException e)
+            {
+                // Thrown if a failure occurs when reading the application configuration
+                String errorMessage = String.Format("ConfigurationErrorsException: {0}", e.Message);
+                Trace.TraceError("Error: {0}", errorMessage);
+                Debug.Assert(false, errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// This method determines the Watcher background color and caches the result.
+        /// </summary>
+        private void LoadWatcherBackGroundColor()
+        {
+            try
+            {
+                // Set the Background Color if it is set in the configuration
+                String setting = Get("BackGroundColor"); //ConfigurationManager.AppSettings["BackGroundColor"];
+                if (!String.IsNullOrEmpty(setting))
+                {
+                    setting = Utility.Base64Decode(setting);
+                    _backgroundcolor = System.Drawing.ColorTranslator.FromHtml(setting);
+                }
             }
 
             catch (ConfigurationErrorsException e)
@@ -566,7 +751,7 @@ namespace CasabaSecurity.Web.Watcher
             try
             {
                 // Set the "AutoSave" flag if it is set in the configuration
-                String setting = ConfigurationManager.AppSettings["AutoSave"];
+                String setting = Get("AutoSave");// ConfigurationManager.AppSettings["AutoSave"];
                 _autosave = (setting == "True");
             }
 
@@ -588,7 +773,7 @@ namespace CasabaSecurity.Web.Watcher
             try
             {
                 // Set the "AutoVerCheck" flag if it is set in the configuration
-                String setting = ConfigurationManager.AppSettings["AutoVerCheck"];
+                String setting = Get("AutoVerCheck");  //ConfigurationManager.AppSettings["AutoVerCheck"];
                 _autocheck = (setting == "True");
             }
 
@@ -644,6 +829,16 @@ namespace CasabaSecurity.Web.Watcher
         {
             Remove("AutoSave");
             Add("Autosave", _autosave ? "True" : "False");
+        }
+
+        /// <summary>
+        /// This method adds the cached BackGround Color property to the application configuration.
+        /// </summary>
+        private void PersistBackGroundColor()
+        {
+            Remove("BackGroundColor");
+            String setting = System.Drawing.ColorTranslator.ToHtml(_backgroundcolor);
+            Add("BackGroundColor", Utility.Base64Encode(setting));
         }
 
         /// <summary>

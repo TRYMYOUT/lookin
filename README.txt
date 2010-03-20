@@ -1,6 +1,6 @@
 Casaba Watcher Web Security Tool
 ---------------------------------------
-Copyright (c) 2009, Casaba Security, LLC.
+Copyright (c) 2010, Casaba Security, LLC.
 All rights reserved.
 
 A free, passive security testing and auditing tool for web-applications. Watcher enables pen-testing and compliance auditing (e.g., PCI and HIPPA) for web applications.
@@ -60,12 +60,12 @@ Watcher provides checks that comply with OWASP's Application Security Verificati
 
 V8.9  ASVL1,ASVL2	Identify Web server error messages.		
 V8.9  ASVL1,ASVL2	Identify database error messages.
-V9.2  ASVL2		Identify proper use of the Cache-Control headers.
-V9.5  ASVL2		Identify sensitive information disclosure in URL.
-V9.5  ASVL2		Identify sensitive information disclosure in HTTP headers.
+V9.2  ASVL2			Identify proper use of the Cache-Control headers.
+V9.5  ASVL2			Identify sensitive information disclosure in URL.
+V9.5  ASVL2			Identify sensitive information disclosure in HTTP headers.
 V10.5 ASVL1,ASVL2	Identify SSL certificate validation errors.
-V11.2 ASVL2		Identify cookies without the 'secure' flag set.
-V11.1 ASVL2		Identify cookies without the 'httponly' flag set.
+V11.2 ASVL2			Identify cookies without the 'secure' flag set.
+V11.1 ASVL2			Identify cookies without the 'httponly' flag set.
 V11.5 ASVL1,ASVL2	Identify open redirects.
 
 By listing ASVL1 or ASVL2, we're considering that Watcher provides coverage for whatever the requirement calls for, be it Level 1A or Level 2A.

@@ -1,9 +1,8 @@
 ﻿// WATCHER
 //
-// WatcherConfig.Designer.cs
-// 
+// WatcherResultsControl.Designer.cs
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -24,6 +23,7 @@ using System.Runtime.InteropServices;
 
 namespace CasabaSecurity.Web.Watcher
 {
+    // TODO: Move this elsewhere
     public enum ListViewExtendedStyles
     {
         /// <summary>
@@ -163,7 +163,8 @@ namespace CasabaSecurity.Web.Watcher
             SendMessage(control.Handle, (int)ListViewMessages.SetExtendedStyle, 0, (int)styles);
         }
     }
-    
+
+    // TODO: Make this internal.  Checks should use ResultsManager.
     partial class WatcherResultsControl : UserControl
     {
         /// <summary>
@@ -518,11 +519,13 @@ namespace CasabaSecurity.Web.Watcher
             this.typeColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.urlColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.buttonpanel = new System.Windows.Forms.Panel();
-            this.btnClearResults = new System.Windows.Forms.Button();
+            this.exportlabel = new System.Windows.Forms.Label();
+            this.cbExportMethod = new System.Windows.Forms.ComboBox();
             this.FileSaveButton = new System.Windows.Forms.Button();
             this.autoscrollcheckBox = new System.Windows.Forms.CheckBox();
             this.filterpanel = new System.Windows.Forms.Panel();
             this.informationalcountlabel = new System.Windows.Forms.Label();
+            this.btnClearResults = new System.Windows.Forms.Button();
             this.noiselabel = new System.Windows.Forms.Label();
             this.lowcountlabel = new System.Windows.Forms.Label();
             this.noisereductioncomboBox = new System.Windows.Forms.ComboBox();
@@ -550,19 +553,19 @@ namespace CasabaSecurity.Web.Watcher
             this.resultPanel.Location = new System.Drawing.Point(0, 0);
             this.resultPanel.Margin = new System.Windows.Forms.Padding(0);
             this.resultPanel.Name = "resultPanel";
-            this.resultPanel.Size = new System.Drawing.Size(851, 344);
+            this.resultPanel.Size = new System.Drawing.Size(851, 311);
             this.resultPanel.TabIndex = 3;
             // 
             // pnlCopyright
             // 
-            this.pnlCopyright.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlCopyright.BackColor = System.Drawing.Color.Transparent;
             this.pnlCopyright.Controls.Add(this.panel1);
             this.pnlCopyright.Controls.Add(this.rightslabel);
             this.pnlCopyright.Controls.Add(this.linkLabel1);
             this.pnlCopyright.Controls.Add(this.pbCasaba);
             this.pnlCopyright.Controls.Add(this.copyrightlabel);
             this.pnlCopyright.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlCopyright.Location = new System.Drawing.Point(0, 289);
+            this.pnlCopyright.Location = new System.Drawing.Point(0, 256);
             this.pnlCopyright.Margin = new System.Windows.Forms.Padding(0);
             this.pnlCopyright.Name = "pnlCopyright";
             this.pnlCopyright.Size = new System.Drawing.Size(851, 55);
@@ -570,7 +573,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.linkLabel2);
             this.panel1.Controls.Add(this.pictureBox1);
@@ -585,7 +588,7 @@ namespace CasabaSecurity.Web.Watcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(448, 24);
+            this.label2.Location = new System.Drawing.Point(500, 20);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 13);
             this.label2.TabIndex = 6;
@@ -594,8 +597,8 @@ namespace CasabaSecurity.Web.Watcher
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.BackColor = System.Drawing.SystemColors.Window;
-            this.linkLabel2.Location = new System.Drawing.Point(333, 24);
+            this.linkLabel2.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel2.Location = new System.Drawing.Point(385, 20);
             this.linkLabel2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(112, 13);
@@ -606,11 +609,11 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(55, 55);
+            this.pictureBox1.Size = new System.Drawing.Size(111, 55);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 5;
             this.pictureBox1.TabStop = false;
@@ -618,11 +621,11 @@ namespace CasabaSecurity.Web.Watcher
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(61, 24);
+            this.label3.Location = new System.Drawing.Point(113, 20);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(228, 13);
             this.label3.TabIndex = 0;
-            this.label3.Text = "Watcher Web Security Tool, Copyright © 2009";
+            this.label3.Text = "Watcher Web Security Tool, Copyright © 2010";
             // 
             // rightslabel
             // 
@@ -636,7 +639,7 @@ namespace CasabaSecurity.Web.Watcher
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.SystemColors.Window;
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
             this.linkLabel1.Location = new System.Drawing.Point(298, 24);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.linkLabel1.Name = "linkLabel1";
@@ -647,7 +650,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // pbCasaba
             // 
-            this.pbCasaba.BackColor = System.Drawing.SystemColors.Window;
+            this.pbCasaba.BackColor = System.Drawing.Color.Transparent;
             this.pbCasaba.Image = ((System.Drawing.Image)(resources.GetObject("pbCasaba.Image")));
             this.pbCasaba.Location = new System.Drawing.Point(0, 0);
             this.pbCasaba.Name = "pbCasaba";
@@ -663,7 +666,7 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel.Name = "copyrightlabel";
             this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
             this.copyrightlabel.TabIndex = 0;
-            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2009";
+            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2010";
             // 
             // alertTextBox
             // 
@@ -677,14 +680,14 @@ namespace CasabaSecurity.Web.Watcher
             this.alertTextBox.Multiline = true;
             this.alertTextBox.Name = "alertTextBox";
             this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.alertTextBox.Size = new System.Drawing.Size(851, 289);
+            this.alertTextBox.Size = new System.Drawing.Size(851, 256);
             this.alertTextBox.TabIndex = 0;
             this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
             // 
             // lowerpanel
             // 
             this.lowerpanel.AutoSize = true;
-            this.lowerpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.lowerpanel.BackColor = System.Drawing.Color.Transparent;
             this.lowerpanel.Controls.Add(this.splitContainer);
             this.lowerpanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lowerpanel.Location = new System.Drawing.Point(0, 0);
@@ -710,7 +713,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             this.splitContainer.Panel2.Controls.Add(this.resultPanel);
             this.splitContainer.Size = new System.Drawing.Size(851, 653);
-            this.splitContainer.SplitterDistance = 305;
+            this.splitContainer.SplitterDistance = 338;
             this.splitContainer.TabIndex = 0;
             // 
             // alertListView
@@ -729,10 +732,10 @@ namespace CasabaSecurity.Web.Watcher
             this.alertListView.FullRowSelect = true;
             this.alertListView.GridLines = true;
             this.alertListView.HideSelection = false;
-            this.alertListView.Location = new System.Drawing.Point(0, 42);
+            this.alertListView.Location = new System.Drawing.Point(0, 63);
             this.alertListView.Margin = new System.Windows.Forms.Padding(0);
             this.alertListView.Name = "alertListView";
-            this.alertListView.Size = new System.Drawing.Size(851, 221);
+            this.alertListView.Size = new System.Drawing.Size(851, 246);
             this.alertListView.TabIndex = 7;
             this.alertListView.UseCompatibleStateImageBehavior = false;
             this.alertListView.View = System.Windows.Forms.View.Details;
@@ -762,37 +765,49 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // buttonpanel
             // 
-            this.buttonpanel.Controls.Add(this.btnClearResults);
+            this.buttonpanel.BackColor = System.Drawing.Color.Transparent;
+            this.buttonpanel.Controls.Add(this.exportlabel);
+            this.buttonpanel.Controls.Add(this.cbExportMethod);
             this.buttonpanel.Controls.Add(this.FileSaveButton);
             this.buttonpanel.Controls.Add(this.autoscrollcheckBox);
             this.buttonpanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonpanel.Location = new System.Drawing.Point(0, 263);
+            this.buttonpanel.Location = new System.Drawing.Point(0, 309);
             this.buttonpanel.Margin = new System.Windows.Forms.Padding(0);
             this.buttonpanel.Name = "buttonpanel";
-            this.buttonpanel.Size = new System.Drawing.Size(851, 42);
+            this.buttonpanel.Size = new System.Drawing.Size(851, 29);
             this.buttonpanel.TabIndex = 11;
             // 
-            // btnClearResults
+            // exportlabel
             // 
-            this.btnClearResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClearResults.Location = new System.Drawing.Point(3, 7);
-            this.btnClearResults.Name = "btnClearResults";
-            this.btnClearResults.Size = new System.Drawing.Size(299, 29);
-            this.btnClearResults.TabIndex = 8;
-            this.btnClearResults.Text = "Clear Selected Results (All results if none selected)";
-            this.toolTipResultsControl.SetToolTip(this.btnClearResults, "Selected results will be removed. If none are selected all results will be remove" +
-                    "d.");
-            this.btnClearResults.UseVisualStyleBackColor = true;
-            this.btnClearResults.Click += new System.EventHandler(this.btnClearResults_Click);
+            this.exportlabel.AutoSize = true;
+            this.exportlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exportlabel.Location = new System.Drawing.Point(108, 10);
+            this.exportlabel.Name = "exportlabel";
+            this.exportlabel.Size = new System.Drawing.Size(79, 13);
+            this.exportlabel.TabIndex = 12;
+            this.exportlabel.Text = "Export Method:";
+            // 
+            // cbExportMethod
+            // 
+            this.cbExportMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbExportMethod.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbExportMethod.FormattingEnabled = true;
+            this.cbExportMethod.ItemHeight = 13;
+            this.cbExportMethod.Location = new System.Drawing.Point(190, 7);
+            this.cbExportMethod.Name = "cbExportMethod";
+            this.cbExportMethod.Size = new System.Drawing.Size(165, 21);
+            this.cbExportMethod.Sorted = true;
+            this.cbExportMethod.TabIndex = 11;
+            this.cbExportMethod.SelectedIndexChanged += new System.EventHandler(this.savemethodcomboBox_SelectedIndexChanged);
             // 
             // FileSaveButton
             // 
-            this.FileSaveButton.Location = new System.Drawing.Point(308, 7);
+            this.FileSaveButton.Location = new System.Drawing.Point(3, 5);
             this.FileSaveButton.Name = "FileSaveButton";
-            this.FileSaveButton.Size = new System.Drawing.Size(130, 29);
+            this.FileSaveButton.Size = new System.Drawing.Size(95, 23);
             this.FileSaveButton.TabIndex = 9;
-            this.FileSaveButton.Text = "Export to XML";
-            this.toolTipResultsControl.SetToolTip(this.FileSaveButton, "Export selected results to an XML format file.");
+            this.FileSaveButton.Text = "Export Findings";
+            this.toolTipResultsControl.SetToolTip(this.FileSaveButton, "Export selected selectedResults using selected save method.");
             this.FileSaveButton.UseVisualStyleBackColor = true;
             this.FileSaveButton.Click += new System.EventHandler(this.FileSaveButton_Click);
             // 
@@ -800,20 +815,21 @@ namespace CasabaSecurity.Web.Watcher
             // 
             this.autoscrollcheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.autoscrollcheckBox.AutoSize = true;
-            this.autoscrollcheckBox.Location = new System.Drawing.Point(772, 14);
+            this.autoscrollcheckBox.Location = new System.Drawing.Point(774, 9);
             this.autoscrollcheckBox.Name = "autoscrollcheckBox";
             this.autoscrollcheckBox.Size = new System.Drawing.Size(74, 17);
             this.autoscrollcheckBox.TabIndex = 10;
             this.autoscrollcheckBox.Text = "AutoScroll";
             this.toolTipResultsControl.SetToolTip(this.autoscrollcheckBox, "When checked Watcher will place the latest alerts and the bottom of the displayed" +
-                    " list of results.");
+                    " list of selectedResults.");
             this.autoscrollcheckBox.UseVisualStyleBackColor = true;
             this.autoscrollcheckBox.CheckedChanged += new System.EventHandler(this.autoscrollcheckBox_CheckedChanged);
             // 
             // filterpanel
             // 
-            this.filterpanel.BackColor = System.Drawing.SystemColors.Window;
+            this.filterpanel.BackColor = System.Drawing.Color.Transparent;
             this.filterpanel.Controls.Add(this.informationalcountlabel);
+            this.filterpanel.Controls.Add(this.btnClearResults);
             this.filterpanel.Controls.Add(this.noiselabel);
             this.filterpanel.Controls.Add(this.lowcountlabel);
             this.filterpanel.Controls.Add(this.noisereductioncomboBox);
@@ -822,7 +838,7 @@ namespace CasabaSecurity.Web.Watcher
             this.filterpanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterpanel.Location = new System.Drawing.Point(0, 0);
             this.filterpanel.Name = "filterpanel";
-            this.filterpanel.Size = new System.Drawing.Size(851, 42);
+            this.filterpanel.Size = new System.Drawing.Size(851, 63);
             this.filterpanel.TabIndex = 2;
             // 
             // informationalcountlabel
@@ -837,6 +853,20 @@ namespace CasabaSecurity.Web.Watcher
             this.informationalcountlabel.Text = "Informational:";
             this.toolTipResultsControl.SetToolTip(this.informationalcountlabel, "(Alerts, Individual Issues)");
             this.informationalcountlabel.Click += new System.EventHandler(this.informationalcountlabel_Click);
+            // 
+            // btnClearResults
+            // 
+            this.btnClearResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClearResults.AutoSize = true;
+            this.btnClearResults.Location = new System.Drawing.Point(6, 35);
+            this.btnClearResults.Name = "btnClearResults";
+            this.btnClearResults.Size = new System.Drawing.Size(300, 23);
+            this.btnClearResults.TabIndex = 8;
+            this.btnClearResults.Text = "Clear Selected Results (All selected results if none selected)";
+            this.toolTipResultsControl.SetToolTip(this.btnClearResults, "Selected selectedResults will be removed. If none are selected all selectedResult" +
+                    "s will be removed.");
+            this.btnClearResults.UseVisualStyleBackColor = true;
+            this.btnClearResults.Click += new System.EventHandler(this.btnClearResults_Click);
             // 
             // noiselabel
             // 
@@ -905,6 +935,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // WatcherResultsControl
             // 
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.lowerpanel);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "WatcherResultsControl";
@@ -964,6 +995,8 @@ namespace CasabaSecurity.Web.Watcher
         public LinkLabel linkLabel2;
         private PictureBox pictureBox1;
         private Label label3;
+        private ComboBox cbExportMethod;
+        private Label exportlabel;
        
         public class AlertListViewItem : ListViewItem
         {

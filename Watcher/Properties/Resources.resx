@@ -118,8 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Casaba" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Casaba.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Watcher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Watcher.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="WatcherCheckStandardsCompliance_None" xml:space="preserve">
     <value>N/A</value>
@@ -156,5 +156,9 @@
   <data name="WatcherCheckStandardsCompliance_OwaspAppSecVerificationLevel4" xml:space="preserve">
     <value>OWASP ASVL4</value>
     <comment>The check conforms to OWASP ASVL 4.</comment>
+  </data>
+  <data name="WatcherCheckStandardsCompliance_MicrosoftSDL" xml:space="preserve">
+    <value>Microsoft SDL</value>
+    <comment>The check conforms to a Microsoft SDL requirement or recommendation.</comment>
   </data>
 </root>

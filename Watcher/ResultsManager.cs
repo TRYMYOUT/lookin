@@ -1,9 +1,9 @@
 ﻿// WATCHER
 //
 // ResultsManager.cs
-// Implements types responsible for managing check results and analysis information.
+// Implements types responsible for managing check selectedResults and analysis information.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 

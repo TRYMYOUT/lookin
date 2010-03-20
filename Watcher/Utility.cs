@@ -3,11 +3,12 @@
 // Utility.cs
 // Main implementation of Watcher Utility functions.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -97,6 +98,22 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             return String.Empty;
+        }
+
+        public static void ReadWriteStream(Stream readStream, Stream writeStream)
+        {
+            int Length = 256;
+            Byte[] buffer = new Byte[Length];
+            readStream.Position = 0;
+            int bytesRead = readStream.Read(buffer, 0, Length);
+            // write the required bytes
+            while (bytesRead > 0)
+            {
+                writeStream.Write(buffer, 0, bytesRead);
+                bytesRead = readStream.Read(buffer, 0, Length);
+            }
+            readStream.Close();
+            writeStream.Close();
         }
 
         public static String GetResponseContentType(Session session)
@@ -225,7 +242,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <returns>The character set specified by the session content or a reasonable guess.</returns>
         public static String GetHtmlCharset(Session session)
         {
-            const String DefaultCharacterSet = "utf-8";     // Return UTF-8 if unsure, ASCII is preserved.
+            const String DefaultEncoding = "utf-8";     // Return UTF-8 if unsure, ASCII is preserved.
 
             // Favor the character set from the HTTP Content-Type header if it exists.
             String CharacterSet = session.oResponse.headers.GetTokenValue("Content-Type", "charset");
@@ -239,7 +256,7 @@ namespace CasabaSecurity.Web.Watcher
             if (session.responseBodyBytes == null || session.requestBodyBytes.Length == 0)
             {
                 Trace.TraceWarning("Warning: Response body byte-array is null, assuming default character set.");
-                return DefaultCharacterSet;
+                return DefaultEncoding;
             }
 
             // Otherwise, parse the document returned for character set hints.
@@ -255,8 +272,8 @@ namespace CasabaSecurity.Web.Watcher
             {
                 // Thrown if a character cannot be decoded
                 Trace.TraceError("Error: DecoderFallbackException: {0}", e.Message);
-                Trace.TraceWarning("Warning: Assuming default character set due to previous error.");
-                return DefaultCharacterSet;
+                Trace.TraceWarning("Warning: Assuming default characterencoding due to previous error.");
+                return DefaultEncoding;
             }
 
             String Temp;
@@ -284,7 +301,7 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             // Return the default character set if unsure
-            return DefaultCharacterSet;
+            return DefaultEncoding;
         }
 
         /// <summary>
@@ -300,10 +317,6 @@ namespace CasabaSecurity.Web.Watcher
                 Trace.TraceWarning("Warning: Response body is empty.");
                 return String.Empty;
             }
-
-            // Remove chunking and compression from the HTTP response
-            // Logging the return value may result in excessive verbosity: avoid it.
-            //session.utilDecodeResponse();
 
             // Attempt to determine the character set used by the response document
             String CharacterSet = Utility.GetHtmlCharset(session);
@@ -354,7 +367,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <returns></returns>
         public static MatchCollection GetHtmlTags(String body, String tagName)
         {
-            return (Regex.Matches(body, "<\\s*?" + tagName + "((\\s*?)|(\\s+?\\w.*?))>"));
+            return (Regex.Matches(body, "<\\s*?" + tagName + "((\\s*?)|(\\s+?\\w.*?))>", RegexOptions.IgnoreCase));
         }
 
         public static String StripQuotes(String val)
@@ -373,6 +386,42 @@ namespace CasabaSecurity.Web.Watcher
 
             return (val);
         }
+
+        public static bool CompareStrings(String x, String y, bool ignoreCase)
+        {
+            StringComparer sc;
+
+            if (ignoreCase)
+            {
+                // Case-insensitive comparer
+                sc = StringComparer.InvariantCultureIgnoreCase;
+            }
+            else
+            {
+                // Case-sensitive comparer
+                sc = StringComparer.InvariantCulture;
+            }
+
+            if (x != null && y != null && (sc.Compare(x, y) == 0))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public static string ToSafeLower(string s)
+        {
+            if (s != null)
+            {
+                return (s.ToLower(CultureInfo.InvariantCulture));
+            }
+            return (s);
+        }
+
 
         /// <summary>
         /// Parse single and multi-line comments from HTML.
@@ -412,30 +461,40 @@ namespace CasabaSecurity.Web.Watcher
             String attribute = null;
 
             // Parse out attribute field looking for values in single or double quotes
-            Match m = Regex.Match(tag, attributeName + "\\s*?=\\s*?(\'|\").*?(\'|\")");
+            Match m = Regex.Match(tag, attributeName + "\\s*?=\\s*?(\'|\").*?(\'|\")", RegexOptions.IgnoreCase);
 
             // Parse out attribute field looking for values that aren't wrapped in single or double quotes
             // TEST: Passed
-            Match m1 = Regex.Match(tag, attributeName + "\\s*?=\\s*?.*?(\\s|>)");
+            Match m1 = Regex.Match(tag, attributeName + "\\s*?=\\s*?.*?(\\s|>)", RegexOptions.IgnoreCase);
 
             if (m.Success)
             {
                 // Parse out attribute value
-                Match a = Regex.Match(m.ToString(), "(\'|\").*?(\'|\")");
+                Match a = Regex.Match(m.ToString(), "(\'|\").*?(\'|\")", RegexOptions.IgnoreCase);
 
                 if (a.Success)
                 {
-                    attribute = StripQuotes(HttpUtility.UrlDecode(a.ToString()));
+                    // BUGBUG: Removing UrlDecode() from here, not sure why we're doing this here.
+                    // It should be up to a check to want UrlDecoded values.
+                    // Otherwise + turns to a space, and other values may break.
+                    //
+                    // attribute = StripQuotes(HttpUtility.UrlDecode(a.ToString()));
+                    attribute = StripQuotes(a.ToString());
                 }
             }
             else if (m1.Success)
             {
                 // Parse out attribute value, matching to the next whitespace or closing tag
-                Match a = Regex.Match(m1.ToString(), "(=).*?(\\s|>)");
+                Match a = Regex.Match(m1.ToString(), "(=).*?(\\s|>)", RegexOptions.IgnoreCase);
 
                 if (a.Success)
                 {
-                    attribute = HttpUtility.UrlDecode(a.ToString());
+                    // BUGBUG: Removing UrlDecode() from here, not sure why we're doing this here.
+                    // It should be up to a check to want UrlDecoded values.
+                    // Otherwise + turns to a space, and other values may break.
+                    // 
+                    // attribute = HttpUtility.UrlDecode(a.ToString());
+                    attribute = a.ToString();
 
                     // Trim the leading = character
                     attribute = attribute.Substring(1).Trim();
@@ -479,7 +538,11 @@ namespace CasabaSecurity.Web.Watcher
                     bodies[x++] = tmp;
                 }
             }
-
+            // Don't return null, return empty string array
+            if (bodies == null)
+            {
+                bodies = new String[] { };
+            }
             return bodies;
         }
 
@@ -509,6 +572,12 @@ namespace CasabaSecurity.Web.Watcher
             return dom;
         }
 
+        /// <summary>
+        /// Checks a URL to see if it's already contained in a running list of URL's
+        /// </summary>
+        /// <param name="url">A full URI, must include the scheme as in http://www.nottrusted.org.  Provided by session.fullUrl.</param>
+        /// <param name="urls">The List<> of URL's to maintain.</param>
+        /// <returns></returns>
         public static bool UrlNotInList(String url, List<string> urls)
         {
             // We need to reset our URL List when a user clicks the
@@ -517,7 +586,7 @@ namespace CasabaSecurity.Web.Watcher
             lock (urls)
             {
                 Uri uri = new Uri(url);
-                url = String.Concat(uri.Host, uri.AbsolutePath);
+                url = uri.ToString();// String.Concat(uri.Host, uri.AbsolutePath);
 
                 // URL has already been checked
                 if (urls.Contains(url))

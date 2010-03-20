@@ -3,7 +3,7 @@
 // WatcherTab.cs
 // Main implementation of WatcherTab UI.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -23,9 +23,11 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using Fiddler;
+using CasabaSecurity.Web.Watcher.Collections;
 
 namespace CasabaSecurity.Web.Watcher
 {
+    // TODO: Make this internal.  Checks should use ResultsManager.
     public partial class WatcherResultsControl : UserControl
     {
         #region Fields
@@ -64,6 +66,32 @@ namespace CasabaSecurity.Web.Watcher
             // Don't load the configuration in design mode
             if (this.Site == null || this.Site.DesignMode == false)
             {
+                //Initialize Save Method
+                //String savetoXML = "XML File";
+                //this.cbExportMethod.Items.Add(savetoXML);
+                
+                foreach (WatcherOutputPlugin plugin in WatcherEngine.OutputPluginManager.OutputPlugins)
+                {
+                    this.cbExportMethod.Items.Add(plugin);
+                }
+
+                String SaveMethod = WatcherEngine.Configuration.Get("DefaultSaveMethod");
+                
+                if (!String.IsNullOrEmpty(SaveMethod))
+                {
+                    SaveMethod = Utility.Base64Decode(SaveMethod);
+                    //Store with Base64 since plugins may use dangerous characters
+                    for (int i = 0; i < cbExportMethod.Items.Count; i++)
+                    {
+                        WatcherOutputPlugin OutPlugin = (WatcherOutputPlugin)this.cbExportMethod.Items[i];
+                        if (SaveMethod == OutPlugin.GetName())
+                        {
+                            this.cbExportMethod.SelectedItem = this.cbExportMethod.Items[i];
+                            break;
+                        }
+                    }
+                }
+
                 // Reduce flicker
                 ListViewHelper.EnableDoubleBuffer(this.alertListView);
 
@@ -73,19 +101,23 @@ namespace CasabaSecurity.Web.Watcher
 
                 // Set the default filter level for check alerts
                 this.noisereduction = WatcherResultSeverity.Informational;
-                this.noisereductioncomboBox.SelectedItem = "Informational";
-
+                
                 // TODO: Use custom Watcher configuration section
                 // Use the filter level from the configuration, if it exists
-                if (!String.IsNullOrEmpty(ConfigurationSettings.AppSettings["DefaultFilter"]))
+                if (!String.IsNullOrEmpty(WatcherEngine.Configuration.Get("DefaultFilter")))
                 {
-                    this.noisereductioncomboBox.SelectedItem = ConfigurationSettings.AppSettings["DefaultFilter"];
+                    this.noisereductioncomboBox.SelectedItem = WatcherEngine.Configuration.Get("DefaultFilter");
+                }
+                else
+                {
+                    //Update the Selected Item since the configuration item did not exist.
+                    this.noisereductioncomboBox.SelectedItem = "Informational";
                 }
 
                 // Determine whether to auto-scroll alerts
-                if (!String.IsNullOrEmpty(ConfigurationSettings.AppSettings["AutoScroll"]))
+                if (!String.IsNullOrEmpty(WatcherEngine.Configuration.Get("AutoScroll")))
                 {
-                    string temp = ConfigurationSettings.AppSettings["AutoScroll"];
+                    string temp = WatcherEngine.Configuration.Get("AutoScroll");
                     this.autoscrollcheckBox.Checked = Boolean.Parse(temp);
                 }
                 int index = this.label3.Text.IndexOf(",");
@@ -95,6 +127,15 @@ namespace CasabaSecurity.Web.Watcher
 
  	        base.OnLoad(e);
         }
+
+        #endregion
+
+        #region Private Callback(s)
+
+        /// <summary>
+        /// This delegate is used to perform the export asynchronously.
+        /// </summary>
+        private delegate void ExportResultsCallback(WatcherOutputPlugin plugin, WatcherResultCollection resultslist, String filename);
 
         #endregion
 
@@ -252,6 +293,12 @@ namespace CasabaSecurity.Web.Watcher
 
         /// <summary>
         /// This event handler method is called when the Clear Results button is clicked.
+        /// 
+        /// TODO:  When no selectedResults are selected by the user, this will call the check.Clear() method
+        /// on each check - see the foreach loop in the 'if' block.
+        /// In the 'else' block, we would have to figure out which checks' selectedResults are being cleared,
+        /// then call check.Clear() on those checks specifically.
+        /// 
         /// </summary>
         private void btnClearResults_Click(object sender, EventArgs e)
         {
@@ -271,6 +318,13 @@ namespace CasabaSecurity.Web.Watcher
                 mediumissues = 0;
                 lowissues = 0;
                 informationalissues = 0;
+                // Some of the noisy checks keep lists to reduce output,
+                // we need to clear their lists when the user clears the 
+                // selectedResults window.
+                foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
+                {
+                    check.Clear();
+                }
             }
             else
             {
@@ -308,13 +362,6 @@ namespace CasabaSecurity.Web.Watcher
                     this.alertListView.Items.Remove(item);
                     this.alerts.Remove(item);
                     this.alertTextBox.Clear();
-                }
-                // Some of the noisy checks keep lists to reduce output,
-                // we need to clear their lists when the user clears the 
-                // results window.
-                foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
-                {
-                    check.Clear();
                 }
             }
 
@@ -409,7 +456,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// This event handler method is called when the user selects an item from the results list.
+        /// This event handler method is called when the user selects an item from the selectedResults list.
         /// </summary>
         private void alertListView_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -417,83 +464,136 @@ namespace CasabaSecurity.Web.Watcher
             {
                 this.alertTextBox.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).Description;
             }
-        }
+        } 
 
-        private XmlDocument GetXmlDocument()
+        /// <summary>
+        /// This is an event handler called when the user clicks the Export button.
+        /// </summary>
+        private void FileSaveButton_Click(object sender, EventArgs e)
         {
-            XmlDocument doc = new XmlDocument();
-            XmlElement root = doc.CreateElement("watcher");
-            XmlElement issue = null;
-            XmlElement level = null;
-            XmlElement url = null;
-            XmlElement typex = null;
-            XmlElement desc = null;
-
-            root.SetAttribute("version", "1.0.0");
-
-            doc.AppendChild(root);
-
-            for (int x = 0; x < this.alertListView.Items.Count; ++x)
+            // If no alerts are selected, bail.
+            if (alertListView.SelectedItems.Count == 0)
             {
-                AlertListViewItem alvi = (AlertListViewItem)this.alertListView.Items[x];
-
-                issue = doc.CreateElement("issue");
-                level = doc.CreateElement("level");
-
-                level.InnerText = alvi.Severity.ToString();
-
-                url = doc.CreateElement("url");
-
-                url.InnerText = alvi.URL;
-
-                typex = doc.CreateElement("type");
-
-                typex.InnerText = alvi.TypeX;
-
-                desc = doc.CreateElement("description");
-
-                desc.InnerText = alvi.Description;
-
-                issue.AppendChild(level);
-                issue.AppendChild(url);
-                issue.AppendChild(typex);
-                issue.AppendChild(desc);
-
-                root.AppendChild(issue);
+                MessageBox.Show("Nothing to export.  Please select one or more items to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
-            return doc;
+            // If no export method is selected, bail.
+            if (cbExportMethod.SelectedItem == null)
+            {
+                MessageBox.Show("No export method selected.  Please select an export method.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Gather the selected results
+            WatcherResultCollection selectedResults = new WatcherResultCollection();
+            foreach (AlertListViewItem item in alertListView.SelectedItems)
+            {
+                WatcherResult result = new WatcherResult();
+                result.Description = item.Description;
+                result.Severity = item.Severity;
+                result.Title = item.TypeX;
+                result.URL = item.URL;
+
+                selectedResults.Add(result);
+            }
+
+            // The export method refers to an instance of the output plugin
+            WatcherOutputPlugin outputPlugin = cbExportMethod.SelectedItem as WatcherOutputPlugin;
+            if (outputPlugin == null)
+            {
+                Trace.TraceError("WatcherResultsControl: Invalid export method selected.");
+                MessageBox.Show("Unable to use the selected export method.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            String filename = String.Empty;
+            String filter = String.Empty;
+
+            // If this plugin is a file-based export, open a file save dialog and allow
+            // the user to select the output filename.  Use the default values provided
+            // by the plugin.
+            //
+            // TODO: Plugin should be interface-based or provide a property to tell whether it is a file-based export or not
+            if (outputPlugin.GetExportDefaults(ref filename, ref filter))
+            {
+                SaveFileDialog dlg = new SaveFileDialog();
+                dlg.FileName = filename;
+                dlg.Filter = filter;
+                dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                dlg.FilterIndex = 1;
+                dlg.RestoreDirectory = true;
+
+                // Display the dialog, and if canceled, abort.
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    Trace.TraceInformation("User canceled export.");
+                    return;
+                }
+
+                // Update the filename selected by the user
+                filename = dlg.FileName;
+            }
+
+            // This is the export progress dialog shown during the export process
+            WatcherEngine.ProgressDialog.Show();
+
+            // Perform the export asynchronously
+            ExportResultsCallback callback = new ExportResultsCallback(ExportResults);
+            callback.BeginInvoke(outputPlugin, selectedResults, filename,
+
+                // This is the anonymous callback method
+                delegate(IAsyncResult ar)
+                {
+                    try
+                    {
+                        // Tidy up after the export
+                        ExportResultsCallback _callback = (ExportResultsCallback)ar.AsyncState;
+                        _callback.EndInvoke(ar); // NOTE: This will throw any unhandled exceptions that happened during the call
+                    }
+
+                    catch (WatcherException ex)
+                    {
+                        Trace.TraceError("Exception: {0}", ex.Message);
+                        if (ex.Data.Contains("UserAbortedOperation") == false)
+                        {
+                            // Only show a message box if the user hasn't already seen one (i.e., they've elected to abort the operation)
+                            MessageBox.Show(this, String.Format("{0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        return;
+                    }
+
+                    finally
+                    {
+                        WatcherEngine.ProgressDialog.Hide();
+                    }
+
+                    MessageBox.Show(this, "Items successfully exported.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                },
+
+            // Pass the callback as user data so we can call EndInvoke() when the operation completes
+            // to retrieve the result.
+            callback);
         }
 
         /// <summary>
-        /// This event handler method is called when the user clicks on the Export to XML button.
+        /// This method is the delegate called when an export is to be handled using a plugin.
         /// </summary>
-        private void FileSaveButton_Click(object sender, EventArgs e)
-        {            
-            SaveFileDialog sfd = new SaveFileDialog();
-            XmlDocument doc = null;
-
-            if (alertListView.Items.Count == 0)
+        /// <returns>True if the operation succeeded, False otherwise.</returns>
+        private void ExportResults(WatcherOutputPlugin plugin, WatcherResultCollection results, String filename)
+        {
+            // Perform the Save operation.  Not every save operation will return a
+            // stream; therefore, a null return value is not necessarily an error.
+            //
+            // TODO: This class is a candidate for redesign as it handles exports with different semantics (e.g., TFS)
+            Stream outputStream = plugin.SaveResult(results);
+            if (outputStream != null)
             {
-                MessageBox.Show("Nothing to export!");
-            }
-            else
-            {
-                sfd.InitialDirectory = "C:\\";
-                sfd.Filter = "XML Files (*.xml)|*.xml";
-                sfd.FilterIndex = 1;
-                sfd.RestoreDirectory = true;
-
-                // Save the file
-                if (sfd.ShowDialog() == DialogResult.OK)
+                using (FileStream fs = new FileStream(filename, FileMode.Create))
                 {
-                    doc = GetXmlDocument();
-                    doc.Save(sfd.FileName);
-                    //MessageBox.Show("File saved!");
+                    Utility.ReadWriteStream(outputStream, fs);
                 }
             }
-
-            base.OnClick(e);
         }
 
         /// <summary>
@@ -553,13 +653,11 @@ namespace CasabaSecurity.Web.Watcher
                 e.Link.Visited = true;
                 System.Diagnostics.Process.Start("http://www.casabasecurity.com/");
             }
-
             catch (Win32Exception ex)
             {
                 // Thrown when the process returns a Win32 error code
                 Trace.TraceError("Unable to launch web site: {0}", ex.Message);
             }
-
             catch (FileNotFoundException ex)
             {
                 // Thrown when an attempt to access a file that does not exist on disk is made
@@ -605,11 +703,16 @@ namespace CasabaSecurity.Web.Watcher
         private void autoscrollcheckBox_CheckedChanged(object sender, EventArgs e)
         {
             WatcherEngine.Configuration.Remove("AutoScroll");
-            WatcherEngine.Configuration.Add("Autoscroll", this.autoscrollcheckBox.Checked.ToString());
+            WatcherEngine.Configuration.Add("AutoScroll", this.autoscrollcheckBox.Checked.ToString());
             autoscroll = this.autoscrollcheckBox.Checked;
+        } 
+
+        private void savemethodcomboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WatcherEngine.Configuration.Remove("DefaultSaveMethod");
+            WatcherEngine.Configuration.Add("DefaultSaveMethod", Utility.Base64Encode(this.cbExportMethod.SelectedItem.ToString()));
         }
 
         #endregion
-
     }
 }

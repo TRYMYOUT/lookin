@@ -3,7 +3,7 @@
 // WatcherConfig.Designer.cs
 // Main implementation of WatcherConfig UI.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 
@@ -56,15 +56,20 @@ namespace CasabaSecurity.Web.Watcher
             this.autovercheckBox = new System.Windows.Forms.CheckBox();
             this.autosavecheckBox = new System.Windows.Forms.CheckBox();
             this.toolTipConfigControl = new System.Windows.Forms.ToolTip(this.components);
+            this.watcherbackgroundbutton = new System.Windows.Forms.Button();
             this.pnlCopyright = new System.Windows.Forms.Panel();
             this.rightslabel = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pbCasaba = new System.Windows.Forms.PictureBox();
             this.copyrightlabel = new System.Windows.Forms.Label();
+            this.uigroupBox = new System.Windows.Forms.GroupBox();
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.pluginPanel = new System.Windows.Forms.Panel();
             this.configGroupBox.SuspendLayout();
             this.appgroupBox.SuspendLayout();
             this.pnlCopyright.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).BeginInit();
+            this.uigroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // configGroupBox
@@ -250,9 +255,20 @@ namespace CasabaSecurity.Web.Watcher
             this.autosavecheckBox.UseVisualStyleBackColor = true;
             this.autosavecheckBox.CheckedChanged += new System.EventHandler(this.autosavecheckBox_CheckedChanged);
             // 
+            // watcherbackgroundbutton
+            // 
+            this.watcherbackgroundbutton.Location = new System.Drawing.Point(9, 21);
+            this.watcherbackgroundbutton.Name = "watcherbackgroundbutton";
+            this.watcherbackgroundbutton.Size = new System.Drawing.Size(106, 23);
+            this.watcherbackgroundbutton.TabIndex = 0;
+            this.watcherbackgroundbutton.Text = "Background Color";
+            this.toolTipConfigControl.SetToolTip(this.watcherbackgroundbutton, "Set the background color for Watcher UI");
+            this.watcherbackgroundbutton.UseVisualStyleBackColor = true;
+            this.watcherbackgroundbutton.Click += new System.EventHandler(this.button1_Click);
+            // 
             // pnlCopyright
             // 
-            this.pnlCopyright.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlCopyright.BackColor = System.Drawing.Color.Transparent;
             this.pnlCopyright.Controls.Add(this.rightslabel);
             this.pnlCopyright.Controls.Add(this.linkLabel1);
             this.pnlCopyright.Controls.Add(this.pbCasaba);
@@ -269,7 +285,7 @@ namespace CasabaSecurity.Web.Watcher
             this.rightslabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.rightslabel.AutoSize = true;
-            this.rightslabel.Location = new System.Drawing.Point(448, 24);
+            this.rightslabel.Location = new System.Drawing.Point(500, 20);
             this.rightslabel.Margin = new System.Windows.Forms.Padding(1);
             this.rightslabel.Name = "rightslabel";
             this.rightslabel.Size = new System.Drawing.Size(93, 13);
@@ -281,8 +297,8 @@ namespace CasabaSecurity.Web.Watcher
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.SystemColors.Window;
-            this.linkLabel1.Location = new System.Drawing.Point(333, 24);
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel1.Location = new System.Drawing.Point(385, 20);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(1);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(112, 13);
@@ -293,11 +309,11 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // pbCasaba
             // 
-            this.pbCasaba.BackColor = System.Drawing.SystemColors.Window;
+            this.pbCasaba.BackColor = System.Drawing.Color.Transparent;
             this.pbCasaba.Image = ((System.Drawing.Image)(resources.GetObject("pbCasaba.Image")));
             this.pbCasaba.Location = new System.Drawing.Point(0, 0);
             this.pbCasaba.Name = "pbCasaba";
-            this.pbCasaba.Size = new System.Drawing.Size(55, 55);
+            this.pbCasaba.Size = new System.Drawing.Size(111, 55);
             this.pbCasaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbCasaba.TabIndex = 5;
             this.pbCasaba.TabStop = false;
@@ -307,17 +323,37 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.copyrightlabel.AutoSize = true;
-            this.copyrightlabel.Location = new System.Drawing.Point(61, 24);
+            this.copyrightlabel.Location = new System.Drawing.Point(113, 20);
             this.copyrightlabel.Name = "copyrightlabel";
             this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
             this.copyrightlabel.TabIndex = 0;
-            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2009";
+            this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2010";
+            // 
+            // uigroupBox
+            // 
+            this.uigroupBox.Controls.Add(this.watcherbackgroundbutton);
+            this.uigroupBox.Location = new System.Drawing.Point(3, 390);
+            this.uigroupBox.Name = "uigroupBox";
+            this.uigroupBox.Size = new System.Drawing.Size(479, 57);
+            this.uigroupBox.TabIndex = 8;
+            this.uigroupBox.TabStop = false;
+            this.uigroupBox.Text = "User Interface";
+            this.uigroupBox.Visible = false;
+            // 
+            // pluginPanel
+            // 
+            this.pluginPanel.Location = new System.Drawing.Point(3, 335);
+            this.pluginPanel.Name = "pluginPanel";
+            this.pluginPanel.Size = new System.Drawing.Size(479, 40);
+            this.pluginPanel.TabIndex = 9;
             // 
             // WatcherConfigControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.pluginPanel);
+            this.Controls.Add(this.uigroupBox);
             this.Controls.Add(this.pnlCopyright);
             this.Controls.Add(this.appgroupBox);
             this.Controls.Add(this.configGroupBox);
@@ -331,6 +367,7 @@ namespace CasabaSecurity.Web.Watcher
             this.pnlCopyright.ResumeLayout(false);
             this.pnlCopyright.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).EndInit();
+            this.uigroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -360,5 +397,9 @@ namespace CasabaSecurity.Web.Watcher
         public System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.PictureBox pbCasaba;
         private System.Windows.Forms.Label copyrightlabel;
+        private System.Windows.Forms.GroupBox uigroupBox;
+        private System.Windows.Forms.Button watcherbackgroundbutton;
+        private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.Panel pluginPanel;
     }
 }

@@ -3,7 +3,7 @@
 // VersionCheck.cs
 // Implements the VersionCheck class.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 

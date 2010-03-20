@@ -3,7 +3,7 @@
 // UtilityHtmlParser.cs
 // Main implementation of the HTML parsing functions and storage containers.
 //
-// Copyright (c) 2009 Casaba Security, LLC
+// Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
 // Author: Chris Weber (chris@casabasecurity.com)
@@ -96,30 +96,53 @@ namespace CasabaSecurity.Web.Watcher
             set { parser = value; }
         }
         
+        /// <summary>
+        /// A collection of all HTML element's attribute values in the page.  
+        /// This is just a list of the attribute values.
+        /// e.g.  In this HTML fragment only 'value' would be stored
+        ///       &lt;a href="value"&gt;
+        /// </summary>
         public List<String> HtmlAttributeValues
         {
             get { return htmlAttributeValues; }
             set { htmlAttributeValues = value; }
         }
 
+        /// <summary>
+        /// A collection of all attrbute name/value pairs in the page.
+        /// e.g. In this HTML fragment only 'href=value' would be stored.
+        ///      &lt;a href="value"&gt;
+        /// </summary>
         public Dictionary<String,List<String>> HtmlAttributeCollection
         {
             get { return htmlAttributeCollection; }
             set { htmlAttributeCollection = value; }
         }
 
+        /// <summary>
+        /// A collection of all the HTML element tags in the page with their attributes and values, e.g. <html>, <a>, etc.
+        /// </summary>
         public List<HtmlElement> HtmlElementCollection
         {
             get { return htmlElementCollection; }
             set { htmlElementCollection = value; }
         }
 
+        /// <summary>
+        /// A collection of all non-markup text in the page.  
+        /// e.g.  In the following HTML fragment, 'plain text' would be stored.
+        ///       &lt;div&gt;plain text&lt;/div&gt;
+        /// </summary>
         public List<String> HtmlTextCollection
         {
             get { return htmlTextCollection; }
             set { htmlTextCollection = value; }
         }
 
+        /// <summary>
+        /// A collection of all script blocks and their content.
+        /// e.g. The following script block
+        /// </summary>
         public List<String> HtmlScriptCollection
         {
             get { return htmlScriptCollection; }
