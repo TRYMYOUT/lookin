@@ -1,0 +1,72 @@
+// WATCHER
+//
+// Check.Pasv.SSL.InsecureTransition.cs
+// Checks Referrer header for SSL pages that load insecure HTTP content.
+//
+// Copyright (c) 2010 Casaba Security, LLC
+// All Rights Reserved.
+//
+//
+// REMOVING CHECK
+// ==============
+// This check is unnecessary now as all browsers prevent referer leaks to HTTP pages from HTTPS
+//
+
+using System;
+using Fiddler;
+
+namespace CasabaSecurity.Web.Watcher.Checks
+{
+    public class CheckPasvSSLInsecureTransition : WatcherCheck
+    {
+        [ThreadStatic] static private int findingnum;
+
+        public override String GetName()
+        {
+            return "SSL - Look for insecure transition from HTTPS to HTTP in Referer header.";
+        }
+
+        public override String GetDescription()
+        {
+            String desc = "This check looks for insecure transitions between HTTPS and HTTP.  The issue is that " +
+                "a secure HTTPS page might be loading resources from insecure HTTP pages.";
+
+            return desc;
+        }
+
+        private void AddAlert(Session session, String header)
+        {
+            String name = "HTTPS to HTTP insecure transition referer header";
+            findingnum++;
+            String text =
+
+                "An HTTPS to HTTP transition appears to have occurred when requesting the following URL:\r\n\r\n" +
+                session.fullUrl +
+                "\r\n\r\n" + findingnum.ToString() + ") " +
+                "The referrer header returned was:\r\n\r\n" +
+                header;
+
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+        }
+
+        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        {
+            String header = null;
+            findingnum = 0;
+
+            if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
+            {
+                if (!session.isHTTPS)
+                {
+                    if (session.oRequest.headers.Exists("referer"))
+                    {
+                        header = session.oRequest.headers["referer"];
+
+                        if (header.Trim().ToLower().IndexOf("https://") == 0)
+                            AddAlert(session, header);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D8C5FD48-5B49-48A4-9396-38F30016D214}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CasabaSecurity.Web.Watcher.Checks</RootNamespace>
+    <AssemblyName>CasabaSecurity.Web.Watcher.Checks</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Fiddler, Version=2.2.0.9, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Fiddler2\Fiddler.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Check.Pasv.Charset.Utf8.cs" />
+    <Compile Include="UI.Cookie.ConfigPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI.Cookie.ConfigPanel.Designer.cs">
+      <DependentUpon>UI.Cookie.ConfigPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Check.Pasv.CrossDomain.FormSubmit.cs" />
+    <Compile Include="Check.Pasv.CrossDomain.JavascriptReference.cs" />
+    <Compile Include="Check.Pasv.CrossDomain.ScriptReference.cs" />
+    <Compile Include="Check.Pasv.CrossDomain.StyleSheetInclusion.cs" />
+    <Compile Include="Check.Pasv.InformationDisclosure.Comments.cs" />
+    <Compile Include="UI.InformationDisclosure.ConfigPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI.InformationDisclosure.ConfigPanel.Designer.cs">
+      <DependentUpon>UI.InformationDisclosure.ConfigPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Check.Pasv.InformationDisclosure.DatabaseErrors.cs" />
+    <Compile Include="Check.Pasv.InformationDisclosure.DebugErrors.cs" />
+    <Compile Include="Check.Pasv.Flash.AllowScriptAccess.cs" />
+    <Compile Include="Check.Pasv.Flash.CrossDomain.cs" />
+    <Compile Include="Check.Pasv.Header.CacheControl.cs" />
+    <Compile Include="Check.Pasv.Header.ContentTypeMissing.cs" />
+    <Compile Include="Check.Pasv.InformationDisclosure.InUrl.cs" />
+    <Compile Include="Check.Pasv.InformationDisclosure.ReferrerLeak.cs" />
+    <Compile Include="Check.Pasv.Header.WeakAuth.cs" />
+    <Compile Include="Check.Pasv.SSL.InsecureFormPost.cs" />
+    <None Include="Check.Pasv.SSL.InsecureTransition.cs_" />
+    <Compile Include="Check.Pasv.Unicode.InvalidUTF8.cs" />
+    <Compile Include="Check.Pasv.Javascript.Eval.cs" />
+    <Compile Include="Check.Pasv.SSLVersion.cs" />
+    <Compile Include="Check.Pasv.SSL.InsecureFormLoad.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Check.Pasv.Cookie.HttpOnly.cs" />
+    <Compile Include="Check.Pasv.Cookie.LooselyScoped.cs" />
+    <Compile Include="Check.Pasv.Cookie.Secure.cs" />
+    <Compile Include="Check.Pasv.SSL.CertValidation.cs" />
+    <Compile Include="Check.Pasv.UserControlled.Charset.cs" />
+    <Compile Include="Check.Pasv.UserControlled.JavascriptProperty.cs" />
+    <Compile Include="Check.Pasv.UserControlled.HtmlAttributes.cs" />
+    <Compile Include="Check.Pasv.UserControlled.OpenRedirect.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Watcher\Watcher.csproj">
+      <Project>{3222DCBC-E412-4287-816A-1AFEC6E697E7}</Project>
+      <Name>Watcher</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI.Enable.ConfigPanel.resx">
+      <DependentUpon>UI.Enable.ConfigPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI.Cookie.ConfigPanel.resx">
+      <DependentUpon>UI.Cookie.ConfigPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI.InformationDisclosure.ConfigPanel.resx">
+      <DependentUpon>UI.InformationDisclosure.ConfigPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Check.Pasv.UserControlled.Cookie.cs" />
+    <Compile Include="Check.Pasv.UserControlled.JavascriptEvent.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Casaba.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Check.Pasv.Charset.Mismatch.cs" />
+    <Compile Include="Check.Pasv.Header.FrameOptions.cs" />
+    <Compile Include="Check.Pasv.Header.IeXssProtection.cs" />
+    <Compile Include="Check.Pasv.Header.MimeSniff.cs" />
+    <Compile Include="Check.Pasv.Silverlight.ClientAccessPolicy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Check.Pasv.Silverlight.EnableHTMLAccess.cs" />
+    <Compile Include="Check.Pasv.Asp.Net.ViewState.Mac.cs" />
+    <Compile Include="Check.Pasv.Java.ViewState.cs" />
+    <Compile Include="UI.Enable.ConfigPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI.Enable.ConfigPanel.designer.cs">
+      <DependentUpon>UI.Enable.ConfigPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Check.Pasv.SharePoint.DocLib.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)Watcher\BuildSupport\PostBuildCopy.bat "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
