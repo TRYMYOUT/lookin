@@ -40,21 +40,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings, "Sensitive Header values:", "Enter new words to watch for here:");
             UpdateWordList();
-        }
 
-        public override String GetName()
-        {
-            return "Information Disclosure - Look for sensitive information passed through HTTP request referrer headers.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks for string patterns to identify sensitive information leaked in the HTTP Referrer headers.  " +
-                    "This can violate PCI and most organizational compliance policies.  You can configure the list of strings below " +
-                    "to add or remove values specific to your environment.\r\n\r\n" +
-                    "In addition this check will find credit card numbers, SSN's, and email addresses.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.InfoDisclosure;
+            LongName = "Information Disclosure - Look for sensitive information passed through HTTP request referrer headers.";
+            LongDescription = "This check looks for string patterns to identify sensitive information leaked in the HTTP Referrer headers. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment. In addition this check will look for credit card numbers, SSN's, and email addresses.";
+            ShortName = "Information leak in HTTP referrer";
+            ShortDescription = "The HTTP Header in the following request may have leaked a potentially sensitive parameter to another domain:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#information-disclosure-in-http-referrer";
+            Recommendation = "Do not pass sensitive information in URI's.";
         }
         
         /// <summary>
@@ -66,7 +59,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// <param name="context"></param>
         private void AddAlert(Session session, bool equal)
         {
-            string name = "Information leak in HTTP referrer";
+            string name = ShortName;
             if (!equal)
             {
                 string text =
@@ -77,7 +70,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "The potentially sensitive parameter(s) identified were:\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
             }
             else
             {
@@ -89,7 +82,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "The potentially sensitive parameter(s) identified were:\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance);
+                WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
             }
         }
 

@@ -1,0 +1,76 @@
+Watcher Web Security Tool:
+Team Foundation Server Plugin (Watcher TFS)
+---------------------------------------------
+Copyright (c) 2010, Casaba Security, LLC.
+All rights reserved.
+
+
+Prerequisites
+-------------
+Microsoft (R) Visual Studio Team System 2008
+Microsoft (R) Visual Studio SDK 2008
+Casaba Watcher v1.3.0 or later
+
+Installation
+------------
+
+1.  Copy the following files to %USERPROFILE%\Documents\Fiddler2\Scripts:
+
+    CasabaSecurity.Web.Watcher.TeamFoundation.dll
+    Watcher.TeamFoundation.xml
+
+2.  Ensure that the Visual Studio SDK 2008 has installed the following TF
+	assemblies in the GAC: 
+
+	Microsoft.TeamFoundation.dll
+	Microsoft.TeamFoundation.Client.dll
+	Microsoft.TeamFoundation.Common.dll
+	Microsoft.TeamFoundation.WorkItemTracking.Client.dll
+
+Usage
+-----
+
+1.  Start Fiddler, and select the Watcher tab.
+2.  If the Watcher TFS plugin has loaded successfully, a Team Foundation Server
+    configuration box will appear on the Watcher Configuration tab.
+3.  Enter the TFS Server and Project name of the destination TFS.
+4.  After collecting results you wish to import to TFS, click the Watcher
+    Results tab.
+5.  Select Team Foundation Server from the Export Method drop-down.
+6.  Select one or more results to export to TFS.
+7.  Click Export to export your results.  If prompted, enter your TFS credentials.
+
+Modifying the TFS Template
+--------------------------
+
+Watcher TFS can be configured to support any required fields for the generated
+work items by clicking the Edit Template button the Watcher Configuration tab.
+If an error occurs during the submission of work items to TFS, try modifying
+the template to match your TFS project's schema.
+
+The Watcher TFS template contains further information on the properties it 
+defines.
+
+Caveats
+-------
+
+1.  Watcher TFS Fails to Load on 64-bit Operating Systems
+
+The Team Foundation assemblies are built for x86 only.  This means that they
+will fail to load when running Watcher on x64 platforms.  Fortunately, Fiddler
+provides the ForceCPU application, which allows Fiddler (and thus Watcher) to
+run in x86 mode.  To run Fiddler in x86 mode, run the following commands from
+the Fiddler directory as an Administrator:
+
+	ForceCPU x86
+	Fiddler
+
+NOTE: Running Fiddler in x86 mode on an x64 platform may break SSL interception.
+
+Known Issues
+-------------
+
+1.  TFS binaries are not included with the plugin.  You must install TFS and obtain the DLLs yourself.
+2.  TFS binaries only come in 32-bit flavor and will not work with Fiddler when running as a 64-bit executable.
+3.  Watcher currently does not customize the Severity or Priority fields in the work item based on the severity rating of the finding being saved.
+4.  The progress UI may occasionally disappear or fail to update.

@@ -21,39 +21,45 @@ namespace CasabaSecurity.Web.Watcher.Checks
     /// TODO: Once we get a javascript interpreter integrated, we can catch the other cases. 
     /// TODO: Modify check so it reports only one alert per request.
     /// </summary>
-    public class CheckPasvFlashAllowScriptAccessNew : WatcherCheck
+    public class CheckPasvFlashAllowScriptAccess : WatcherCheck
     {
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private string alertbody2 = "";
         [ThreadStatic] static private string alertbody3 = "";
         [ThreadStatic] static private int findingnum;
 
+        public CheckPasvFlashAllowScriptAccess()
+        {
+            CheckCategory = WatcherCheckCategory.Flash;
+            LongName = "Flash - Look for instantiations of Adobe Flash Player which don't restrict javascript access.";
+            LongDescription = "The Flash object includes a parameter named AllowScriptAccess which can be set to allow a Flash SWF file to access the browser's javascript DOM, even if the page embedding the SWF is different from the page hosting it. This means the SWF could inject javascript, open windows, or perform other dangerous actions if the SWF was vulnerable to such manipulation. Typical values are 'sameDomain', 'always', and 'never'. This check flags patterns which don't set this value to 'never', which allows script access. You may not be concerned when this value is set to 'sameDomain' as that limits the scope of access somewhat, however this gets flagged as well.";
+            ShortName = "Flash allowScriptAccess";
+            ShortDescription = "The page at the following URL specified a potentially insecure allowScriptAccess value when loading a flash SWF file:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#flash-javascript-access";
+            Recommendation = "Set AllowScriptAccess to 'never'.";
+        }
+
+
         public override String GetName()
         {
-            return "Flash - Look for instantiations of Adobe Flash Player which don't restrict javascript access.";
+            return LongName;
         }
 
         public override String GetDescription()
         {
-            String desc = "The Flash object includes a parameter named AllowScriptAccess which can be used " +
-                    "to scope how javascript can access the Flash code.  Typical values are 'sameDomain', 'always', " +
-                    "and 'never'.  This check flags patterns which don't set this value to 'never', " +
-                    "which allows script access.  You may not be concerned when this value is set to 'sameDomain' " +
-                    "as that limits the scope of access somewhat, however this gets flagged as well.";
-
-            return desc;
+            return LongDescription;
         }
 
         private void AddAlert(Session session, WatcherResultSeverity severity, String context)
         {
-            String name = "Flash allowScriptAccess ";
+            String name = ShortName;
             String text =
-                "The page at the following URL specified a potentially insecure allowScriptAccess value when loading a flash SWF file:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 context;
 
-            WatcherEngine.Results.Add(severity, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(severity, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private String AssembleAlert(String alert, String value, String context)

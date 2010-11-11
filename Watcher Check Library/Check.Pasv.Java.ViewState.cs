@@ -46,21 +46,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             configpanel = new EnableCheckConfigPanel(this, "JavaServer Faces ViewState", "Reduce noise - enable only one ViewState finding per site.");
             configpanel.Init();
-            
-        }
 
-
-        public override String GetName()
-        {
-            return "(BETA) JavaServer Faces - identify when ViewState data is insecure.";
-
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks at JavaServer Faces values implemented in Apache MyFaces and Sun's Mojarra project, to detect when cryptographic protection has been disabled. If disabled, it's possible for attackers to tamper with the ViewState and create XSS attacks.  More information is available from the advisory at https://www.trustwave.com/spiderlabs/advisories/TWSL2010-001.txt  \r\n\r\n  Use the configuration option below to reduce output from this check.  When enabled, only one VIEWSTATE finding will be reported per site.  As soon as a single VIEWSTATE finding is identified, no further checking would be done for that domain/site.  When disabled however, the VIEWSTATE will be checked on every single page and page request, which could generate a lot of findings when VIEWSTATE is insecure site-wide.  Keeping this option disabled will produce more thorough results across a site.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Java;
+            LongName = "JavaServer Faces - identify when ViewState data is insecure.";
+            LongDescription = "This check looks at JavaServer Faces values implemented in Apache MyFaces and Sun's Mojarra project, to detect when cryptographic protection has been disabled. If disabled, it's possible for attackers to tamper with the ViewState and create XSS attacks.";
+            ShortName = "JavaServer Faces ViewState vulnerable to tampering";
+            ShortDescription = "The response at the following URL contains a ViewState value that has no cryptographic protections:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#java-myfaces-viewstate";
+            Recommendation = "Secure VIEWSTATE with a MAC specific to your environment.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -82,13 +75,13 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "JavaServer Faces ViewState vulnerable to tampering";
+            String name = ShortName;
             String text =
-                "The response at the following URL contains a ViewState value that has no cryptographic protections:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
         }
 
         /// <summary>
@@ -226,7 +219,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 // host has not been checked yet
                 else
                 {
-                    hosts.Add(hostname);
+                    // Only add the hostname if a finding was recorded
                     return true;
                 }
             }
@@ -283,6 +276,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                         // If the ViewState is not secured cryptographic protections then raise an alert.
                                         if (!IsViewStateSecure(val))
                                         {
+                                            lock (hosts)
+                                            {
+                                                hosts.Add(session.hostname);
+                                            }
                                             AddAlert(session);
                                         }
                                     }

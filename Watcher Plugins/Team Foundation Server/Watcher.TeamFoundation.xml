@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<WatcherTeamFoundationAdapter xmlns="http://schemas.casabasecurity.com/schemas/watcher/tfs/1.0">
+  <!-- 
+  Watcher Team Foundation Export Adapter Configuration
+  Copyright (c) 2010 Casaba Security, LLC.  All rights reserved.
+  
+  This file provides a mapping from Watcher findings attributes to arbitrary Team 
+  Foundation Server project template fields.  It has been configured to map Watcher
+  findings to the SDL Process Template.  To configure Watcher to export to other 
+  templates, this file must be updated appropriately.
+  
+  NOTE: Team Foundation Server connection settings are set via the UI and stored in 
+  the application configuration.  
+  
+  To configure the Team Foundation Server work item export, use the WorkItem schema
+  below.  For each field of a Watcher finding you wish to export, you must create a 
+  Field entry, consisting of a Field element and the child elements WatcherSource, 
+  TeamFoundationDestination, and DefaultValue.
+  
+  Field entries that are not defined will not be exported.  If no Field entries are 
+  defined, Watcher will abort the export.
+  
+  The elements of a Field entry are described below:
+  
+  // WatcherSource //
+  
+  WatcherSource defines an attribute of a Watcher finding from which data will be read.
+  If the attribute specified here is not a field known by Watcher, the export will not
+  occur.  The following fields are valid WatcherSource values:
+  
+  CasabaSecurity.Web.Watcher.Title
+  CasabaSecurity.Web.Watcher.Description
+  CasabaSecurity.Web.Watcher.Origin
+  CasabaSecurity.Web.Watcher.Severity
+  
+  This field needn't be defined if a you wish to export the same value to a TFS project
+  for every Watcher finding that is exported.  In this case, only the DefaultValue and
+  TeamFoundationDestination elements need to be defined.
+  
+  // TeamFoundationDestination //
+  
+  TeamFoundationDestination defines the field in the Team Foundation project to which 
+  data read from WatcherSource will be written.  If the field specified here is not a
+  field supported by the Team Foundation project specified in the UI, the export will
+  not occur.  Field values for this element will vary depending on the template used
+  for the project being exported to.  
+  
+  For the SDL Process Template, the following is a sample set of fields that Watcher 
+  will export to (as defined in this file):
+  
+  System.Title
+  System.Description
+  System.WorkItemType
+  System.State
+  Microsoft.SDL.Security.Blocking
+  Microsoft.SDL.Security.Cause
+  Microsoft.SDL.Security.Effect
+  Microsoft.SDL.Security.Origin
+  Microsoft.SDL.Security.Severity
+  Microsoft.VSTS.Common.Priority
+  Microsoft.VSTS.Common.Triage
+  
+  // DefaultValue //
+  
+  DefaultValue defines the value that should be written to TeamFoundationDestination
+  if the WatcherSource element is not present in the Field map.  If the WatcherSource
+  element is present in addition to the DefaultValue, the default value will be ignored.
+  
+  /// Translation Table ///
+  
+  The value of a WatcherSource field will not always map one to one with the value 
+  recognized by a TeamFoundationDestination field.  Thus, for fields with a set of
+  values that are enumerations (versus arbitrary values), a mapping must be created 
+  to translate the source to destination field values.  
+  
+  To create this mapping, it is helpful to know the types and values associated with 
+  each of attribute of Watcher finding that is available for export:
+
+  Field Name                             Type             Possible Values
+  ====================================================================================
+  CasabaSecurity.Watcher.Severity        Enumeration      Informational
+                                                          Low
+                                                          Medium
+                                                          High
+  
+  CasabaSecurity.Watcher.Title           String           [Arbitrary]
+  CasabaSecurity.Watcher.Description     String           [Arbitrary]
+  CasabaSecurity.Watcher.Origin          String           [Arbitrary]
+  
+  -->
+  
+  <!-- 
+  The following field, CasabaSecurity.Web.Watcher.Severity, will have its values mapped from the 
+  value specified in the From attribute, to the value of the attribute To.
+   -->
+  <ValueTranslation>
+    
+    <WatcherField Name="CasabaSecurity.Web.Watcher.Severity">
+      <Value From="Informational" To="4 - Low"/>
+      <Value From="Low"           To="3 - Moderate"/>
+      <Value From="Medium"        To="2 - Important"/>
+      <Value From="High"          To="1 - Critical"/>
+    </WatcherField>
+    
+  </ValueTranslation>
+ 
+  <!-- The following entries will be entered as a work item type of "Bug". -->
+  <WorkItem Type="Bug">
+    
+    <!-- For every work item, CasabaSecurity.Web.Watcher.Title will always be mapped to System.Title. -->
+    <Field>
+      <WatcherSource>CasabaSecurity.Web.Watcher.Title</WatcherSource>
+      <TeamFoundationDestination>System.Title</TeamFoundationDestination>
+    </Field>
+    
+    <!-- CasabaSecurity.Web.Watcher.Description will be mapped to System.Description. -->
+    <Field>
+      <WatcherSource>CasabaSecurity.Web.Watcher.Description</WatcherSource>
+      <TeamFoundationDestination>System.Description</TeamFoundationDestination>
+    </Field>
+
+    <!-- System.WorkItemType will always be entered with a value of "Bug". -->
+    <Field>
+      <TeamFoundationDestination>System.WorkItemType</TeamFoundationDestination>
+      <DefaultValue>Bug</DefaultValue>
+    </Field>
+
+    <!-- System.State will always be entered with a value of "Active". -->
+    <Field>
+      <TeamFoundationDestination>System.State</TeamFoundationDestination>
+      <DefaultValue>Active</DefaultValue>
+    </Field>
+
+    <!-- Microsoft.VSTS.Common.Priority will always be entered with a value of "1". -->
+    <Field>
+      <TeamFoundationDestination>Microsoft.VSTS.Common.Priority</TeamFoundationDestination>
+      <DefaultValue>1</DefaultValue>
+    </Field>
+
+    <!-- Microsoft.VSTS.Common.Triage will always be entered with a value of "Investigate". -->
+    <Field>
+      <TeamFoundationDestination>Microsoft.VSTS.Common.Triage</TeamFoundationDestination>
+      <DefaultValue>Investigate</DefaultValue>
+    </Field>
+
+    <!-- Microsoft.SDL.Security.Cause will always be entered with a value of "Other". -->
+    <Field>
+      <TeamFoundationDestination>Microsoft.SDL.Security.Cause</TeamFoundationDestination>
+      <DefaultValue>Other</DefaultValue>
+    </Field>
+
+    <!-- Microsoft.SDL.Security.Effect will always be entered with a value of "Attack Surface Reduction". -->
+    <Field>
+      <TeamFoundationDestination>Microsoft.SDL.Security.Effect</TeamFoundationDestination>
+      <DefaultValue>Attack Surface Reduction</DefaultValue>
+    </Field>
+    
+    <!-- 
+    NOTE: For the Microsoft SDL Agile Template, remove the following two fields:
+    -->
+
+    <!-- CasabaSecurity.Web.Watcher.Severity will be mapped to Microsoft.SDL.Security.Severity. -->
+    <Field>
+      <WatcherSource>CasabaSecurity.Web.Watcher.Severity</WatcherSource>
+      <TeamFoundationDestination>Microsoft.SDL.Security.Severity</TeamFoundationDestination>
+    </Field>
+
+    <!-- Microsoft.SDL.Security.Blocking will always be entered with a value of "Blocking". -->
+    <Field>
+      <TeamFoundationDestination>Microsoft.SDL.Security.Blocking</TeamFoundationDestination>
+      <DefaultValue>Blocking</DefaultValue>
+    </Field>
+    
+  </WorkItem>
+
+</WatcherTeamFoundationAdapter>

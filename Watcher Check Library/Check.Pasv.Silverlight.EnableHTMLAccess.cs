@@ -55,38 +55,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody2 = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvSilverlightAllowHtmlAccess()
         {
-            return "Silverlight - Look for instantiations of Silverlight Player which don't restrict javascript access.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "The Silverlight object includes a parameter named EnableHtmlAccess which can be used " +
-                    "to scope how javascript can access the Silverlight code.  Values can be either true or false." +
-                    "This check flags patterns which set this value to 'true', " +
-                    "which allows script access.  For more information see:  \r\n\r\n" +
-                    "http://msdn.microsoft.com/en-us/library/cc838264(VS.95).aspx";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Silverlight;
+            LongName = "Silverlight - Look for instantiations of Silverlight Player which don't restrict javascript access.";
+            LongDescription = "The Silverlight object includes a parameter named EnableHtmlAccess which can be used to scope how javascript can access the Silverlight code. Values can be either true or false.  This check flags patterns which don't set this value to 'false', which allows script access.";
+            ShortName = "Silverlight EnableHtmlAccess";
+            ShortDescription = "The page at the following URL specified a potentially insecure EnableHtmlAccess value when loading a Silverlight XAP file.  When enabled, this value allows javascript access to the Silverlight code:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#silverlight-javascript-access";
+            Recommendation = "Set the EnableHtmlAccess parameter to 'false'.";
         }
 
         private void AddAlert(Session session, WatcherResultSeverity severity, String context)
         {
-            String name = "Silverlight EnableHtmlAccess";
+            String name = ShortName;
             String text =
 
-                name +
-                "\r\n\r\n" +
-                "Risk: " +
-                severity.ToString() +
-                "\r\n\r\n" +
-                "The page at the following URL specified a potentially insecure EnableHtmlAccess value when loading a Silverlight XAP file:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 context;
 
-            WatcherEngine.Results.Add(severity, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(severity, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private String AssembleAlert(String alert, String value, String context)

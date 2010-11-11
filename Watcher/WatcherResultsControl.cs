@@ -151,7 +151,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="resultDescription">The description of the finding.</param>
         /// <param name="compliesWith">Standards implemented by Watcher that this check conforms to.</param>
         /// <param name="count">The number of times the finding was discovered.</param>
-        public void AddAlert(WatcherResultSeverity resultSeverity, int sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, int count)
+        public void AddAlert(WatcherResultSeverity resultSeverity, int sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, int count, String reflink)
         {
             AlertListViewItem alvi = null;
 
@@ -167,28 +167,28 @@ namespace CasabaSecurity.Web.Watcher
             switch (resultSeverity)
             {
                 case WatcherResultSeverity.High:
-                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count);
+                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count, reflink);
                     alvi.ForeColor = Color.Red;
                     highissueincrement = count;
                     highincrement++;
                     break;
 
                 case WatcherResultSeverity.Medium:
-                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count);
+                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count, reflink);
                     alvi.ForeColor = Color.Orange;
                     mediumissueincrement = count;
                     mediumincrement++;
                     break;
 
                 case WatcherResultSeverity.Low:
-                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count);
+                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count, reflink);
                     alvi.ForeColor = Color.Blue;
                     lowissueincrement = count;
                     lowincrement++;
                     break;
 
                 case WatcherResultSeverity.Informational:
-                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count);
+                    alvi = new AlertListViewItem(resultSeverity, sessionId, checkName, sessionUrl, resultDescription, count, reflink);
                     alvi.ForeColor = Color.Green;
                     informationalissueincrement = count;
                     informationalincrement++;
@@ -443,6 +443,7 @@ namespace CasabaSecurity.Web.Watcher
                 FiddlerApplication.UI.lvSessions.Items[index].Focused = true;
                 FiddlerApplication.UI.lvSessions.Items[index].Selected = true;
                 // Active the Raw request/response inspector for this session
+                FiddlerApplication.UI.actInspectSession();
                 FiddlerApplication.UI.ActivateRequestInspector("Raw");
                 FiddlerApplication.UI.ActivateResponseInspector("Raw");
             }
@@ -463,6 +464,7 @@ namespace CasabaSecurity.Web.Watcher
             if (this.alertListView.SelectedItems.Count == 1)
             {
                 this.alertTextBox.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).Description;
+                this.reflinkLabel.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).refLink;
             }
         } 
 
@@ -471,12 +473,16 @@ namespace CasabaSecurity.Web.Watcher
         /// </summary>
         private void FileSaveButton_Click(object sender, EventArgs e)
         {
+
+            // CHANGE - We used to just export selected items from Results, now we export all items.
+            /*
             // If no alerts are selected, bail.
             if (alertListView.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Nothing to export.  Please select one or more items to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+             */
 
             // If no export method is selected, bail.
             if (cbExportMethod.SelectedItem == null)
@@ -487,7 +493,10 @@ namespace CasabaSecurity.Web.Watcher
 
             // Gather the selected results
             WatcherResultCollection selectedResults = new WatcherResultCollection();
-            foreach (AlertListViewItem item in alertListView.SelectedItems)
+
+            // CHANGE - We used to just export selected items from Results, now we export all items.
+            //foreach (AlertListViewItem item in alertListView.SelectedItems)
+            foreach (AlertListViewItem item in alertListView.Items)
             {
                 WatcherResult result = new WatcherResult();
                 result.Description = item.Description;
@@ -651,7 +660,7 @@ namespace CasabaSecurity.Web.Watcher
             {
                 // Show the link was visited and go to our URL
                 e.Link.Visited = true;
-                System.Diagnostics.Process.Start("http://www.casabasecurity.com/");
+                System.Diagnostics.Process.Start("http://www.casaba.com/");
             }
             catch (Win32Exception ex)
             {
@@ -711,6 +720,33 @@ namespace CasabaSecurity.Web.Watcher
         {
             WatcherEngine.Configuration.Remove("DefaultSaveMethod");
             WatcherEngine.Configuration.Add("DefaultSaveMethod", Utility.Base64Encode(this.cbExportMethod.SelectedItem.ToString()));
+        }
+
+        private void reflinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                e.Link.Visited = true;
+                System.Diagnostics.Process.Start(reflinkLabel.Text);
+            }
+
+            catch (Win32Exception ex)
+            {
+                // Thrown when a Win32 error code is returned
+                Trace.TraceError("Error: Win32Exception: {0}", ex.Message);
+            }
+
+            catch (ObjectDisposedException ex)
+            {
+                // Thrown when an operation is performed on a disposed object
+                Trace.TraceError("Error: ObjectDisposedException: {0}", ex.Message);
+            }
+
+            catch (FileNotFoundException ex)
+            {
+                // Thrown when the resource does not exist
+                Trace.TraceError("Error: FileNotFoundException: {0}", ex.Message);
+            }
         }
 
         #endregion

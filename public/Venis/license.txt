@@ -1,0 +1,22 @@
+Venis IX Licensing
+=================================
+
+Except where otherwise noted, all of the documentation and software included is copyrighted by Spaceblue LLC.
+
+Copyright (C) 2000-2003 Spaceblue LLC. All rights reserved.
+
+Venis IX Software License Agreement version 1.2
+
+1. Venis IX is free and includes no technical support.
+2. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+3. You may not decompile, disassemble, or create derivative works based upon the software. You may not modify, adapt, translate, or create derivative works based upon the written documentation.
+4. If you would like to distribute Venis IX packaged within a product such as a book, please email angelo[at]spaceblue.com  for written authorization.
+5. This software is provided "as-is," without any express or implied warranty.  In no event shall the author be held liable for any damages arising from the use of this software.
+6. Computer professionals are obligated to notify the author Spaceblue LLC of software bugs.
+
+
+Information:
+Web: http://www.spaceblue.com/venis/
+
+
+Date: 1/3/2009

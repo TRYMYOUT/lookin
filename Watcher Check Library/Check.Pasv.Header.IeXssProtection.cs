@@ -18,54 +18,42 @@ namespace CasabaSecurity.Web.Watcher.Checks
     /// </summary>
     public class CheckPasvHeaderXssProtection : WatcherCheck
     {
-        [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvHeaderXssProtection()
         {
-            return "Header - Checks that IE8's XSS protection filter has not been disabled by the Web-application. ";
-        }
-
-        public override String GetDescription()
-        {
-            //TODO: Beef this up.
-            String desc = "This check is specific to Internet Explorer 8. " +
-                    "It flags when an HTTP response " +
-                    "sets the 'X-XSS-Protection' header to a value of 0, which disables IE8's XSS protection filter." +
-                    "For more information see: \r\n\r\n" +
-                    "http://blogs.msdn.com/ie/archive/2008/07/01/ie8-security-part-iv-the-xss-filter.aspx";
-            return desc;
+            CheckCategory = WatcherCheckCategory.Header;
+            LongName = "Header - Checks that IE8's XSS protection filter has not been disabled by the Web-application.";
+            LongDescription = "This check is specific to Internet Explorer 8. It flags when an HTTP response sets the X-XSS-Protection'; header to a value of 0, which disables IE8's XSS protection filter.";
+            ShortName = "IE8 XSS protection was disabled by site";
+            ShortDescription = "The response to the following request disabled IE8's XSS protection filter:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#internet-explorer-xss-filter-disabled";
+            Recommendation = "If IE's XSS filter must be disabled for functional or other reasons, ensure that every page of the website is properly sanitizing user input and output, and well-protected against XSS vulnerability.";
         }
 
         private void AddAlert(Session session)
         {
-            string name = "IE8 XSS protection was disabled by site";
+            string name = ShortName;
             string url = session.fullUrl.Split('?')[0];
-            findingnum++;
             string text =
-                findingnum.ToString() + ") " +
-                "The response to the following request disabled IE8's XSS protection filter:\r\n\r\n " +
+                ShortDescription +
                 url +
                 "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)
         {
-            findingnum = 0;
-            if (session.oRequest.headers.ExistsAndContains("User-Agent", "MSIE 8.0"))
+            if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
-                if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
+                if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                 {
-                    if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
+                    // Only look at HTML responses.
+                    if (Utility.IsResponseHtml(session) || Utility.IsResponsePlain(session))
                     {
-                        // Only look at HTML responses.
-                        if (Utility.IsResponseHtml(session) || Utility.IsResponsePlain(session))
+                        if (session.oResponse.headers.ExistsAndEquals("X-XSS-Protection", "0"))
                         {
-                            if (session.oResponse.headers.ExistsAndEquals("X-XSS-Protection", "0"))
-                            {
-                                AddAlert(session);
-                            }
+                            AddAlert(session);
                         }
                     }
                 }

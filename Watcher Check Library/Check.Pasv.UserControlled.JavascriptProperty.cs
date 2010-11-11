@@ -21,33 +21,29 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvUserControlledJavascriptProperty()
         {
-            return "User Controlled - Javascript property.";
+            CheckCategory = WatcherCheckCategory.UserControlled;
+            LongName = "User Controlled - Javascript property.";
+            LongDescription = "This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.";
+            ShortName = "User controllable javascript property (XSS)";
+            ShortDescription = "The page at the following URL appears to contain user input in a javascript property value:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-javascript-reference";
+            Recommendation = "Do not allow user-input to control javascript source location references.";
         }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where URL's in certain javascript properties (e.g. createElement src) might be" +
-                    "controlled.  This provides hot-spot " +
-                    "detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.  ";
-
-            return desc;
-        }
-
+        
         private void AddAlert(Session session)
         {
-            String name = "User controllable javascript property (XSS)";
+            String name = ShortName;
             String text =
 
-                "The page at the following URL appears to contain user input in a javascript property value:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody +
                 "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String parm, String val, String context)
@@ -148,7 +144,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
                     {
-                        parms = GetRequestParameters(session);
+                        parms = Utility.GetRequestParameters(session);
 
                         if (parms != null && parms.Keys.Count > 0)
                         {

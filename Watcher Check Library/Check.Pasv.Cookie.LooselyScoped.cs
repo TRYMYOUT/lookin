@@ -29,24 +29,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             configpanel = new CookieCheckConfigPanel(this);
             configpanel.Init();
-        }
+            configpanel.enablefiltercheckBox.Visible = false; //Hack requested to enable filtering always
 
-        public override String GetName()
-        {
-            return "Cookie - Look for cookies with loosely scoped domain restrictions.";
-        }
+            CheckCategory = WatcherCheckCategory.Cookie;
+            LongName = "Cookie - Look for cookies with loosely scoped domain restrictions.";
+            LongDescription = "Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookieLoosely scoped cookies are common in mega-applications like google.com and live.com.";
+            ShortName = "Cookie's domain was loosely scoped";
+            ShortDescription = "The response included a Set-Cookie header that specified a loosely scoped domain:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#cookie-loosely-scoped-domain";
+            Recommendation = "Always scope cookies to a FQDN.";
 
-        public override String GetDescription()
-        {
-            String desc = "Cookies can be scoped by domain or path.  This check is only concerned with domain scope." +
-                    "The domain scope applied to a cookie determines which domains can access it.  For example, " +
-                    "a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to " +
-                    "a parent domain e.g. nottrusted.com.  In the latter case, any subdomain of nottrusted.com can access the cookie" +
-                    "Loosely scoped cookies are common in mega-applications like google.com and live.com.\r\n\r\n" +
-                    "Because Watcher can't distinguish between the important and unimportant " +
-                    "cookies, you can configure an inclusive or exclusive list of cookie names to watch below.";
-
-            return desc;
         }
 
         public override void Clear()
@@ -84,9 +76,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session, String org)
         {
-            String name = "Cookie's domain was loosely scoped";
+            String name = ShortName;
             String text =
-                "The response included a Set-Cookie header that specified a loosely scoped domain:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The origin domain used for comparison was:\r\n\r\n" +
@@ -95,7 +87,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "The cookie(s) returned were:\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)
@@ -116,15 +108,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
             findingnum = 0;
 
             String filterstate = configpanel.GetFilterState();
-            filter = configpanel.enablefiltercheckBox.Checked;
+            //filter = configpanel.enablefiltercheckBox.Checked;
+            filter = true; //Hack requested to always enable filter
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
                 if (session.responseCode == 200)
                 {
-                    org = WatcherEngine.Configuration.OriginDomain;
+                    // Update 3/24/2010:
+                    // If an origin domain was not configured in Watcher, then 
+                    // treat the current domain as the origin.  This is part of our
+                    // default behavior change to treat each response host as 
+                    // the origin.  By doing so, we can identify issues that would
+                    // otherwise get ignored when an origin domain is not configured.
 
-                    //TODO: Check seems wrong if OriginDomain can accept regular expressions!!!!
+                    if (String.IsNullOrEmpty(WatcherEngine.Configuration.OriginDomain))
+                    {
+                        org = session.hostname;
+                    }
+                    else
+                    {
+                        org = WatcherEngine.Configuration.OriginDomain;
+                    }
+
+                    // TODO: Check seems wrong if OriginDomain can accept regular expressions!!!!
                     if (org != null && org.Length > 0 && org.IndexOf("*") < 0)
                     {
                         if (session.oResponse.headers.Exists("set-cookie"))

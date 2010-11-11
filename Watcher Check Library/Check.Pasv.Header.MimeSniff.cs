@@ -19,21 +19,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvHeaderMimeSniff()
         {
-            return "Header - Checks that the X-CONTENT-TYPE-OPTIONS defense against MIME-sniffing has been declared.";
-        }
-
-        public override String GetDescription()
-        {
-            //TODO: Beef this up.
-            String desc = "This check is specific to Internet Explorer 8 and Google Chrome.  " +
-                        "It flags HTTP responses which don't set the X-CONTENT-TYPE-OPTIONS header in responses. This 'nosniff' HTTP header is used by " +
-                        "certain browsers such as IE8 and Chrome to reduce the potential for vulnerability that can " +
-                        "occur when an attacker can trigger and manipulate a browser's MIME-sniffing behavior. " +
-                        "For more information see: \r\n\r\n" +
-                        "http://blogs.msdn.com/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx";
-            return desc;
+            CheckCategory = WatcherCheckCategory.Header;
+            LongName = "Header - Checks that the X-CONTENT-TYPE-OPTIONS defense against MIME-sniffing has been declared.";
+            LongDescription = "This check is specific to Internet Explorer 8 and Google Chrome. It flags HTTP responses which don't set the X-CONTENT-TYPE-OPTIONS header in responses. This 'nosniff' HTTP header is used by certain browsers such as IE8 and Chrome to reduce the potential for vulnerability that can occur when an attacker can trigger and manipulate a browser's MIME-sniffing behavior.";
+            ShortName = "The Anti-MIME-Sniffing header was not set to 'nosniff'";
+            ShortDescription = "The response to the following request did not set the X-CONTENT-TYPE-OPTIONS header value to 'nosniff'.\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#http-header-x-content-type-options";
+            Recommendation = "Ensure each page sets a Content-Type header and the X-CONTENT-TYPE-OPTIONS if the Content-Type header is unknown.";
         }
 
         private void AddAlert(Session session, string value)
@@ -57,7 +51,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "The value was set to:\r\n\r\n '" + value + "'\r\n\r\n";
             }
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)

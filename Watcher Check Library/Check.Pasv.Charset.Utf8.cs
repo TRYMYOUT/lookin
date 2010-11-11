@@ -38,20 +38,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvCharsetUTF8()
         {
-            return "Charset - Charset not explicitly set to UTF-8 in HTML/XML content.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifies HTTP headers, meta tags, and XML documents that don't explicitly " +
-                    "set a charset value to UTF-8.  UTF-8 is supported in all major Web browsers today, and from a security " +
-                    "perspective it is the preferred charset for most Web-applications.  When a charset is not " +
-                    "explicitly declared, Web browsers are forced into an undesirable content-sniffing mode " +
-                    "to determine the content's character set.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Charset;
+            LongName = "Charset - Charset not explicitly set to UTF-8 in HTML/XML content.";
+            LongDescription = "This check identifies HTTP headers, meta tags, and XML documents that don't explicitly set a charset value to UTF-8. UTF-8 is supported in all major Web browsers today, and from a security perspective it is the preferred charset for most Web-applications. When a charset is not explicitly declared, Web browsers are forced into an undesirable content-sniffing mode to determine the content's character set.";
+            ShortName = "Charset not UTF-8";
+            ShortDescription = "The response to the following request did not explicitly set the character set as UTF-8.";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#charset-not-utf8";
+            Recommendation = "Force UTF-8 for all text content, such as HTML and XML.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -62,16 +57,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            string name = "Charset not UTF-8";
+            string name = ShortName;
             string text =
-                "The response to the following request did not explicitly set the character set as UTF-8:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The following issue(s) were identified:" +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()
@@ -147,12 +142,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
-                if ((Utility.IsResponseHtml(session) || Utility.IsResponseXml(session)) && Utility.UrlNotInList(session.fullUrl, urls))
+                // We only care about HTML and XML content, see:
+                // http://www.w3.org/International/O-charset
+                //
+                if (Utility.IsResponseHtml(session) && Utility.UrlNotInList(session.fullUrl, urls))
                 {
-                    // We only care about HTML and XML content, see:
-                    // http://www.w3.org/International/O-charset
-                    //
-                    if (Utility.IsResponseHtml(session))
+                    // Ignore responses with empty bodies.
+
+                    if (session.responseBodyBytes.Length != 0)
                     {
                         // IsResponse* functions fail if no content-type header, 
                         // so, if here, we know we have content-type header value (either html or xml).
@@ -195,46 +192,46 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             }
                         }
                     }
-                    else if (Utility.IsResponseXml(session))
+                }
+                else if (Utility.IsResponseXml(session) && Utility.UrlNotInList(session.fullUrl, urls))
+                {
+                    // IsResponse* functions fail if no content-type header, so, if here, we know we have content-type header value (either html or xml).
+
+                    // First check the HTTP Content-Type header.
+                    // If it's set to UTF8 then we're happy.  We don't care if the
+                    // XML encoding value is set at this point - the HTTP header is more important.
+                    // And, there's a separate check to detect a mismatch.
+                    if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
                     {
-                        // IsResponse* functions fail if no content-type header, so, if here, we know we have content-type header value (either html or xml).
+                        body = Utility.GetResponseText(session);
 
-                        // First check the HTTP Content-Type header.
-                        // If it's set to UTF8 then we're happy.  We don't care if the
-                        // XML encoding value is set at this point - the HTTP header is more important.
-                        // And, there's a separate check to detect a mismatch.
-                        if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
+                        // Ignore empty response body
+                        if (!String.IsNullOrEmpty(body))
                         {
-                            body = Utility.GetResponseText(session);
-
-                            // Ignore empty response body
-                            if (!String.IsNullOrEmpty(body))
+                            // need to escape the ? for the regex in GetHtmlTags()
+                            foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
                             {
-                                // need to escape the ? for the regex in GetHtmlTags()
-                                foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
+                                enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
+                                if (enc != null)
                                 {
-                                    enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
-                                    if (enc != null)
-                                    {
-                                        IsCharsetUTF8(enc, "xml");
-                                        flag = true;
-                                    }
+                                    IsCharsetUTF8(enc, "xml");
+                                    flag = true;
                                 }
+                            }
 
-                                if (!flag)
-                                {
-                                    findingnum++;
-                                    //AddAlert(watcher, session, "Content type and/or charset not defined in <?xml version=\"1.0\" encoding=\"utf-8\" ?>.");
-                                    alertbody = alertbody + findingnum.ToString() + ") Content type and/or charset not defined as <?xml version =\"1.0\" encoding=\"utf-8\" ?>.\r\n";
-                                }
+                            if (!flag)
+                            {
+                                findingnum++;
+                                //AddAlert(watcher, session, "Content type and/or charset not defined in <?xml version=\"1.0\" encoding=\"utf-8\" ?>.");
+                                alertbody = alertbody + findingnum.ToString() + ") Content type and/or charset not defined as <?xml version =\"1.0\" encoding=\"utf-8\" ?>.\r\n";
                             }
                         }
                     }
+                }
                     if (!String.IsNullOrEmpty(alertbody))
                     {
                         AddAlert(session);
                     }
-                }
             }
         }
     }

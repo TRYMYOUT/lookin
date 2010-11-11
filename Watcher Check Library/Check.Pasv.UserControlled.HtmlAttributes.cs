@@ -19,32 +19,29 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
-        
-        public override String GetName()
-        {
-            return "User Controlled - HTML element attributes (XSS).";
-        }
 
-        public override String GetDescription()
+        public CheckPasvUserControlledHTMLAttributes()
         {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where certain HTML attribute values might be controlled.  This provides hot-spot " +
-                    "detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.  ";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.UserControlled;
+            LongName = "User Controlled - HTML element attributes (potential XSS).";
+            LongDescription = "This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability. ";
+            ShortName = "User controllable HTML element attribute (potential XSS)";
+            ShortDescription = "User-controlled HTML attribute values were found.  Try injecting special characters such as ', \", <, and > to see if XSS might be possible.  The page at the following URL:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-html-attribute";
+            Recommendation = "Validate all input and sanitize output it before writing to any HTML attributes.";
         }
 
         private void AddAlert(Session session)
         {
-            string name = "User controllable HTML element attribute (XSS)";
+            string name = ShortName;
             string text =
 
-                "The page at the following URL: \r\n\r\n" +
+                ShortDescription +
                 session.fullUrl + 
-                " appears to include user input in: \r\n\r\n" +
+                "\r\n\r\nappears to include user input in: \r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String tag, String attribute, String parm, String val, String context)
@@ -60,7 +57,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "=" +
                 val +
                 "\r\n\r\n" +
-                "The context was:\r\n" +
+                "The user-controlled value was:\r\n" +
                 context +
                 "\r\n\r\n\r\n";
         }
@@ -184,7 +181,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
         public override void Check(Session session, UtilityHtmlParser htmlparser)
         {
             NameValueCollection parms = null;
-            String body = null;
             alertbody = "";
             findingnum = 0;
             List<HtmlElement> htmlElements = htmlparser.HtmlElementCollection;
@@ -193,21 +189,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session))
+                    // Make sure that we have at least one HTML element.
+                    if (htmlElements.Count >= 1)
                     {
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
-                        {
-                            parms = GetRequestParameters(session);
+                        parms = Utility.GetRequestParameters(session);
 
-                            if (parms != null && parms.Keys.Count > 0)
-                            {
-                                CheckTags(parms, htmlElements);
-                            }
-                            if (!String.IsNullOrEmpty(alertbody))
-                            {
-                                AddAlert(session);
-                            }
+                        if (parms != null && parms.Keys.Count > 0)
+                        {
+                            CheckTags(parms, htmlElements);
+                        }
+                        if (!String.IsNullOrEmpty(alertbody))
+                        {
+                            AddAlert(session);
                         }
                     }
                 }

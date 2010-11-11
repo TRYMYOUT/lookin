@@ -61,6 +61,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             this.btnRemove.TabIndex = 3;
             this.btnRemove.Text = "Remove";
             this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click +=new System.EventHandler(deletebutton_Click);
+
             // 
             // addbutton
             // 
@@ -71,6 +73,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             this.addbutton.TabIndex = 2;
             this.addbutton.Text = "Add";
             this.addbutton.UseVisualStyleBackColor = true;
+            this.addbutton.Click += new System.EventHandler(addbutton_Click);
             // 
             // stringcheckentrytextBox
             // 

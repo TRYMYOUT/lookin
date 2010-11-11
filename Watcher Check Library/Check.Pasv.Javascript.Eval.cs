@@ -24,35 +24,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Complies with Microsoft SDL
             StandardsCompliance =
                 WatcherCheckStandardsCompliance.MicrosoftSDL;
-        }
 
-        public override String GetName()
-        {
-            return "Javascript - Examine javascript code for use of dangerous eval() methods.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifies the use of eval(), setTimeout(), and setInterval() in javascript code.  " +
-                "These functions evaluate a string and execute it as javascript code.  When they're passed attacker-controlled " +
-                "values, cross-site scripting and other attacks could be possible.  These findings should be reviewed by a " +
-                "security analyst for exploitability.  Their use may also violate your organizational policy.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.JavaScript;
+            LongName = "Javascript - Examine javascript code for use of dangerous eval() methods.";
+            LongDescription = "This check identifies the use of eval(), setTimeout(), and setInterval() in javascript code. These functions evaluate a string and execute it as javascript code. When they're passed attacker-controlled values, cross-site scripting and other attacks could be possible. These findings should be reviewed by a security analyst for exploitability. Their use may also violate your organizational policy.";
+            ShortName = "Javascript eval() usage";
+            ShortDescription = "The page at the following URL appears to contain javascript that calls the eval() function:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#javascript-eval";
+            Recommendation = "Never pass un-sanitized user-input to eval() statements.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Javascript eval() usage";
+            String name = ShortName;
             String text =
 
-                "The page at the following URL appears to contain javascript that calls the eval() function:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The context was:\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
         }
 
         private void CheckJavascriptEvalUsage(Session session, String input)

@@ -55,20 +55,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             configpanel = new EnableCheckConfigPanel(this, "SSL CRL Validation", "Enable full CRL validation of SSL Certificate Chains");
             configpanel.Init();
-        }
 
-        public override String GetName()
-        {
-            return "SSL - SSL certificate validation.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check validates SSL certificates and reports a finding when validation errors " +
-                    "such as host name mis-match and expiration are found.  If configured, this check will also attempt to " +
-                    "walk the certificate chain and perform CRL revocation checking.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.SSL;
+            LongName = "SSL - Look for certificate validation issues.";
+            LongDescription = "This check validates SSL certificates and reports a finding when validation errors such as host name mis-match and expiration are found. If configured, this check will also attempt to walk the certificate chain and perform CRL revocation checking.";
+            ShortName = "SSL - SSL certificate validation";
+            ShortDescription = "SSL issues were identified with host:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-certificate-validation";
+            Recommendation = "Websites should use SSL certificates that match their selected hostnames, and should be re-provisioned prior to expiration.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -80,17 +74,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
             return panel;
         }
 
-        private void AddAlert(Session session, String name, String context)
+        private void AddAlert(Session session, String context)
         {
+            String name = ShortName;
             String text =
 
-                "SSL issues were identified with host: \r\n" +
+                ShortDescription +
                 session.host +		// don't change this or we'll get duplicate alerts
                 "\r\n\r\n" +
                 context;
 
             // don't change session.host or we'll get duplicate alerts
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, 1, Reference);
         }
 
         // we only want to check the SSL handshake once per host
@@ -106,7 +101,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 context;
 
             // don't change session.host or we'll get duplicate alerts
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, 1, Reference);
         }
 
         public override void Clear()
@@ -186,7 +181,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 if (!String.IsNullOrEmpty(e.Message))
                 {
                     error = e.Message;
-                    AddAlert(state.session, "SSL certificate validation error\r\n", error);
+                    AddAlert(state.session, error);
                 }
             }
             state.ssl.Flush();
@@ -218,7 +213,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                    error = e.InnerException.Message;
                 }
 
-                AddAlert(session, "SSL certificate validation error\r\n", error);
+                AddAlert(session, error);
             }
 
             catch (IOException)

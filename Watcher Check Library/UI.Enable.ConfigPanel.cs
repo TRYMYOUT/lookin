@@ -43,7 +43,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public void Init()
         {
-            string configstring = WatcherEngine.Configuration.GetConfigItem(watchercheck, "Filter", "False");
+            string configstring = WatcherEngine.Configuration.GetConfigItem(watchercheck, "Filter", "True");
             if (configstring == "True")
             {
                 enablefiltercheckBox.CheckState = CheckState.Checked;

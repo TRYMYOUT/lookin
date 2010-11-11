@@ -500,6 +500,9 @@ namespace CasabaSecurity.Web.Watcher
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WatcherResultsControl));
             this.resultPanel = new System.Windows.Forms.Panel();
+            this.alertTextBox = new System.Windows.Forms.TextBox();
+            this.referencepanel = new System.Windows.Forms.Panel();
+            this.referencelabel = new System.Windows.Forms.Label();
             this.pnlCopyright = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
@@ -510,7 +513,6 @@ namespace CasabaSecurity.Web.Watcher
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pbCasaba = new System.Windows.Forms.PictureBox();
             this.copyrightlabel = new System.Windows.Forms.Label();
-            this.alertTextBox = new System.Windows.Forms.TextBox();
             this.lowerpanel = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.alertListView = new System.Windows.Forms.ListView();
@@ -532,7 +534,9 @@ namespace CasabaSecurity.Web.Watcher
             this.mediumcountlabel = new System.Windows.Forms.Label();
             this.highcountlabel = new System.Windows.Forms.Label();
             this.toolTipResultsControl = new System.Windows.Forms.ToolTip(this.components);
+            this.reflinkLabel = new System.Windows.Forms.LinkLabel();
             this.resultPanel.SuspendLayout();
+            this.referencepanel.SuspendLayout();
             this.pnlCopyright.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -547,14 +551,49 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // resultPanel
             // 
-            this.resultPanel.Controls.Add(this.pnlCopyright);
             this.resultPanel.Controls.Add(this.alertTextBox);
+            this.resultPanel.Controls.Add(this.referencepanel);
+            this.resultPanel.Controls.Add(this.pnlCopyright);
             this.resultPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.resultPanel.Location = new System.Drawing.Point(0, 0);
             this.resultPanel.Margin = new System.Windows.Forms.Padding(0);
             this.resultPanel.Name = "resultPanel";
             this.resultPanel.Size = new System.Drawing.Size(851, 311);
             this.resultPanel.TabIndex = 3;
+            // 
+            // alertTextBox
+            // 
+            this.alertTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.alertTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.alertTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.alertTextBox.Location = new System.Drawing.Point(0, 33);
+            this.alertTextBox.Margin = new System.Windows.Forms.Padding(0);
+            this.alertTextBox.Multiline = true;
+            this.alertTextBox.Name = "alertTextBox";
+            this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.alertTextBox.Size = new System.Drawing.Size(851, 223);
+            this.alertTextBox.TabIndex = 0;
+            this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
+            // 
+            // referencepanel
+            // 
+            this.referencepanel.BackColor = System.Drawing.Color.LightGray;
+            this.referencepanel.Controls.Add(this.reflinkLabel);
+            this.referencepanel.Controls.Add(this.referencelabel);
+            this.referencepanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.referencepanel.Location = new System.Drawing.Point(0, 0);
+            this.referencepanel.Name = "referencepanel";
+            this.referencepanel.Size = new System.Drawing.Size(851, 33);
+            this.referencepanel.TabIndex = 8;
+            // 
+            // referencelabel
+            // 
+            this.referencelabel.AutoSize = true;
+            this.referencelabel.Location = new System.Drawing.Point(3, 10);
+            this.referencelabel.Name = "referencelabel";
+            this.referencelabel.Size = new System.Drawing.Size(141, 13);
+            this.referencelabel.TabIndex = 1;
+            this.referencelabel.Text = "Reference: ";
             // 
             // pnlCopyright
             // 
@@ -610,6 +649,7 @@ namespace CasabaSecurity.Web.Watcher
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
@@ -667,22 +707,6 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
             this.copyrightlabel.TabIndex = 0;
             this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2010";
-            // 
-            // alertTextBox
-            // 
-            this.alertTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.alertTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.alertTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.alertTextBox.Location = new System.Drawing.Point(0, 0);
-            this.alertTextBox.Margin = new System.Windows.Forms.Padding(0);
-            this.alertTextBox.Multiline = true;
-            this.alertTextBox.Name = "alertTextBox";
-            this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.alertTextBox.Size = new System.Drawing.Size(851, 256);
-            this.alertTextBox.TabIndex = 0;
-            this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
             // 
             // lowerpanel
             // 
@@ -807,7 +831,7 @@ namespace CasabaSecurity.Web.Watcher
             this.FileSaveButton.Size = new System.Drawing.Size(95, 23);
             this.FileSaveButton.TabIndex = 9;
             this.FileSaveButton.Text = "Export Findings";
-            this.toolTipResultsControl.SetToolTip(this.FileSaveButton, "Export selected selectedResults using selected save method.");
+            this.toolTipResultsControl.SetToolTip(this.FileSaveButton, "Export all results using chosen save method.");
             this.FileSaveButton.UseVisualStyleBackColor = true;
             this.FileSaveButton.Click += new System.EventHandler(this.FileSaveButton_Click);
             // 
@@ -933,6 +957,16 @@ namespace CasabaSecurity.Web.Watcher
             this.toolTipResultsControl.SetToolTip(this.highcountlabel, "(Alerts, Individual Issues)");
             this.highcountlabel.Click += new System.EventHandler(this.highcountlabel_Click);
             // 
+            // reflinkLabel
+            // 
+            this.reflinkLabel.AutoSize = true;
+            // Position the check's reference link over past the "Reference: " introduction
+            this.reflinkLabel.Location = new System.Drawing.Point(71, 10);
+            this.reflinkLabel.Name = "reflinkLabel";
+            this.reflinkLabel.Size = new System.Drawing.Size(0, 13);
+            this.reflinkLabel.TabIndex = 2;
+            this.reflinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.reflinkLabel_LinkClicked);
+            // 
             // WatcherResultsControl
             // 
             this.BackColor = System.Drawing.Color.Transparent;
@@ -942,6 +976,8 @@ namespace CasabaSecurity.Web.Watcher
             this.Size = new System.Drawing.Size(851, 653);
             this.resultPanel.ResumeLayout(false);
             this.resultPanel.PerformLayout();
+            this.referencepanel.ResumeLayout(false);
+            this.referencepanel.PerformLayout();
             this.pnlCopyright.ResumeLayout(false);
             this.pnlCopyright.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -997,6 +1033,9 @@ namespace CasabaSecurity.Web.Watcher
         private Label label3;
         private ComboBox cbExportMethod;
         private Label exportlabel;
+        private Panel referencepanel;
+        private Label referencelabel;
+        private LinkLabel reflinkLabel;
        
         public class AlertListViewItem : ListViewItem
         {
@@ -1007,6 +1046,7 @@ namespace CasabaSecurity.Web.Watcher
             private String _name;
             private String _description;
             private Int32 _count;
+            private String _reflink;
             #endregion
 
             #region Ctor(s)
@@ -1018,6 +1058,21 @@ namespace CasabaSecurity.Web.Watcher
                 _name = name;
                 _description = description;
                 _count = count;
+                _reflink = String.Empty;
+
+                // Set the item text to the canonical version of the WatcherResutlSeverity
+                this.Text = severity.ToString();
+            }
+
+            public AlertListViewItem(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count, String reflink)
+            {
+                _id = id;
+                _severity = severity;
+                _url = url;
+                _name = name;
+                _description = description;
+                _count = count;
+                _reflink = reflink;
 
                 // Set the item text to the canonical version of the WatcherResutlSeverity
                 this.Text = severity.ToString();
@@ -1054,6 +1109,11 @@ namespace CasabaSecurity.Web.Watcher
             public String Description
             {
                 get { return _description; }
+            }
+
+            public String refLink
+            {
+                get { return _reflink; }
             }
 
             #endregion

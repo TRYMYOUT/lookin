@@ -34,33 +34,19 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings, "Sensitive URL Values:", "Enter new words to watch for here:");
             UpdateWordList();
+
+            CheckCategory = WatcherCheckCategory.InfoDisclosure;
+            LongName = "Information Disclosure - Look for sensitive information passed through URL parameters.";
+            LongDescription = "This check looks for string patterns to identify sensitive information leaked in the URL. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment. In addition this check will find credit card numbers, SSN's, and email addresses.";
+            ShortName = "Information leak in URL parameter";
+            ShortDescription = "The following request may have leaked a potentially sensitive parameter in a URL parameter:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#information-disclosure-in-url-parameter";
+            Recommendation = "Do not pass sensitive information in URI's.";
         }
 
-        public override String GetName()
-        {
-            return "Information Disclosure - Look for sensitive information passed through URL parameters.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks for string patterns to identify sensitive information leaked in the URL.  " +
-                    "This can violate PCI and most organizational compliance policies.  You can configure the list of strings below " +
-                    "to add or remove values specific to your environment.\r\n\r\n" +
-                    "In addition this check will find credit card numbers, SSN's, and email addresses.";
-
-            return desc;
-        }
-
-        /// <summary>
-        /// TODO: Change to informational when leaks occur in same domain, medium when going offsite.
-        /// </summary>
-        /// <param name="watcher"></param>
-        /// <param name="session"></param>
-        /// <param name="param"></param>
-        /// <param name="context"></param>
         private void AddAlert(Session session, bool equal)
         {
-            string name = "Information leak in URL parameter";
+            string name = ShortName;
             if (!equal)
             {
                 string text =
@@ -69,18 +55,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+                WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
             }
             else
             {
                 string text =
                     "The following request may have leaked a potentially sensitive parameter in a URL parameter" +
-                    "(even though protected by https it will still be in URL history):\r\n\r\n" +
+                    "(even though protected by https it could still be in the browser's history):\r\n\r\n" +
                     session.fullUrl +
                     "\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance);
+                WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
             }
         }
 

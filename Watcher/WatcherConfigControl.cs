@@ -270,7 +270,7 @@ done:
             try
             {
                 e.Link.Visited = true;
-                System.Diagnostics.Process.Start("http://www.casabasecurity.com/");
+                System.Diagnostics.Process.Start("http://www.casaba.com/");
             }
 
             catch (Win32Exception ex)

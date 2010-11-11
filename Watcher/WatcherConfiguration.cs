@@ -507,6 +507,21 @@ namespace CasabaSecurity.Web.Watcher
             return Regex.IsMatch(domain, regex);
         }
 
+        /// <summary>
+        /// Get a list of the configured trusted domains as a string.
+        /// </summary>
+        /// <returns>Comma-separated list of configured trusted domains.</returns>
+        public String GetTrustedDomainsAsString()
+        {
+            string doms = "";
+            foreach (string trustedDomain in TrustedDomains)
+            {
+                doms = String.Concat(doms, trustedDomain, ",");
+            }
+
+            return doms.TrimEnd(new Char[] { ',' });
+        }
+
         #endregion
 
         /// <summary>

@@ -22,20 +22,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private String referrer;
         [ThreadStatic] static private String doclibroot;
 
-        public override String GetName()
+        public CheckPasvSharePointDocLib()
         {
-            return "(BETA) SharePoint - Look for dangerous HTML content hosted in the Shared Document Library.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check flags SharePoint document libraries which return HTML content " +
-                    "without setting the Content-Disposition HTTP header.  Setting this header tells " +
-                    "the Web browser to download the content rather than to parse and display it.  " +
-                    "Without setting this header, users could upload malicious HTML content that would " +
-                    "load and execute in a visitor's browser.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Sharepoint;
+            LongName = "SharePoint - Look for dangerous HTML content hosted in the Shared Document Library.";
+            LongDescription = "This check flags SharePoint document libraries which return HTML content without setting the Content-Disposition HTTP header.  Setting this header tells the Web browser to download the content rather than to parse and display it.  Without setting this header, users could upload malicious HTML content that would load and execute in a visitor's browser.";
+            ShortName = "SharePoint insecure DocLib";
+            ShortDescription = "A doclib seems to be displaying HTML content at the following URL:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#sharepoint-insecure-doclib";
+            Recommendation = "You need to force the Content-Disposition HTTP header on doclibs to force downloads, otherwise a .html file will get rendered in the browser as HTML from the site.";
         }
 
         private void AddAlert(Session session)
@@ -47,7 +42,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
             else root = doclibroot;
 
-            string name = "SharePoint insecure DocLib";
+            string name = ShortName;
             findingnum++;
             string text =
 
@@ -59,7 +54,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "\r\n\r\nThe root of the DocLib is at:\r\n\r\n" +
                 root;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()

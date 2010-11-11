@@ -153,6 +153,24 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+        /// <summary>
+        /// An API for getting a comman separated list of the enabled checks by name.
+        /// </summary>
+        /// <returns>Comma-separated list of enabled checks by name.</returns>
+        public string GetEnabledChecksAsString()
+        {
+            string enabledChecks = "";
+            foreach (WatcherCheck wc in WatcherEngine.CheckManager.Checks)
+            {
+                if (wc.Enabled)
+                {
+                    enabledChecks = String.Concat(enabledChecks, wc.GetShortName(),",");
+                }
+            }
+            // Return the list, removing the trailing comma.
+            return enabledChecks.TrimEnd(new Char[] {','});
+        }
+
         #endregion
     }
 }

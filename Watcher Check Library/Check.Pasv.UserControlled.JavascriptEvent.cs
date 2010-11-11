@@ -19,33 +19,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
     public class CheckPasvUserControlledJavascriptEvent : WatcherCheck
     {
         [ThreadStatic] static private string alertbody = String.Empty;
-        [ThreadStatic] static private int findingnum;        
+        [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvUserControlledJavascriptEvent()
         {
-            return "User Controlled - Javascript event (XSS).";
+            CheckCategory = WatcherCheckCategory.UserControlled;
+            LongName = "User Controlled - Javascript event (XSS).";
+            LongDescription = "This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability. ";
+            ShortName = "User controllable javascript event (XSS)";
+            ShortDescription = "User-controlled javascript event(s) was found.  Exploitability will need to be manually determined.  The page at the following URL:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-javascript-event";
+            Recommendation = "Validate all input and sanitize output it before writing to any Javascript on* events.";
         }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where certain javascript events (e.g. onclick) might be controlled.  This provides hot-spot " +
-                    "detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.  ";
-
-            return desc;
-        }
-
+        
         private void AddAlert(Session session)
         {
-            string name = "User controllable javascript event (XSS)";
+            string name = ShortName;
             string text =
 
-                "The page at the following URL: \r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\nincludes the following Javascript events which may be attacker-controllable: \r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String jsevent, String parm, String attribute)
@@ -97,7 +94,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         body = Utility.GetResponseText(session);
                         if (body != null)
                         {
-                            parms = GetRequestParameters(session);
+                            parms = Utility.GetRequestParameters(session);
 
                             if (parms != null && parms.Keys.Count > 0)
                             {

@@ -20,32 +20,39 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         [ThreadStatic] static private int findingnum;
 
+        public CheckPasvHeaderFrameOptions()
+        {
+            CheckCategory = WatcherCheckCategory.Header;
+            LongName = "Header - Checks that the 'X-FRAME-OPTIONS' header is being set for defense against 'ClickJacking' attacks.";
+            LongDescription = "Including the X-FRAME-OPTIONS header in the server HTTP response instructs the browser to prevent the web page from being displayed in a subframe of the page. That is, it's a security measure similar to 'framebusting' which prevents malicious websites from hosting your website in an iframe. This check flags HTTP responses which don't set this header.";
+            ShortName = "X-FRAME-OPTIONS header was not set.";
+            ShortDescription = "The response to the following request did not include a X-FRAME-OPTIONS header:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#http-header-x-frame-options";
+            Recommendation = "Most modern Web browsers support the X-FRAME-OPTIONS HTTP header, ensure it's set on all web pages returned by your site.";
+        }
+
         public override String GetName()
         {
-            return "Header - Checks that the 'X-FRAME-OPTIONS' header is being set for defense against 'ClickJacking' attacks. ";
+            return LongName;
         }
 
         public override String GetDescription()
         {
-            //TODO: Beef this up.
-            String desc = "Including the X-FRAME-OPTIONS header in the server HTTP response instructs the browser to prevent the web page " +
-                    "from being displaed in a subframe of the page.  This check flags HTTP responses which don't set this header."  +
-                    "For more information see:  \r\n\r\n" +
-                    "http://blogs.msdn.com/ie/archive/2009/01/27/ie8-security-part-vii-clickjacking-defenses.aspx";
-            return desc;
+            return LongDescription;
         }
 
         private void AddAlert(Session session)
         {
-            string name = "X-FRAME-OPTIONS header was not set.";
+            string name = ShortName;
             string url = session.fullUrl.Split('?')[0];
             findingnum++;
             string text =
+                Reference +
                 findingnum.ToString() + ") " +
                 "The response to the following request did not include a X-FRAME-OPTIONS header: \r\n\r\n" +
                 url;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AddAlert(Session session, string value)
@@ -58,7 +65,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "The response to the following request did not set the X-FRAME-OPTIONS header value to 'deny'. " +
                 "The value set was: \r\n\r\n" + value + "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)

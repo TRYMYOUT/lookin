@@ -26,37 +26,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Complies with Microsoft SDL
             StandardsCompliance =
                 WatcherCheckStandardsCompliance.MicrosoftSDL;
-        }
 
-        public override String GetName()
-        {
-            return "Silverlight - Search for insecure domain references in Silverlight client access policy.";
-        }
+            CheckCategory = WatcherCheckCategory.Silverlight;
+            LongName = "Silverlight - Search for insecure domain references in Silverlight client access policy.";
+            LongDescription = "Silverlight assemblies can allow cross-domain access defined through a clientaccesspolicy.xml or crossdomain.xml. This can introduce security vulnerability when access is allowed to and from untrusted domains. For example, if a wildcard '*' is set in the access list Silverlight assemblies may introduce Cross-Site Request Forgery or other issues. The potential security issues around this are numerous depending on the functionality of the application, for more info check out the Silverlight security white paper referenced.";
+            ShortName = "Silverlight clientaccesspolicy.xml insecure domain reference";
+            ShortDescription = "The clientaccesspolicy.xml file found at the following URL contains a potentially insecure domain reference.  This configuration allows the Silverlight code to have cross-domain communication with third-party domains, which may lead to security vulnerabilities if the Silverlight code can be abused:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#silverlight-client-access-policy";
+            Recommendation = "Narrow the scope of a crossdomain.xml file to a small set of required hosts. Never use wildcards '*' to denote allowed domains.";
 
-        public override String GetDescription()
-        {
-            String desc = "Silverlight assemblies can allow cross-domain access defined through a clientaccesspolicy.xml or crossdomain.xml." +
-                    "This can introduce security vulnerability when access is allowed to and from untrusted domains.  " +
-                    "For example, if a wildcard '*' is set in the access list Silverlight assemblies may introduce " +
-                    "Cross-Site Request Forgery or other issues.  " +
-                    "The potential security issues around this are numerous depending on the functionality of the application, " +
-                    "for more info check out: \r\n\r\n" +
-                    "http://msdn.microsoft.com/en-us/library/cc838250(VS.95).aspx";
-
-            return desc;
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Silverlight clientaccesspolicy.xml insecure domain reference";
+            String name = ShortName;
             String text =
 
-                "The clientaccesspolicy.xml file found at the following URL contains an insecure domain reference:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String domain, String context)

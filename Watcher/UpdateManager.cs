@@ -1,6 +1,6 @@
 ﻿// WATCHER
 //
-// VersionCheck.cs
+// UpdateManager.cs
 // Implements the VersionCheck class.
 //
 // Copyright (c) 2010 Casaba Security, LLC
@@ -153,7 +153,7 @@ namespace CasabaSecurity.Web.Watcher
                 alert.ShowDialog();
                 if (alert.DialogResult == DialogResult.Yes)
                 {
-                    Fiddler.Utilities.LaunchHyperlink("http://websecuritytool.codeplex.com/Release/ProjectReleases.aspx");
+                    Fiddler.Utilities.LaunchHyperlink("http://websecuritytool.codeplex.com/");
                 }
             }
             else if (displayUI)
@@ -183,7 +183,7 @@ namespace CasabaSecurity.Web.Watcher
             try
             {
                 // Prepare the Engine version request
-                Request = (HttpWebRequest)WebRequest.Create("http://www.casabasecurity.com/products/watcher.php");
+                Request = (HttpWebRequest)WebRequest.Create("http://www.casaba.com/products/watcher.php");
                 Request.KeepAlive = false;
                 Request.UserAgent = "Casaba Security Watcher " + CurrentVersionEngine.ToString();
 

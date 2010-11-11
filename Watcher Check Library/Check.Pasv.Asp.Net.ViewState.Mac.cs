@@ -42,22 +42,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             configpanel = new EnableCheckConfigPanel(this, "ASP.NET Viewstate", "Reduce noise - enable only one VIEWSTATE finding per site.");
             configpanel.Init();
-            
+
+            CheckCategory = WatcherCheckCategory.AspNet;
+            LongName = "ASP.NET VIEWSTATE - identify when EnableViewStateMac setting has been disabled.";
+            LongDescription = "This check looks at ASP.NET VIEWSTATE values to detect when MAC protection has been disabled. If disabled, it's possible for attackers to tamper with the VIEWSTATE and create XSS attacks.  More information is available from the advisory at https://www.trustwave.com/spiderlabs/advisories/TWSL2010-001.txt. \r\n\r\n  Use the configuration option below to reduce output from this check.  When enabled, only one VIEWSTATE finding will be reported per site.  As soon as a single VIEWSTATE finding is identified, no further checking would be done for that domain/site.  When disabled however, the VIEWSTATE will be checked on every single page and page request, which could generate a lot of findings when VIEWSTATE is insecure site-wide.  Keeping this option disabled will produce more thorough results across a site.";
+            ShortName = "ASP.NET VIEWSTATE vulnerable to tampering";
+            ShortDescription = "The response at the following URL contains a VIEWSTATE value that has MAC protections disabled:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#asp-net-viewstate-tampering";
+            Recommendation = "Secure VIEWSTATE with a MAC by setting EnableViewStateMac to true, which is on by default.";
         }
 
-
-        public override String GetName()
-        {
-            return "(BETA) ASP.NET VIEWSTATE - identify when EnableViewStateMac setting has been disabled.";
-
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks at ASP.NET VIEWSTATE values to detect when MAC protection has been disabled. If disabled, it's possible for attackers to tamper with the VIEWSTATE and create XSS attacks.  More information is available from the advisory at https://www.trustwave.com/spiderlabs/advisories/TWSL2010-001.txt.  The recommendation is to secure VIEWSTATE with a MAC by setting EnableViewStateMac to true, which is default.  See http://msdn.microsoft.com/en-us/library/system.web.ui.page.enableviewstatemac.aspx for code-level and http://msdn.microsoft.com/en-us/library/950xf363.aspx for web.config options.\r\n\r\n  Use the configuration option below to reduce output from this check.  When enabled, only one VIEWSTATE finding will be reported per site.  As soon as a single VIEWSTATE finding is identified, no further checking would be done for that domain/site.  When disabled however, the VIEWSTATE will be checked on every single page and page request, which could generate a lot of findings when VIEWSTATE is insecure site-wide.  Keeping this option disabled will produce more thorough results across a site.";
-
-            return desc;
-        }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
         {
@@ -70,6 +64,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override void Clear()
         {
+            // We need to reset our hosts List when a user clicks the
+            // Clear() button.  This is done through Watcher.cs clear button
+            // event handler.
+            // 
             lock (hosts)
             {
                 hosts = new List<String>();
@@ -81,13 +79,13 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// <param name="session"></param>
         private void AddAlert(Session session)
         {
-            String name = "ASP.NET VIEWSTATE vulnerable to tampering";
+            String name = ShortName;
             String text =
-                "The response at the following URL contains a VIEWSTATE value that has MAC protections disabled:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance,0, Reference);
         }
 
         /// <summary>
@@ -192,10 +190,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public bool SiteNotChecked(String hostname)
         {
-            // We need to reset our hosts List when a user clicks the
-            // Clear() button.  This is done through Watcher.cs clear button
-            // event handler.
-            // 
             lock (hosts)
             {
                 // host has already been checked
@@ -207,7 +201,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 // host has not been checked yet
                 else
                 {
-                    hosts.Add(hostname);
+                    // Only add the hostname if a finding was recorded
                     return true;
                 }
             }
@@ -247,6 +241,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                         // If the VIEWSTATE is not secured with a MAC, then raise an alert.
                                         if (!IsViewStateSecure(val))
                                         {
+                                            lock (hosts)
+                                            {
+                                                hosts.Add(session.hostname);
+                                            }
                                             AddAlert(session);
                                         }
                                     }

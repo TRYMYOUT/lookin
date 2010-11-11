@@ -36,25 +36,17 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             configpanel = new CookieCheckConfigPanel(this);
             configpanel.Init();
+            configpanel.enablefiltercheckBox.Visible = false; //Hack requested to enable filtering always
+
+            CheckCategory = WatcherCheckCategory.Cookie;
+            LongName = "Cookie - Look for instances where the HTTPOnly cookie flag is not being set.";
+            LongDescription = "This check looks for cookies that don't have the HTTPOnly flag set. The HttpOnly flag was invented to reduce the affect of XSS vulnerabilities, by preventing them from reading user cookies. When a cookie is set with the HTTPOnly flag, it instructs the browser that the cookie can only be accessed by the server. In other words, client-side script is forbidden from accessing the cookie. This is an important security protection for session cookies and other sensitive cookies, but less important for others.  Because Watcher can't distinguish between the important and unimportant cookies, you can configure an inclusive or exclusive list of cookie names to watch.";
+            ShortName = "Cookie's HTTPOnly flag was not set";
+            ShortDescription = "The response included a Set-Cookie header that did not include the HTTPOnly attribute:";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#cookie-not-setting-httponly-flag";
+            Recommendation = "Always set the 'HttpOnly' flag for session cookies and other sensitive cookies that should never be read by javascript.";
         }
 
-        public override String GetName()
-        {
-            return "Cookie - Look for instances where the HTTPOnly cookie flag is not being set.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks for cookies that don't have the HTTPOnly flag set.  " +
-                    "When a cookie is set with the HTTPOnly flag, it instructs the browser that the cookie " +
-                    "can only be accessed by the server.  In other words, client-side script " +
-                    "is forbidden from accessing the cookie.  This is an important security protection " +
-                    "for session cookies and other sensitive cookies, but less important for others.\r\n\r\n" +
-                    "Because Watcher can't distinguish between the important and unimportant " +
-                    "cookies, you can configure an inclusive or exclusive list of cookie names to watch below.";
-
-            return desc;
-        }
 
         public override void Clear()
         {
@@ -91,15 +83,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Cookie's HTTPOnly flag was not set";
-            String text =
-                "The response included a Set-Cookie header that did not include the HTTPOnly attribute:\r\n\r\n" +
+            String name = ShortName;
+            String text = ShortDescription +
+                "\r\n\r\n" +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The cookie(s) returned were:\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)
@@ -117,7 +109,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             alertbody = "";
             findingnum = 0;
-            filter = configpanel.enablefiltercheckBox.Checked;
+            //filter = configpanel.enablefiltercheckBox.Checked;
+            filter = true; //Hack asked for to always enable noise reduction
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {

@@ -19,33 +19,29 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvUserControlledCharset()
         {
-            return "User Controlled - Charset values.";
+            CheckCategory = WatcherCheckCategory.UserControlled | WatcherCheckCategory.Charset;
+            LongName = "User Controlled - Charset values.";
+            LongDescription = "This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.";
+            ShortName = "User controllable charset";
+            ShortDescription = "By controlling the character encoding an attacker could manipulate content (e.g. UTF-7) to bypass security filters and inject HTML or javascript.";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-charset";
+            Recommendation = "Force UTF-8 in all charset declarations.  If user-input is required to decide a charset declaration, ensure that only an allowed list is used.";
         }
 
-        public override String GetDescription()
-        {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where Content-Type or meta tag charset declarations might be user-controlled.  " +
-                    "Such charset declarations should always be declared by the application.  If an attacker " +
-                    "can control the response charset, they could manipulate the HTML to perform XSS or " +
-                    "other attacks.";
-
-            return desc;
-        }
 
         private void AddAlert(Session session)
         {
-            string name = "User controllable charset";
-            string text =
+            string name = ShortName;
+            string text = ShortDescription +
 
                 "The page at the following URL: \r\n\r\n" +
                 session.fullUrl +
                 " appears to include user input in: \r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String tag, String attribute, String parm, String val, String context)
@@ -61,7 +57,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "=" +
                 val +
                 "\r\n\r\n" +
-                "The context was:\r\n" +
+                "The charset value it controlled was:\r\n" +
                 context +
                 "\r\n\r\n\r\n";
         }
@@ -150,7 +146,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         body = Utility.GetResponseText(session);
                         if (body != null)
                         {
-                            parms = GetRequestParameters(session);
+                            parms = Utility.GetRequestParameters(session);
 
                             if (parms != null && parms.Keys.Count > 0)
                             {

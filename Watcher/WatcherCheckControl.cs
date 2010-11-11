@@ -142,7 +142,7 @@ namespace CasabaSecurity.Web.Watcher
             domainconfigButton.Visible = true;
             checklistsplitContainer.Panel2.SuspendLayout();
             checklistsplitContainer.Panel2.Controls.Clear();
-           
+            
             // Retrieve the check object from the user-data associated with the item
             WatcherCheck check = (WatcherCheck)enabledChecksListView.SelectedItems[0].Tag;
 
@@ -183,8 +183,11 @@ namespace CasabaSecurity.Web.Watcher
                 description.Dock = DockStyle.Top;
             }
 
+            reflinkLabel.Text = check.GetRefLink();
             // Add the check description to the bottom panel of the check list tab
             checklistsplitContainer.Panel2.Controls.Add(description);
+            checklistsplitContainer.Panel2.Controls.Add(referencepanel);
+           
             description.ResumeLayout();
 
             // Display the check's description/configuration panel
@@ -202,9 +205,12 @@ namespace CasabaSecurity.Web.Watcher
 
             foreach (WatcherCheck check in WatcherEngine.CheckManager.Checks)
             {
-                String checkName = check.GetName();
+                String checkInfo = check.GetName();
+                // Include the compliance mappings in the check info, so users can
+                // filter on OWASP or Microsoft SDL.
+                checkInfo = String.Concat(checkInfo, check.StandardsCompliance.ToString());
 
-                if (checkName.IndexOf(filtertextBox.Text, StringComparison.CurrentCultureIgnoreCase) > -1)
+                if (checkInfo.IndexOf(filtertextBox.Text, StringComparison.CurrentCultureIgnoreCase) > -1)
                 {
                     ListViewItem item = new ListViewItem();
 
@@ -305,7 +311,7 @@ namespace CasabaSecurity.Web.Watcher
             {
                 // Show the link was visited and go to our URL
                 e.Link.Visited = true;
-                System.Diagnostics.Process.Start("http://www.casabasecurity.com/");
+                System.Diagnostics.Process.Start("http://www.casaba.com/");
             }
 
             catch (Win32Exception ex)
@@ -321,12 +327,39 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+
+
+        private void reflinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                e.Link.Visited = true;
+                System.Diagnostics.Process.Start(reflinkLabel.Text);
+            }
+
+            catch (Win32Exception ex)
+            {
+                // Thrown when a Win32 error code is returned
+                Trace.TraceError("Error: Win32Exception: {0}", ex.Message);
+            }
+
+            catch (ObjectDisposedException ex)
+            {
+                // Thrown when an operation is performed on a disposed object
+                Trace.TraceError("Error: ObjectDisposedException: {0}", ex.Message);
+            }
+
+            catch (FileNotFoundException ex)
+            {
+                // Thrown when the resource does not exist
+                Trace.TraceError("Error: FileNotFoundException: {0}", ex.Message);
+            }
+        }
         #endregion
 
-        private void checklistsplitContainer_Panel2_Paint(object sender, PaintEventArgs e)
+        private void referencepanel_Paint(object sender, PaintEventArgs e)
         {
 
         }
-
     }
 }

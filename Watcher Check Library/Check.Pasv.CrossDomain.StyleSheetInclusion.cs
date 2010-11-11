@@ -21,31 +21,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvCrossDomainStylesheetInclusion()
         {
-            return "Cross-Domain - Check for cross-domain CSS source file references, akin to client-side mashups.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check tries to identify cross-domain CSS stylesheet references in the page, " +
-                    "e.g. import url('nottrusted.com').  This can be an issue when untrusted CSS " +
-                    "code gets introduced to the page through.\r\n\r\n";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.CrossDomain;
+            LongName = "Cross-Domain - Check for cross-domain CSS source file references, akin to client-side mashups.";
+            LongDescription = "This check tries to identify cross-domain CSS stylesheet references in the page, e.g. import url('nottrusted.com/foo.css'). This can be an issue when untrusted CSS code gets introduced to the page, leading to XSS attacks, clickjacking attacks, and other exploits related to UI layout.";
+            ShortName = "Third-party (cross-domain) style sheet import or inclusion";
+            ShortDescription = "The page at the following URL includes one or more style sheet files from a third-party domain:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#cross-domain-css";
+            Recommendation = "Ensure CSS files are loaded from only trusted sources, and the sources can't be controlled by end users of the application.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (cross-domain) style sheet import or inclusion";
+            String name = ShortName;
             String text =
-                "Risk: Medium\r\n\r\n" +
-                "The page at the following URL includes one or more style sheet files from a third-party domain:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String domain, String context)

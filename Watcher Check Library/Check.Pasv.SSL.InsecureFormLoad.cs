@@ -19,33 +19,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvSSLInsecureFormLoad()
         {
-            return "SSL - Look for insecure transition from HTTP to HTTPS during Form Post.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks for insecure HTTP pages that host HTTPS forms.  The issue is that " +
-                "an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be " +
-                "replaced or spoofed.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.SSL;
+            LongName = "SSL - Look for insecure transition from HTTP to HTTPS during Form Post.";
+            LongDescription = "This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.";
+            ShortName = "HTTP to HTTPS insecure transition in form post";
+            ShortDescription = "The response to the following request over HTTP included an HTTPS form tag action attribute value:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-from-http";
+            Recommendation = "Use HTTPS for landing pages that host secure forms.";
         }
 
         private void AddAlert(Session session, String context)
         {
-            String name = "HTTP to HTTPS insecure transition in form post";
+            String name = ShortName;
             findingnum++;
             String text =
 
-                "The response to the following request over HTTP included an HTTPS form tag action attribute value:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The context was:\r\n\r\n" +
                 context;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)

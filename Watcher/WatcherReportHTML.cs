@@ -152,7 +152,7 @@ namespace CasabaSecurity.Web.Watcher
                             ";
 
             string introduction = @"<h1>Watcher Security Report</h1>
-                                <p>The following issues were automatically identified by the <a href='http://www.casabasecurity.com'>Watcher security plugin</a>
+                                <p>The following issues were automatically identified by the <a href='http://www.casaba.com'>Watcher security plugin</a>
                                 for <a href='http://www.fiddler2.com'>Fiddler</a>.</p>";
 
             doctype = doc.CreateDocumentType("html", "-//W3C//DTD XHTML 1.0 Transitional//EN", null, null);

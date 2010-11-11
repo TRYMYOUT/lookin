@@ -28,33 +28,36 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Complies with Microsoft SDL
             StandardsCompliance =
                 WatcherCheckStandardsCompliance.MicrosoftSDL;
+
+            CheckCategory = WatcherCheckCategory.Flash;
+            LongName = "Flash - Look for issues with the Flash cross-domain policy file.";
+            LongDescription = "Flash objects can allow cross-domain access defined through a crossdomain.xml. This can introduce security vulnerability when access is allowed from untrusted domains. For example, if a wildcard '*' is set in the access list Flash will allow access from any domain. ";
+            ShortName = "Flash crossdomain.xml insecure domain reference";
+            ShortDescription = "The crossdomain.xml file found at the following URL contains an insecure domain reference:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#flash-cross-domain-xml";
+            Recommendation = "Narrow the scope of a crossdomain.xml file to a small set of required hosts. Never use wildcards '*' to denote allowed domains.";
         }
 
         public override String GetName()
         {
-            return "Flash - Look for issues with the Flash cross-domain policy file.";
+            return LongName;
         }
 
         public override String GetDescription()
         {
-            String desc = "Flash objects can allow cross-domain access defined through a crossdomain.xml.  This can introduce security vulnerability " +
-                    "when access is allowed from untrusted domains.  For example, if a wildcard '*' is set in the access list " +
-                    "Flash will allow access from any domain.  The potential security issues around this are numerous, for more info check out: \r\n\r\n" +
-                    "http://jeremiahgrossman.blogspot.com/2008/05/crossdomainxml-invites-cross-site.html";
-
-            return desc;
+            return LongDescription;
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Flash crossdomain.xml insecure domain reference";
+            String name = ShortName;
             String text =
-                "The crossdomain.xml file found at the following URL contains an insecure domain reference:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String domain, String context)

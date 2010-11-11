@@ -1,0 +1,178 @@
+The Spaceblue team (Angelo and Brian) would like to give credit to the following NSIS developers for inspiring the Venis project.
+
+
+${Programmers}
+Justin Frankel aka 0xDEADBEEF
+
+Creating the all mighty NSIS
+Amir "make me stop" Szekely aka KiCHiK
+
+Multilingual NSIS
+RTF license text
+The new paging system
+Full color support for icons and bitmaps
+Branding image
+Customizable UI
+One makensis.exe for both zlib and bzip2
+Joost Verburg
+
+Modern User Interface
+NSIS website
+NSIS Menu
+System for DLL/TLB library setup
+NSIS Update for NSIS distribution (original version by Nathan Purciful)
+Robert Rainwater
+
+MakeNSISW
+New documentation format
+Enhancing the TreeView
+Reorganizing NSIS directory structure
+Dave "bit-by-bit" Laundon aka eccles
+
+Massive optimizing
+Ximon Eighteen aka Sunjammer
+
+The new plug-ins system
+"Copy to clipboard" context menu for the Details window
+License text initial focus
+Ramon aka Ramon18
+
+Version information resource commands
+Named user variables
+Lots of UI fixes
+InstallOptions improvements
+
+
+${Designers}
+Nikos Adamamas
+
+The new modern icons
+Jan T. Sott / whyEye.org
+
+Lots of icons and check marks
+
+
+${Translators}
+Arabic - asdfuae, Rami Kattan
+
+Breton - Korvigelloù An Drouizig
+
+Bulgarian - Asparouh Kalyandjiev, Plamen Penkov
+
+Catalan - falanko
+
+Croatian - Igor Ostriz, Vedran "RIV@NVX" Miletic
+
+Czech - T.V. Zuggy, SELiCE
+
+Danish - Christopher, Casper Bergenstoff, Claus Futtrup
+
+Dutch - Hendri Adriaens, Joost Verburg
+
+Estonian - izzo
+
+Farsi - Masoud Alinaqian, FzerorubigD
+
+Finnish - AKX, Eclipser
+
+French - veekee, Sébastien Delahaye, Jerome Charaoui
+
+German - L.King, K. Windszus, R. Bisswanger, M. Simmack, Tim Kosse
+
+Greek - Makidis N. Michael
+
+Hebrew - Amir Szekely (aka KiCHiK), Yaron Shahrabani
+
+Hungarian - Soft-Trans Bt., Jozsef Tamas Herczeg, Lajos Molnar (Orfanik)
+
+Italian - Orfanik, sanface, Alessandro Staltari, Lorenzo Bevilacqua
+
+Japanese - Dnanako, Takahiro Yoshimura
+
+Korean - dTomoyo, linak, koder
+
+Lithuanian - NorCis, Vytautas Krivickas, Danielius Scepanskis
+
+Luxembourgish - Jo Hoeser
+
+Macedonian - Sasko Zdravkin
+
+Norwegian - Jonas Christoffer Lindstrøm, Jan Ivar Beddari
+
+Polish - Piotr Murawski, Rafa³ Lampe, cube
+
+Portuguese - DragonSoull, Dre', Ramon
+
+Portuguese Brasil - Layout do Brasil, deguix
+
+Romanian - Sorin Sbarnea, Cristian Pirvu, George Radu
+
+Russian - Sergey `Timon` Kusnetsov, Nik Medved, Scam, THRaSH, Dmitry Yerokhin
+
+Serbian - Vladan Obradovic
+
+Slovak - trace, Kypec
+
+Slovenian - Janez Dolinar
+
+Spanish - MoNKi, Lobo Lunar
+
+Swedish - Peter Gustafsson, Magnus Bonnevier, Rickard Angbratt
+
+Thai - TuW@nNu (asdfuae)
+
+Traditional & Simplified Chinese - Kii Ali
+
+Turkish - Bertan Kodamanoglu, Çagatay Dilsiz, Fatih BOY
+
+Ukrainian - Yuri Holubow, Nash-Soft
+
+
+${Writers}
+Sebastian Armbrust aka flizebogen
+
+
+${Contributors}
+nnop@newmail.ru
+
+Ryan Geiss
+
+Andras Varga
+
+Drew Davidson
+
+Peter Windridge
+
+Yaroslav Faybishenko
+
+Jeff Doozan
+
+NSIS 2's new TreeView
+Nike (nike@sendmail.ru)
+
+HTML Help support for Halibut
+
+
+Please see the latest NSIS help documentation for the latest list of credits.
+
+${Acknowledgements}
+Spaceblue would like to give acknowledgements the following projects.
+
+wxWindows
+A portable C++ and Python GUI toolkit
+http://www.wxwindows.org/
+
+Scintilla
+A free source code editing component for Win32 and GTK+
+http://www.scintilla.org/
+
+MinGW Developer Studio
+wxWindows and MinGW C/C++ editor.
+http://parinya.homeip.net/
+
+MinGW
+MinGW provides a native Win32 version of GCC, binutils, gdb and a few other GNU tools.
+http://www.mingw.org/
+
+Venis IX Users
+Thank you to everyone who has contributed suggestions and bugs.

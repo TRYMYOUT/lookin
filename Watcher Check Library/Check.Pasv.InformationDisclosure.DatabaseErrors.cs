@@ -52,20 +52,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings,"Database Error Strings:","Enter new Database Error Strings here:");
             UpdateWordList();
-        }
 
-        public override String GetName()
-        {
-            return "Information Disclosure - Check for common error messages returned by databases, which may indicate SQL injection potential.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check will review HTML content, including comments, for common error messages returned by database providers such as MSSQL, MySQL, and Oracle.  " +
-                    "If found, this may indicate SQL injection potential, which will need to be tested separately. You can configure the list of common error messages " +
-                    "to look for below.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.InfoDisclosure;
+            LongName = "Information Disclosure - Check for common error messages returned by databases, which may indicate SQL injection potential.";
+            LongDescription = "This check will review HTML content, including comments, for common error messages returned by database providers such as MSSQL, MySQL, and Oracle. If found, this may indicate SQL injection potential, which will need to be tested separately. You can configure the list of common error messages.";
+            ShortName = "Database error message";
+            ShortDescription = "The response to the following request appeared to contain a database error message:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#information-disclosure-in-database-error-messages";
+            Recommendation = "Disable debugging messages before pushing to production.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -79,14 +73,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Database error message";
+            String name = ShortName;
             String text =
-                "The response to the following request appeared to contain a database error message:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String errormsg)

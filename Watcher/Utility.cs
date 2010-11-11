@@ -170,7 +170,7 @@ namespace CasabaSecurity.Web.Watcher
 
         /// <summary>
         /// TODO: Fix up to support other variations of text/html.  
-        /// FIX: This will match Atom and RSS feeds now, which set text/html but use <?xml> in content
+        /// FIX: This will match Atom and RSS feeds now, which set text/html but use &lt;?xml&gt; in content
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
@@ -601,6 +601,75 @@ namespace CasabaSecurity.Web.Watcher
                     return true;
                 }
             }
+        }
+
+        public static NameValueCollection GetRequestParameters(Session session)
+        {
+            NameValueCollection nvc = null;
+            String qs = null;
+
+            // If this is GET request
+            if (session.HTTPMethodIs("GET"))
+            {
+                // ...and has query string
+                if (session.PathAndQuery.IndexOf("?") > 0)
+                {
+                    // Get the query string
+                    qs = session.PathAndQuery.Substring(session.PathAndQuery.IndexOf("?") + 1);
+                }
+            }
+
+            // If is a POST request
+            if (session.HTTPMethodIs("POST"))
+            {
+                // ...and has a content-type
+                if (session.oRequest.headers.Exists("content-type"))
+                {
+                    // ... and is urlencoded form data
+                    if (session.oRequest.headers["content-type"] == "application/x-www-form-urlencoded")
+                    {
+                        // TODO: is a decode needed?
+                        //session.utilDecodeRequest();
+
+                        // Get the request body as a string
+                        qs = System.Text.Encoding.UTF8.GetString(session.requestBodyBytes);
+                    }
+                }
+            }
+
+            // If we have a query string
+            if (qs != null)
+            {
+                // Parse it...
+                try
+                {
+                    nvc = HttpUtility.ParseQueryString(qs);
+
+                    // Remove any nulls from ill-formed query strings
+                    List<string> lst = new List<string>();
+
+                    foreach (String param in nvc.Keys)
+                    {
+                        if (param == null)
+                        {
+                            lst.Add(param);
+                        }
+                    }
+
+                    foreach (String param in lst)
+                    {
+                        nvc.Remove(param);
+                    }
+                }
+
+                // TODO: Could we be missing things here?  False negatives?
+                catch (ArgumentNullException ane)
+                {
+                    ExceptionLogger.HandleException(ane);// discard
+                }
+            }
+
+            return (nvc);
         }
 
         #endregion

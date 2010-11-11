@@ -1,0 +1,49 @@
+
+// FEATURES //
+
+v1.3.0
++ Change all checks to use the new HtmlParser collections - HtmlAttributes is the first to do this.
++ Test and review multi-threading code!
++ Code quality review of all code.
++ Move Utility functions and HtmlParser to a new Utility project that can be shared by all projects. Right now Watcher and WatcherCheckLib use some of the same Utility methods.
++ Should we fix GetResponseContentType() to only take the session.oResponse.headers collection as an argument.  There's no sense in passing in the entire session object since we're only ever checking the headers.  If we change this then all of the callers will need to be updated.
++ Improve the MessageBox used in VersionCheck to use something like what Fiddler has, but with our own logo. :)
++ Update installer for new assembly names
++ Readd lazy loading of the Watcher UI 
++ Review CheckLib
++ Update add-in check doc
+
+
+// CHECKS //
++ Add check for Silverlight EnableHtmlAccess
++ Add Silverlight check  to check the mime-type of the XAP.  If its application/x-silverlight-app, the app can be served to cross-domain pages as well.  
++ New Check (SDL) - Evaluate building a check to review ViewStateUserKey and ValidateAntiForgeryTokenAttribute 
++ New Check - Inventory Check (Catalog ActiveX controls, flash, etc.) 
++ New Check - Unsigned or not safe for scripting ActiveX
++ New Check (SDL) - Is there anyway we can detect use of an older version of RPS/LiveID Server/IDCRL?
++ Come up with more Silverlight checks from http://msdn.microsoft.com/en-us/library/cc645032(VS.95).aspx
++ Come up with more PCI checks, reference from http://www.acunetix.com/vulnerability-scanner/PCI_ComplianceReport.pdf
++ Integrate some kind of Flash Scanner into watcher to automatically analyze downloaded SWF files.
++ Integrate any other file download scanners that we can think of. Perhaps make the download and analyze a generic check.
++ New Check - Detect passwords sent for basic/forms auth and check for strength, complexity, etc. (PCIDSS 8.5.10 and 8.5.11)
++ New Check - Once we have a way of detecing authenticated sessions, add a check that loooks for session timeout after 15 minutes (PCIDSS ??)
++ New Check - Detect missing X-Content-Security-Policy 
+
+// BUGS //
++ FIX BUG in Javascript.Eval.cs check - currently it doesn't do group matching when multiple parens exist, like eval(func()) would get reported as eval(func()
++ FIX BUG in InformationDisclosure.Comments.cs - seems many comments get reported truncated, I see stuff like 'bu' get reported and lots of other truncations.
+
+// TEST CASES //
++ Sharepoint DocLib
++ MIME-sniffing header
++ ClickJacking header
++ Large response body (> 200K), ensure checks still run
+
+// MISC //
++ Branching and tagging HOWTO (as a part of the release TODO, presumably)
++ Check for updates to the check library AND the engine? Currently, only the engine version is checked.
++ WatcherConfiguration locking
+? Kill global exception handling; register for Watson bucket --or-- have crash dumps sent to Casaba instead
++ Don't run tests when checking for new version of Watcher
++ Report PCI compliance values for SSL Checks (PCIDSS 4.1a), and other checks (PCIDSS 6.5.x)
++ Review the Web Application Security Scanner Evaluation Criteria and document mappings http://sites.google.com/site/wassec/final-draft

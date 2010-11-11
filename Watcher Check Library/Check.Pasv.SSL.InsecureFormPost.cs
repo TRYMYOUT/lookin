@@ -18,31 +18,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvSSLInsecureFormPost()
         {
-            return "SSL - Look for insecure transition from HTTPS to HTTP during Form Post.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifies secure HTTPS pages that host insecure HTTP forms.  The issue is that " +
-                "a secure page is transitioning to an insecure page when data is uploaded through a form. " +
-                "The user may think they're submitting data to a secure page when in fact they are not.  ";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.SSL;
+            LongName = "SSL - Look for insecure transition from HTTPS to HTTP during Form Post.";
+            LongDescription = "This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.";
+            ShortName = "HTTPS to HTTP insecure transition in form post";
+            ShortDescription = "The response to the following request over HTTPS included an HTTP form tag action attribute value:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-to-http";
+            Recommendation = "Ensure sensitive data is only sent over secured HTTPS channels.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "HTTPS to HTTP insecure transition in form post";
+            String name = ShortName;
             String text =
-
-                "The response to the following request over HTTPS included an HTTP form tag action attribute value:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" + 
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String context)

@@ -22,33 +22,31 @@ namespace CasabaSecurity.Web.Watcher.Checks
         private volatile List<String> urls = new List<String>();
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvHeaderWeakAuth()
         {
-            return "Header - Look for weak authentication protocols.";
+            CheckCategory = WatcherCheckCategory.Header;
+            LongName = "Header - Look for weak authentication protocols like Basic and Digest.";
+            LongDescription = "This check flags HTTP responses which request a weak authentication protocol such as Basic or Digest.  You will need to determine whether this would be considered a vulnerability in your organization. Typically usage of these protocols are frowned upon but can be protected from snooping by using SSL channels.";
+            ShortName = "Weak authentication protocol";
+            ShortDescription = "The server issued a weak Basic or Digest authorization challenge:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#http-header-weak-authentication-protocols";
+            Recommendation = "Ensure SSL is being forced for basic and digest.";
         }
 
-        public override String GetDescription()
-        {
-            String desc = "This check flags HTTP responses which request a weak authentication protocol such as Basic or Digest." +
-                    "You will need to determine whether this would be considered a vulnerability in your organization.  " +
-                    "Typically usage of these protocols are frowned upon even when used over secure SSL channels.";
-
-            return desc;
-        }
 
         private void AddAlert(Session session, String context)
         {
-            string name = "Weak authorization method";
+            string name = ShortName;
             findingnum++;
             string text =
                 findingnum.ToString() + ") " +
-                "The server issued a weak Basic or Digest authorization challenge:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The context was:\r\n\r\n" +
                 context;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()

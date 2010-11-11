@@ -61,13 +61,22 @@ namespace CasabaSecurity.Web.Watcher
             XmlElement issue = null;
             XmlElement level = null;
             XmlElement url = null;
-            XmlElement typex = null;
+            XmlElement type = null;
             XmlElement desc = null;
+
+            // Get current Watcher version
+            Version currentver = new UpdateManager().CurrentVersionEngine;
 
             // Create the very beginning Xml Declaration
             xmlDec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
             root = doc.CreateElement("watcher");
-            root.SetAttribute("version", "1.0.0");
+
+            root.SetAttribute("version", currentver.ToString());
+            root.SetAttribute("date", DateTime.Today.ToLongDateString());
+            root.SetAttribute("originDomain", WatcherEngine.Configuration.OriginDomain.ToString());
+            root.SetAttribute("trustedDomains", WatcherEngine.Configuration.GetTrustedDomainsAsString());
+            root.SetAttribute("enabledChecks", WatcherEngine.CheckManager.GetEnabledChecksAsString());
+           
             doc.AppendChild(root);
 
             doc.InsertBefore(xmlDec, root);
@@ -86,15 +95,15 @@ namespace CasabaSecurity.Web.Watcher
 
                 url.InnerText = item.URL;
 
-                typex = doc.CreateElement("type");
+                type = doc.CreateElement("type");
 
-                typex.InnerText = item.Title;
+                type.InnerText = item.Title;
 
                 desc = doc.CreateElement("description");
 
                 desc.InnerText = item.Description;
 
-                issue.AppendChild(typex);
+                issue.AppendChild(type);
                 issue.AppendChild(level);
                 issue.AppendChild(url);
                 issue.AppendChild(desc);

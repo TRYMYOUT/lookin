@@ -1,0 +1,37 @@
+WATCHER WEB SECURITY TOOL
+END USER LICENSE AGREEMENT
+
+This End User License Agreement ("Agreement") constitutes a license agreement between the end user (the  "End User" or "You") and Casaba Security, LLC a Washington limited liability company ("Casaba"), whereby Casaba will provide access to the Watcher Web Security Tool software in object and source code forms (the "Software").  BY CHECKING "I ACCEPT" BELOW OR BY USING OR MODIFYING THE SOFTWARE, YOU REPRESENT THAT YOU HAVE READ THIS AGREEMENT, AND THAT YOU ACCEPT AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.
+
+1.	License.  Casaba grants End User a perpetual, non-exclusive, royalty-free license to use and modify the Software, subject to the terms and conditions of this Agreement.  
+
+2.	Proprietary Notices.  End User may not remove, change, or obscure any copyright, trademark, or other proprietary notices in the Software or on any associated media including but not limited to the following notice which shall be included with any copies of the Software: "Copyright (c) 2010 Casaba Security, LLC.  All rights reserved."  End User must include the notices in any authorized copies and modified versions.  
+
+3.	Exclusion of Warranties.  THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH THE END USER.  CASABA  DOES NOT WARRANT THAT YOUR USE OF THE SERVICES WILL BE UNINTERRUPTED OR ERROR FREE.  FURTHER, CASABA  DOES NOT WARRANT THAT ANY DEFECTS IN THE OPERATION OR FUNCTIONING OF THE SOFTWARE WILL BE CORRECTED.  
+
+4.	Limitation of Liability.  IN NO EVENT WILL CASABA BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOST PROFITS, LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), HOWEVER CAUSE AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF CASABA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.  
+
+5.	Responsibility for Use.  Casaba is not responsible for any errors or omissions in relation to the Software or for the results obtained from the use of the Software.  End User will indemnify Casaba against any loss, liability, or costs incurred on account of End User's use of the Software relating to applications End User may design using the Software, whether or not attributable to the Software and/or third party software's operation or design. 
+
+6.	Third Party Licensing Terms.  Portions of this software are based in part on the work of third parties, whose terms and conditions are listed below where applicable.  Use of this software is governed by the terms set forth in these license(s):
+
+---------------------
+     HTMLparser
+---------------------
+
+Copyright (c) Alex Chudnovsky, Majestic-12 Ltd (UK). 2005+ 
+All rights reserved.
+
+Web:		http://www.majestic12.co.uk
+E-mail:		alexc@majestic12.co.uk
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+* Neither the name of the Majestic-12 nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

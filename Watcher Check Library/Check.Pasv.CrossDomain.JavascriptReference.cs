@@ -28,34 +28,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvCrossDomainJavascriptReference()
         {
-            return "Cross-Domain - Check for references to untrusted domains in javascript source code.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check tries to identify javascript code that uses functions like createElement(tag) " +
-                    "to programmatically add javascript src references to the DOM, and only reports when " +
-                    "cross-domain javascript src references are made.  This can be an issue when untrusted javascript " +
-                    "code gets introduced to the page.\r\n\r\n" +
-                    "Unfortunately, this is a typical pattern when third-party advertising " +
-                    "and tracking code is used (e.g. Google Analytics or DoubleClick).  Since this check doesn't implement a " +
-                    "javascript interpreter we're limited to regular expressions to find these potential issues.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.CrossDomain;
+            LongName = "Cross-Domain - Check for references to untrusted domains in javascript source code.";
+            LongDescription = "This check tries to identify javascript code that uses functions like createElement(tag) to programmatically add javascript src references to the DOM, and only reports when cross-domain javascript src references are made. This would be an issue when untrusted javascript code get introduced to the page.";
+            ShortName = "Third-party (cross-domain) javascript reference";
+            ShortDescription = "The page at the following URL contains javascript that references a third-party domain:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#reference-to-untrusted-javascript";
+            Recommendation = "Ensure javascript source files are loaded from only trusted sources, and the sources can't be controlled by end users of the application.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (cross-domain) javascript reference";
+            String name = ShortName;
             String text =
-                "The page at the following URL contains javascript that references a third-party domain:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String domain, String context)

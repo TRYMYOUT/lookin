@@ -37,7 +37,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="resultDescription">The description of the finding.</param>
         /// <param name="compliesWith">Standards implemented by Watcher that this check conforms to.</param>
         /// <param name="count">The number of times the finding was discovered.</param>
-        public void Add(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count)
+        public void Add(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink)
         {
             WatcherResultsControl control = WatcherEngine.UI.WatcherResultsControl;
 
@@ -48,12 +48,12 @@ namespace CasabaSecurity.Web.Watcher
             if (control.InvokeRequired)
             {
                 // We're not the UI thread: marshall an update to the control asynchronously
-                control.BeginInvoke(new AddAlertCallback(control.AddAlert), new Object[] { resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count });
+                control.BeginInvoke(new AddAlertCallback(control.AddAlert), new Object[] { resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink });
             }
             else
             {
                 // We're the UI thread, update the control directly
-                control.AddAlert(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count);
+                control.AddAlert(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink);
             }
         }
 
@@ -68,7 +68,22 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="compliesWith">Standards implemented by Watcher that this check conforms to.</param>
         public void Add(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith)
         {
-            Add(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, 1);
+            Add(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, 1, String.Empty);
+        }
+
+        /// <summary>
+        /// TODO: fixup documentation for this function.
+        /// </summary>
+        /// <param name="resultSeverity"></param>
+        /// <param name="sessionId"></param>
+        /// <param name="sessionUrl"></param>
+        /// <param name="checkName"></param>
+        /// <param name="resultDescription"></param>
+        /// <param name="compliesWith"></param>
+        /// <param name="num"></param>
+        public void Add(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, Int32 num)
+        {
+            Add(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, num, String.Empty);
         }
 
         #endregion
@@ -78,7 +93,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <summary>
         /// This callback is used to update UI controls from a non-UI thread.
         /// </summary>
-        private delegate void AddAlertCallback(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String checkDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count);
+        private delegate void AddAlertCallback(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String checkDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink);
 
         #endregion
     }

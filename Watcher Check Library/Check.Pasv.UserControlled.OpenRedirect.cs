@@ -22,32 +22,25 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 WatcherCheckStandardsCompliance.MicrosoftSDL |
                 WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel1 | 
                 WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel2;
-        }
 
-        public override String GetName()
-        {
-            return "User Controlled - Open redirect.";
-        }
+            CheckCategory = WatcherCheckCategory.UserControlled;
+            LongName = "User Controlled - Open redirect.";
+            LongDescription = "Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.";
+            ShortName = "User controllable location header (Open Redirect)";
+            ShortDescription = "The 301 or 302 response to a request for the following URL appeared to contain user input in the location header:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-redirect";
+            Recommendation = "Implement safe redirect functionality that only redirects to relative URI's, or a list of trusted domains.";
 
-        public override String GetDescription()
-        {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where Open Redirects might be possible.  Open Redirects occur when an application " +
-                    "allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect.  " +
-                    "This is generally a pretty accurate " +
-                    "way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks. ";
-
-            return desc;
         }
 
         private void AddAlert(Session session, String parm, String val, String context, bool ispost)
         {
-            String name = "User controllable location header (Open Redirect)";
+            String name = ShortName;
             if (!ispost)
             { 
                 String text =
 
-                    "The 301 or 302 response to a request for the following URL appeared to contain user input in the location header:\r\n\r\n" +
+                    ShortDescription +
                     session.fullUrl +
                     "\r\n\r\n" +
                     "The user input found was:\r\n\r\n" +
@@ -58,7 +51,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "The context was:\r\n\r\n" +
                     context;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance);
+                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
             }
             else
             {
@@ -79,7 +72,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "The context was:\r\n\r\n" +
                     context;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance);
+                WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
             }
         }
 
@@ -140,7 +133,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (session.oResponse.headers.Exists("location"))
                     {
-                        parms = GetRequestParameters(session);
+                        parms = Utility.GetRequestParameters(session);
 
                         if (parms != null && parms.Keys.Count > 0)
                             CheckUserControllableLocationHeaderValue(session, parms, session.oResponse.headers["location"]);

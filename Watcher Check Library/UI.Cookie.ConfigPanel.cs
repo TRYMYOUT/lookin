@@ -43,7 +43,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public void Init()
         {
-            string configstring = WatcherEngine.Configuration.GetConfigItem(watchercheck, "Filter", "False");
+            string configstring = WatcherEngine.Configuration.GetConfigItem(watchercheck, "Filter", "True");
             if (configstring == "True")
             {
                 enablefiltercheckBox.CheckState = CheckState.Checked;
@@ -87,14 +87,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
             lock (this)
             {
                 return (string)this.filtertypecomboBox.SelectedItem;
-            }
-        }
-
-        private void enablefiltercheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            lock (this)
-            {
-                WatcherEngine.Configuration.SetConfigItem(watchercheck, "Filter", enablefiltercheckBox.Checked.ToString());
             }
         }
 
@@ -166,6 +158,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 this.lblCookies.Text = "Cookies to ignore:";
             }
             WatcherEngine.Configuration.SetConfigItem(watchercheck, "CookieFilterType", selection); 
+        }
+
+        private void enablefiltercheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            lock (this)
+            {
+                WatcherEngine.Configuration.SetConfigItem(watchercheck, "Filter", enablefiltercheckBox.Checked.ToString());
+            }
         }
     }
 }

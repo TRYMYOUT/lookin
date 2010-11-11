@@ -32,8 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WatcherCheckControl));
             this.checklistsplitContainer = new System.Windows.Forms.SplitContainer();
             this.enabledChecksListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.referencepanel = new System.Windows.Forms.Panel();
+            this.reflinkLabel = new System.Windows.Forms.LinkLabel();
+            this.referencelabel = new System.Windows.Forms.Label();
             this.labelDisableAll = new System.Windows.Forms.LinkLabel();
             this.FilterBox = new System.Windows.Forms.Label();
             this.domainconfigButton = new System.Windows.Forms.Button();
@@ -49,7 +52,9 @@
             this.pbCasaba = new System.Windows.Forms.PictureBox();
             this.copyrightlabel = new System.Windows.Forms.Label();
             this.checklistsplitContainer.Panel1.SuspendLayout();
+            this.checklistsplitContainer.Panel2.SuspendLayout();
             this.checklistsplitContainer.SuspendLayout();
+            this.referencepanel.SuspendLayout();
             this.selectionpanel.SuspendLayout();
             this.pnlCopyright.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCasaba)).BeginInit();
@@ -73,7 +78,7 @@
             this.checklistsplitContainer.Panel2.AutoScroll = true;
             this.checklistsplitContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.checklistsplitContainer.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.checklistsplitContainer.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.checklistsplitContainer_Panel2_Paint);
+            this.checklistsplitContainer.Panel2.Controls.Add(this.referencepanel);
             this.checklistsplitContainer.Size = new System.Drawing.Size(600, 524);
             this.checklistsplitContainer.SplitterDistance = 234;
             this.checklistsplitContainer.TabIndex = 4;
@@ -111,6 +116,37 @@
             // 
             this.columnHeader2.Text = "Standards Compliance";
             this.columnHeader2.Width = 150;
+            // 
+            // referencepanel
+            // 
+            this.referencepanel.BackColor = System.Drawing.Color.LightGray;
+            this.referencepanel.Controls.Add(this.reflinkLabel);
+            this.referencepanel.Controls.Add(this.referencelabel);
+            this.referencepanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.referencepanel.Location = new System.Drawing.Point(0, 0);
+            this.referencepanel.Name = "referencepanel";
+            this.referencepanel.Size = new System.Drawing.Size(598, 34);
+            this.referencepanel.TabIndex = 0;
+            this.referencepanel.Paint += new System.Windows.Forms.PaintEventHandler(this.referencepanel_Paint);
+            // 
+            // reflinkLabel
+            // 
+            this.reflinkLabel.AutoSize = true;
+            // Position the check's reference link over past the "Reference: " introduction
+            this.reflinkLabel.Location = new System.Drawing.Point(71, 9);
+            this.reflinkLabel.Name = "reflinkLabel";
+            this.reflinkLabel.Size = new System.Drawing.Size(0, 13);
+            this.reflinkLabel.TabIndex = 1;
+            this.reflinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.reflinkLabel_LinkClicked);
+            // 
+            // referencelabel
+            // 
+            this.referencelabel.AutoSize = true;
+            this.referencelabel.Location = new System.Drawing.Point(3, 9);
+            this.referencelabel.Name = "referencelabel";
+            this.referencelabel.Size = new System.Drawing.Size(141, 13);
+            this.referencelabel.TabIndex = 0;
+            this.referencelabel.Text = "Reference: ";
             // 
             // labelDisableAll
             // 
@@ -264,7 +300,10 @@
             this.Name = "WatcherCheckControl";
             this.Size = new System.Drawing.Size(600, 619);
             this.checklistsplitContainer.Panel1.ResumeLayout(false);
+            this.checklistsplitContainer.Panel2.ResumeLayout(false);
             this.checklistsplitContainer.ResumeLayout(false);
+            this.referencepanel.ResumeLayout(false);
+            this.referencepanel.PerformLayout();
             this.selectionpanel.ResumeLayout(false);
             this.selectionpanel.PerformLayout();
             this.pnlCopyright.ResumeLayout(false);
@@ -296,5 +335,8 @@
         public System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.PictureBox pbCasaba;
         private System.Windows.Forms.Label copyrightlabel;
+        private System.Windows.Forms.Panel referencepanel;
+        private System.Windows.Forms.Label referencelabel;
+        private System.Windows.Forms.LinkLabel reflinkLabel;
     }
 }

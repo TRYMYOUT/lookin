@@ -46,20 +46,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings, "Database Error Strings:", "Enter new Database Error Strings here:");
             UpdateWordList();
-        }
 
-        public override String GetName()
-        {
-            return "Information Disclosure - Check for common debugging error messages.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check will search HTML content, including comments, for common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache.  " +
-                    "You can configure the list of common debug messages " +
-                    "to look for below.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.InfoDisclosure;
+            LongName = "Information Disclosure - Check for common debugging error messages.";
+            LongDescription = "This check will search HTML content, including comments, for common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure the list of common debug messages.";
+            ShortName = "Debug error message";
+            ShortDescription = "The response to the following request appeared to contain debugging information:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#information-disclosure-in-error-messages";
+            Recommendation = "Disable debugging messages before pushing to production.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -89,14 +83,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Debug error message";
+            String name = ShortName;
             String text =
-                "The response to the following request appeared to contain debugging information:\r\n\r\n" +
+                ShortDescription+
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String errormsg)

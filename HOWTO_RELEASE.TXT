@@ -1,0 +1,61 @@
+HOWTO_RELEASE.txt
+
+Each new release of Watcher requires proper setup.
+
+1. Update ALL version number instances
+a) VersionCheck.cs 
+VersionStruct version should be updated to match the new release number, for example:
+
+        // This version of Watcher is 1.1.0
+        VersionStruct version = new VersionStruct(1, 1, 0, String.Empty);
+
+b) Watcher projects AssemblyInfo.cs
+c) WatcherCheckLib project's AssemblyInfo.cs
+d) NSIS installer scripts
+e) CHANGELOG.txt
+
+2. The three NSIS installer scripts should be updated to match the new version number.
+	Installer.nsi
+	NoPrivInstaller.nsi
+	PrivInstaller.nsi
+
+For example:
+
+!define APPNAMEANDVERSION "Watcher Security Auditor v1.1.0" 
+
+3. The casaba.com/products/watcher.php page needs to be updated with the latest
+version number and release notes.  For example, version 1.1.0 would be:
+
+// START (DO NOT INCLUDE THIS LINE)//
+1
+1
+0
+
+Download from http://websecuritytool.codeplex.com
+
+Minor feature: Added AutoScroll to the results ListView.
+Minor feature: Added descriptions to each check.
+New Check: Detect user-controlled javascript events.
+Bug Fix: information disclosure checks for debug and error messages were missing stuff. 
+// END (DO NOT INCLUDE THIS LINE)//
+
+4. Create a ZIP of these files:
+CHANGELOG.txt
+EULA.txt
+LICENSE.txt
+README.txt
+Watcher.dll
+WatcherCheckLib.dll
+
+5. Prepare a ZIP of the source code.  
+- Remove all binaries from debug and release folders
+- Remove the .suo file, it contains private paths
+
+6. Six release files will be delivered to CodePlex.
+- Watcher.zip - binary RELEASE dll's for manual installation.
+- Watcher.zip.sha256 - SHA256 of the above
+- WatcherSetup.exe - binary installer for RELEASE dll's.
+- WatcherSetup.exe.sha256 - SHA256 of the above
+- Watcher.v1.0.0.release.src - zip file of source code
+- Watcher.v1.0.0.release.src.sha256 - SHA256 of the above
+

@@ -22,31 +22,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvCrossDomainFormSubmit()
         {
-            return "Cross-Domain - Cross-domain Form submit when <form> HTML tag \"action\" attribute points to an offsite domain.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifies HTML forms that post data offsite to a domain other than " +
-                    "the origin domain.  This would include subdomains if you didn't specify a wildcard or " +
-                    "a trusted domain in your configuration, e.g. *.nottrusted.com.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.CrossDomain;
+            LongName = "Cross-Domain - Cross-domain Form submit when <form> HTML tag \"action\" attribute points to an offsite domain.";
+            LongDescription = "Form-data sent to third-party sites may be considered a privacy violation. This check identifies HTML forms that post data offsite to a domain other than the origin domain. This would include subdomains if you didn't specify a wildcard or a trusted domain in your configuration, e.g. *.nottrusted.com.";
+            ShortName = "Third-party (cross-domain) form submit";
+            ShortDescription = "The page at the following URL submits one or more forms to a third-party domain:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#cross-domain-form";
+            Recommendation = "Ensure forms only post data to trusted locations, and that all data transmitted meet appropriate privacy requirements.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "Third-party (cross-domain) form submit";
+            String name = ShortName;
             String text =
-                "The page at the following URL submits one or more forms to a third-party domain:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 alertbody +
                 "\r\n\r\n";
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String domain, String context)

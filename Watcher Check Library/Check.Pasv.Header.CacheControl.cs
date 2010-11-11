@@ -21,28 +21,33 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         [ThreadStatic] static private int findingnum;
 
+        public CheckPasvHeaderCacheControl()
+        {
+            CheckCategory = WatcherCheckCategory.Header;
+            LongName = "Header - Check that cache-control HTTP header is set to the 'no-store' value.";
+            LongDescription = "Even in secure SSL channels sensitive data could be stored by intermediary proxies and SSL terminators. To direct such proxies from storing data, the 'no-store' Cache-Control header should be specified. This check will flag all SSL responses which don't set this value.  False positives are likey with this as the check doesn't have a good way to determine what's truly sensitive data and what's not. ";
+            ShortName = "Insecure Cache-Control header";
+            ShortDescription = "The response to the following request included a potentially insecure Cache-Control header:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#http-cache-control-header-no-store";
+            Recommendation = "Set the cache-control directive to no-cache and no-store.";
+        }
+
         public override String GetName()
         {
-            return "Header - Check that cache-control HTTP header is set to the 'no-store' value.";
+            return LongName;
         }
 
         public override String GetDescription()
         {
-            String desc = "Even in secure SSL channels sensitive data could be stored by intermediary proxies and " +
-                    "SSL terminators.  To direct such proxies from storing data, the 'no-store' Cache-Control header  " +
-                    "should be specified.  This check will flag all SSL responses which don't set this value.\r\n\r\n" +
-                    "False positives are likey with this as the check doesn't have a good way to determine what's truly " +
-                    "sensitive data and what's not. See http://palisade.plynt.com/issues/2008Jul/cache-control-attributes/ for more details.";
-
-            return desc;
+            return LongDescription;
         }
 
         private void AddAlert(Session session, String header)
         {
-            string name = "Insecure Cache-Control header";
+            string name = ShortName;
             findingnum++;
             string text =
-                "The response to the following request included a potentially insecure Cache-Control header:\r\n\r\n" +
+                Reference + ShortName +
                 session.fullUrl +
                 "\r\n\r\n" +
                 findingnum.ToString() + ") " +
@@ -50,7 +55,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 header;
 
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)

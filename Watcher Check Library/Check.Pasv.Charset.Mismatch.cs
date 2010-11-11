@@ -32,20 +32,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private String alertbody;
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvCharsetMismatch()
         {
-            return "Charset - Detect charset mismatches between the HTTP header and HTML or XML bodies.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifies responses where the HTTP Content-Type header declares a charset " +
-                    "different from the charset defined by the body of the HTML or XML.  " +
-                    "When there's a charset mismatch between the HTTP header and content body " +
-                    "Web browsers can be forced into an undesirable content-sniffing mode " +
-                    "to determine the content's correct character set.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Charset;
+            LongName = "Charset - Detect charset mismatches between the HTTP header and HTML or XML bodies.";
+            LongDescription = "This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.";
+            ShortName = "Charset mismatch";
+            ShortDescription = "The response to the following request declared two different charsets that did not match:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#charset-mismatch";
+            Recommendation = "Force UTF-8 for all text content, such as HTML and XML.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -58,14 +53,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             string name = "Charset mismatch";
             string text =
-                "The response to the following request did not explicitly set the character set as UTF-8:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The following issue(s) were identified:" +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()

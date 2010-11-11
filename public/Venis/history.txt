@@ -1,0 +1,338 @@
+History log
+Author: Angelo Mandato of Spaceblue
+Contact: angelo@spaceblue.com
+Website: http://www.spaceblue.com/venis/
+
+
+Version: Pre Release 1
+Date: 02/19/2002
+======================
+- First release of Venis, not functional
+
+
+Version: Pre Release 2
+Date: 02/22/2002 1:30AM
+======================
+- First functional release of Venis
+
+
+Version: Pre Release 2a
+Date: 02/22/2002 11:00 PM
+======================
+- Added Thread for compiling and a Thread to stop compiling.
+- Set tab to 3 characters (was 8, how annoying). This will eventually be a setting.  
+- Added link to Makensis.htm file in Help pull down menu. 
+
+
+Version: Pre Release 3
+Date: 02/28/2002
+======================
+- Fixed bug with Recent File List when selected, not checking if the previous document was modified. 
+- Added Find Dialog.  
+- Added Find Next (F3). Currently finds the next string based from the last specifications from Find Dialog.  
+- Added Replace Dialog (not functional). Version 1 (03/14/2002 really early in the morning)  
+- Changed tab to 2 spaces to conform with the 2 space tabs in the default NSI files.  
+- Made Replace and Goto dialogs functional.  
+- Updated the key NSIS words for syntax highlighting.  
+- Added toolbar with common tool buttons. Removed non functioning Printer option in menu. (Shall return)  
+- Added option to Installer to add Venis Editor as an open option when editing NSI files. 
+
+
+Version: 1.0
+Date: 03/14/2002
+======================
+- Changed tab to 2 spaces to conform with the 2 space tabs in the default NSI files.  
+- Made Replace and Goto dialogs functional.  
+- Updated the key NSIS words for syntax highlighting.  
+- Added toolbar with common tool buttons.  
+- Removed non functioning Printer option in menu. (Shall return)  
+- Added option to Installer to add Venis Editor as an open option when editing NSI files. 
+
+
+Version: 1.0.1
+Date: 06/18/2002
+======================
+- Font size is now saved. Currently only 10, 12 and 15 point work. 
+- Fixed compile window not clearing results. 
+- Cleaned up toolbar icons. 
+- Added venis.nsi source install file and license.txt to install. 
+- Updated about dialog with program icon and new url to spaceblue.com 
+- Added new orange application icon to compiled program. 
+
+
+Version: 1.0.2
+Date: 07/24/2002
+======================
+- Font size adjustable to any size. 
+- Open file though network path (\\machine\share\file.nsi) now works. 
+- Web link fixed, opens with IE6 correctly now. 
+- Bottom window area does not change when window is resized. 
+- Printing support added. Note: This is not fully tested and is not a feature I care to focus on yet. 
+- Added ability to change the colors of the syntax highlighting (key words) in the Preferences. 
+- Added ability to set tab spacing in the Preferences. 
+
+
+Version: 1.0.3
+Date: 09/01/2002
+======================
+- Fixed syntax color registry setting for Labels (back to Venis orange). 
+- Removed open file with Venis message box pop up. 
+- Fixed help link to use the default browser to open makensis.htm. 
+- Added demonstration of new drag and drop function wizard. Only the MessageBox function is implemented. If there is positive feedback for this feature, I will create all the functions for this wizard. 
+- Added "Select" button's to the function wizard to select from the different options for an NSIS function. 
+- Added F1 support in function wizard, opens the makensis.htm with the specified function name anchor. 
+
+
+Version: 1.0.4
+Date: 11/07/2002
+======================
+- Added function list dialog. This new dialog will keep its position in relation to the main application position. 
+- Added output compiled path and filename to status bar. 
+- Fixed line and column number reporting bug in status bar. 
+- Added a number of typical functions to the new Function List Dialog. Each function may be drag-n-dropped into your code for a quick function argument wizard. 
+- Changed location of registry settings. NOTE: your current program window position and font size/colors will not be saved. Sorry if this is an inconvenience for you. 
+- Reduced window flickering when application was resized or moved. 
+- Added *.nsh to the open dialogs. 
+- Added word file support. May be edited for your needs. 
+- Added new functions as of NSIS 2.0a7 to wordfile. 
+
+
+Version: 1.0.4a
+Date: 1/08/2003
+======================
+- Modified internal compile command to remove /CD when compiling code. Future versions will have a textbox where you can specify compiler arguments. 
+
+
+Version: 2.0
+Date: 1/31/2003
+======================
+- New multiple document interface created for Venis 2.0. 
+- Cleaned up look within program. 
+- Enhanced method of enabling and disabling menus, status bars and and toolbars. 
+- Added one instance logic. All Venis files will now open in one application. 
+- Added file(s) drag and drop to application. 
+- Enhanced compile results window. You can now double click a line with an error and the compiled file will be set to focus with the cursor at that line. 
+- Added compiler arguments in the Preferences dialog. This allows you to add /CD if you use an older version of NSIS. Note: 2.0b and later versions have removed the /CD compile flag. 
+- Added `Close All` to menus and toolbar. 
+- Modified recent files list to handle up to 9 recent files. Ability to select your most recent files has been added. 
+- Drag to code functions wizard has been removed. Feature will be re-added once 2.0 version series is stable. 
+- Print menu and toolbar options have been removed. Feature slated to be returned on next release. 
+- Save document on compile feature removed. Slated to return on next release as an option in the Preferences dialog. 
+
+
+Version: 2.0.1
+Date: 4/10/2003
+======================
+- Fixed `Save All` icon, previous version, button did not work. 
+- Added `Save File` option On Compile. Setting found in Preferences dialog.  
+- Added error messages when trying to open a file that does not exist or does not have read permission. 
+- Enhanced double clicking feature in the compile results plate. Lines with the word error or warning may be double clicked. If the line number is specified, the document's cursor is set on that line. 
+
+
+Version: 2.1
+Date: 7/14/2003
+======================
+- Advanced settings for editor and syntax coloring. 
+- Further enhanced the compile plate goto event (double clicking compiler error) for the different types of NSIS errors and warnings. 
+- Many editor enhancements including variables in strings as a different syntax color, folding for Functions, Sections, SubSections, ifdefs, and macros, tab guides. 
+- Added Print and Print Preview support. 
+- Added Export as HTML support. 
+- Added file tab control with full path tool tips, right click pop up menu, and ability to drag and drop tabs to change the tab order. 
+- Added optional compile as STDOUT. 
+- Added NSIS API tool tips in editor. Simply type in a key function or press Ctrl+Shift+Space to display tool tip. 
+- Fixed the Replace All bug in the Replace dialog. 
+- Added Block Commenting. Preferred commenting character(s) may be set in the Preferences dialog. 
+- Added smart indenting, indents and un-indents within code where folding areas exist such as Function, Section, etc. This may keep your code lined up correctly. 
+- Allow opening of multiple files in the Open file dialog. 
+- Minimized application flickering. 
+- Added option in Preferences to highlight current line. 
+- Added option in Preferences to fold Functions, Sections, SubSections, ifdefs and macros upon Opening a document. 
+
+
+Version: 2.2pr1
+Date: 10/16/2003
+======================
+- Added Function Wizard design plate.
+	- Added many commonly used functions to wizard plate.  Eventually all functions will be designed with the wizard.
+	- Added ability to browse for files and folders in wizard.
+	- Added ability to select Functions and Labels that already exist in current script from wizard.
+- Enhanced tooltip (file path) for file tab control.
+- Removed About dialog and is now replaced by About tab in design plate.
+- Added File Session support.  Sessions save the current opened documents cursor positions for reloading at a later time.
+- Added option to reload previously opened documents on startup.
+- Added "Open Containing Folder" option to the edit menu.
+- Fixed API tool tip bug, will now disappear on all left down click events.
+
+
+Version 2.2pr2
+Date: 11/20/2003
+======================
+- Added History button in about tab, loads history.txt
+- Added License button in about tab, loads license.txt
+- Added an additional thread to receive the compiling results.  Dramatically faster compiling results now.
+- Changed Loading Session files to append to the currently opened documents.
+- Fixed bug when selecting a file from file toobar that is iconized(minimized).
+- Added launch chm support for latest nsis.chm online help
+- Added F1 feature in editor, Function Plate and Function Wizard. 
+	F1 will now start the nsis.chm file with the function as the search topic
+- Add New Install Wizard.  Many features including ability to select
+	files or folders and creating shortcuts.
+- Fixed screen jumping in Find/Replace to not jump if text is already visible.
+- Add to Find/Replace the ability to take what is highlighted and automatically putting it into find field.
+- Add replace existing file warning dialog to Save File Session option.
+- Add ability to check for NSIS updates from within Venis.
+- Add ability to check for Venis updates from within Venis.
+- Save As warning if a file to save is already opened in another window,
+	Option will Display that this current opened one will be closed
+- Add Ability to add shortcuts to component sections in wizard.  Seems more pratical.	
+	
+Version 2.2 (final)
+Date: 12/9/2003
+======================
+- Fixed InstallDirRegKey popping up before InstallDir instruction bug.
+- Added detailed function API tips based from /CMDHELP flag from makensis.exe
+- Added report dialog in find/replace when document has been searched once though.
+- Added find/replace report dialog option to preferences.
+- Rename 'HTML path' to 'Html/Chm Path' in preferences dialog.
+- Eliminated flicker when loading or reloading documents.
+- Added option to only apply BrandingText if it does not exist in the script.
+- Added option to check if NSIS is installed, if it is not ask them if they wnat to visit the NSIS web site.
+- Added Check and ask if user wants to associate nsi/nsh files with Venis IX.
+- Added Option to check if Venis IX is the default NSIS editor.  Also checks if NSIS is installed
+- Added a tip window for Function Tips button in Functions Plate.
+- Added collapse Functions and Sections only option.
+- Fixed Install Wizard uninstall generation, $INSTDIR is now always the last directory to be deleted.
+  Subdirectories are removed in the correct order.
+- Update Venis Install Wizard
+	- Added a new page 4, old page 4 is now page 5
+	- Added Branding Text to wizard to page 2
+	- Added Set Compressor to page 4
+	- Moved Application Executable to page 4.  Does not have to be selected.
+	- Added Select Language(s) to page 4
+	- Added saving of last used settings for wizard.
+	- Pop up dialog on Wizard completion to see if they want to save the file.
+		- Doing so will change the paths to relative paths where the newly generated nsi file is saved.
+- Added Run args option in tools pull down menu.  Set the arguments you wish to pass to your install when you click run.
+- Finally Finished implementing a better compiler calling interface.  Compile results will now display in the 
+  Compile Plate as soon as they are printed from the makensis.exe compiler.  Lightening fast!
+- New compiler calling tested on WindowsXP/2000/98se.
+- Merry Christmas everyone!
+
+
+Version 2.2.1
+Date: 12/17/2003
+======================
+- Fixed a bug with the MDI interface focus when reloading a session.
+- Added F1 help and block comment options to context sensative pop up menu in editor.
+- Fix compiler call freeze when calling with large scripts.
+- Fixed background color not setting correctly.
+  Note:  The background color must be set for each style, the default background color is overridden
+	by each styles background color.  Future versions of Venis will resolve this issue by making the
+	background color optional.
+
+
+Version 2.2.2
+Date: 02/26/2004
+======================
+- Added features to edit control
+  - Added option for user defined variables to be colored. (default)
+	- Added option for key words to ignore case. (not default)
+	- fixed bug, $$, $\r, $\n and $\t are now not colorized
+	- Added logic to folding, fold will now only occur if key word is the first word on that line.
+- Added Function/Section View.  Simply double click the function, section, macro, or definition
+  and go directly to that portion of the code.
+- Fixed bug with restoring sessions and cursor focus.
+- Fixed bug with Open Maximized not working correctly.
+- Fixed make Venis your default editor for NSIS (Script and Header) v2.0 release.
+- Added option to preferences to add block comments at first position of each line. (comment at 1st pos)
+- Branding text default setting is unchecked.
+- Fix Close Help window if open before closing application.
+- Fixed save as file in wizard not adding the nsi default extension.
+- Add Keywords case insensative to preferences (default unchecked).
+- Add colorise user variables to preferences (default checked).
+
+
+Version 2.2.3
+Date: 04/19/2004
+======================
+- Fixed bug with View not displaying all tree items.
+- Fixed bug with new install wizard always adding default shortcuts even when removed.
+- Added word wrap option in View pull down menu.
+- Added Open word wrapped option in preferences.
+- Fixed bug where Venis would crash when left mouse click on calltip.
+
+
+Venis IX 2.2.4
+Date: 03/10/2005
+======================
+- Added all NSIS functions to the functions drag-n-drop wizard panel.
+	- File Functions wizard can add multiple files or directory with flags (*.ext)
+	- Functions with color parameters can select colors with a color picker
+- Improved the Function/Section view regeneration during editing.
+- Added folding for /* */ comments.
+- Added folding for !else in defines.
+- Added multi line string support with lines ending with '\' character.
+- Added PageEx and SectionGroup to folding.
+- Highlighted text with Replace (Ctrl+H) will now put selected text in find field.
+- Refresh file dailog if file changed by external editor.
+- Clicking on API tooltip will now take you to the Help for that function
+- Updated Functions, Variables and labels
+- Added the Modern Interface variables styling. (default light purple)
+- Added Numbers styling (default dark gray)
+- Added Compile and Run option
+- Add option in Help pulldown menu to launch NSISupdate.exe.
+
+
+Venis IX 2.2.5
+Date: 03/12/2005
+======================
+- Redesigned Fixed View plate, does not regenerate tree when document focused
+- Fixed bug with View plate not displaying when last line ends with a SubSectionEnd
+- Fixed bug in text control with folding for files that do not have \r\n in them
+- Added middle click on file notebook control, closes current file similar to Firefox's tab control
+
+
+Venis IX 2.2.5 free
+Date: 01/03/2009
+======================
+- Venis is now free and is automatically registered as a paid version upon install.
+- User Name: Free
+- Registration Code: baab47497f1d7927a1b837489da5af17
+
+
+Slated for Venis IX 2.2.x series
+======================
+- Add icon to fix paths (convert to relative paths based on script saved location).
+	- Icon would be gray for new files that are not saved
+	- First pass would convert paths in commands such as File relative to location where script is saved.
+	- Second pass would replace all paths that are also predefined variables in NSIS, such as $PROGRAMFILES
+- Enhance features in current wizard.
+- Ability to drag and drop reg files and paste as ReadRegXXX /WriteRegXXX etc..
+- Registry browsing tools
+- Options designer (possible)
+
+
+Future Venis 3.0
+======================
+- Create chm file for Venis IX support
+- Redesign MDI interface as a tab only file management to reduce CPU and memory usage.
+- Design features and tools geared toward the latest NSIS development (ofcourse).
+- Utilize a project file concept for maintaining and generating future Installs
+- Redesign preferences so all languages available in Scite (used in Venis) can be used.
+- Add additional features with find/replace.  Possibly make another tab next to Compile Results.
+- Move most all settings from registry to the users application data\Venis directory.
+- Add ability to save and load wizard settings.
+- Add options to Function/Section View, such as
+	- right click and edit section/function arguments
+	- display default seciton icon based on section setting (readonly, checked, etc...)
+	- Small wizard for a section/function, if possible
+- Ablity to drag and drop files into wizard (page 3).
+- Ability to drag and drop links into wizard (page 4).
+- Add option "Auto goto error" for compile errors
+- Change install wizard image from being vertical on left side to
+  horizontal along the top. This will give the last 2 pages more room.
+- Additional wizards for different types of installs	
+- Add syntax highlighting for config files such as ini, inf, and reg files.
+- Add ability to keep track of all the install paths in an install. 
+
+

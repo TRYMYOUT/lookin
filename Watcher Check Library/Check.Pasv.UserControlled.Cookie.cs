@@ -19,35 +19,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private int findingnum;
         [ThreadStatic] static private bool isPost;
 
-        public override String GetName()
+        public CheckPasvUserControlledCookie()
         {
-            return "User Controlled - Cookie poisoning.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check looks at user-supplied input in query string parameters and POST data to " +
-                    "identify where cookie parameters might be controlled.  " +
-                    "This is called a cookie poisoning attack, and becomes exploitable when an attacker can " +
-                    "manipulate the cookie in nafarious ways.  In some cases this will not be exploitable, " +
-                    "however, allowing URL parameters to set cookie values is generally considered a bug.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.UserControlled | WatcherCheckCategory.Cookie;
+            LongName = "User Controlled - Cookie poisoning.";
+            LongDescription = "This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in nafarious ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.";
+            ShortName = "User controllable cookie (potential cookie poisoning attack)";
+            ShortDescription = "An attacker may be able to poison cookie values through URL parameters.  Try injecting a semicolon to see if you can add cookie values (e.g. name=controlledValue;name=anotherValue;). This was identified at:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-cookie";
+            Recommendation = "Do not allow user input to control cookie names and values. If some query string parameters must be set in cookie values, be sure to filter out semicolon's that can serve as name/value pair delimiters.";
         }
 
         private void AddAlert(Session session)
         {
-            String name = "User controllable cookie (cookie poisoning attack)";
+            String name = ShortName;
             if (!isPost)
             {
                 String text =
 
-                    "An attacker may be able to poison cookie values through URL parameters.  This was identified at: \r\n\r\n" +
+                    ShortDescription +
                     session.fullUrl +
                     "\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+                WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
             }
             else
             {
@@ -62,7 +57,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     "\r\n\r\n" +
                     alertbody;
 
-                WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+                WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
             }
         }
 
@@ -119,7 +114,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 if (session.oResponse.headers.Exists("set-cookie"))
                 {
                     // get the query string and POST params if cookies were set
-                    parms = GetRequestParameters(session);
+                    parms = Utility.GetRequestParameters(session);
 
                     // loop through each header to find the cookies
                     // TODO: Does Fiddler expose a cookie collection?

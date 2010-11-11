@@ -45,33 +45,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private int findingnum2;
         #endregion
 
-        public override String GetName()
+        public CheckPasvUnicodeInvalidUTF8()
         {
-            return "Unicode - Identify ill-formed Unicode UTF-8 content, and null bytes in HTML.";
+            CheckCategory = WatcherCheckCategory.Unicode;
+            LongName = "Unicode - Identify ill-formed Unicode UTF-8 content and null bytes in HTML.";
+            LongDescription = "This check reviews the byte stream of an UTF-8 encoded HTML page, and identifies ill-formed byte sequences as well as null bytes. When a web-app emits illegal UTF-8 byte sequences, then something more detrimental could be happening deeper in the server-side code.";
+            ShortName = "Ill-formed UTF-8 bytes";
+            ShortDescription = "An invalid UTF-8 ByteStream was detected for request:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#unicode-ill-formed-utf-8";
+            Recommendation = "If an alert is returned from this check, have a developer investigate the string handling on the server-side to identify how the string is being handled.";
         }
-
-        public override String GetDescription()
-        {
-            String desc = "This check reviews the byte stream of an UTF-8 encoded HTML page, and identifies " +
-                    "ill-formed byte sequences as well as null bytes.  For more information see: \r\n\r\n" +
-                    "http://www.lookout.net/2009/03/25/detecting-ill-formed-utf-8-byte-sequences-in-html-content/";
-
-            return desc;
-        }
-
+        
         private void AddAlert(Session session)
         {
-            string name = "Ill-formed UTF-8 bytes";
+            string name = ShortName;
             string text =
 
-                "An invalid UTF-8 ByteStream was detected for request:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The following issue(s) were identified:" +
                 "\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AddAlert2(Session session)
@@ -86,7 +83,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "\r\n\r\n" +
                 alertbody2;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum2);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum2, Reference);
         }
 
         private void FormMessage(long position, int sequencelength, MemoryStream memstream, bool isHeader)

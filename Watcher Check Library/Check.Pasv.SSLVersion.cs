@@ -25,18 +25,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
 
-        public override String GetName()
+        public CheckPasvSSLVersion()
         {
-            return "SSL - SSLv2 protocol check.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "When an SSL connection is initiated, this check attempts to connect to the server " +
-                    "using the insecure SSL v2 protocol.  If the server allows this, a finding is reported. " +
-                    "Most servers today should support SSL v3 and disallow the legacy versions of SSL.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.SSL;
+            LongName = "SSL - SSLv2 protocol check.";
+            LongDescription = "When an SSL connection is initiated, this check attempts to connect to the server using the insecure SSL v2 protocol. If the server allows this, a finding is reported. Most servers today should support SSL v3 and disallow the legacy versions of SSL.";
+            ShortName = "Insecure SSLv2 was allowed";
+            ShortDescription = "SSL issues were identified with host:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-v2-protocol";
+            Recommendation = "Ensure that SSL version 3.0 or TLS are being forced, and SSL v2 is prohibited on the server-side application.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -52,7 +49,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         // we only want to check the SSL handshake once per host
         private void AddAlert(Session session)
         {
-            String name = "Insecure SSLv2 was allowed";
+            String name = ShortName;
             String text =
 
                 "SSL issues were identified with host: \r\n" +
@@ -62,7 +59,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 alertbody;
 
             // don't change session.host or we'll get duplicate alerts
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()

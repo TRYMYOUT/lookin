@@ -37,18 +37,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings, "Dubious Comment Words:", "Enter new words to watch for here:");
             UpdateWordList();
-        }
-
-        public override String GetName()
-        {
-            return "Information Disclosure - Check for dubious comments that warrant further attention.";
-        }
-
-        public override String GetDescription()
-        {
-            return "This check looks for common patterns in HTML and javascript comments that may be useful to inspect in a " +
-            "security review or audit.  This performs a pattern match looking for a list of words like " +
-            "BUG, TODO, and profanity.  You can configure this list below.";
+            
+            CheckCategory = WatcherCheckCategory.InfoDisclosure;
+            LongName = "Information Disclosure - Check for dubious comments that warrant further attention.";
+            LongDescription = "This check looks for common patterns in HTML and javascript comments that may be useful to inspect in a security review or audit. This performs a pattern match looking for a list of words like BUG, TODO, and profanity. You can configure the list of words to search.";
+            ShortName = "Dubious comments were found";
+            ShortDescription = "Curious looking comments were found at the following URL:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#information-disclosure-in-comments";
+            Recommendation = "Scrub all comments before pushing to production.";
         }
 
         public override System.Windows.Forms.Panel GetConfigPanel()
@@ -62,15 +58,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Dubious comments were found.";
+            String name = ShortName;
             String text =
-                "Curious looking comments were found at the following URL:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The context was (up to 512 bytes following displayed):\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void UpdateWordList()

@@ -34,24 +34,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             configpanel = new CookieCheckConfigPanel(this);
             configpanel.Init();
-        }
+            configpanel.enablefiltercheckBox.Visible = false; //Hack requested to enable filtering always
 
-        public override String GetName()
-        {
-            return "Cookie - Look for cookies without the \"secure\" attribute.";
-        }
-
-        public override String GetDescription()
-        {
-            String desc = "This check identifes cookies set over SSL which don't set the 'secure' flag.  " +
-                    "When a cookie is set with the 'secure' flag, it instructs the browser that the cookie " +
-                    "can only be accessed over secure SSL channels.  This is an important security protection " +
-                    "for session cookies and other sensitive cookies that should never leak or be passed over an " +
-                    "unencrypted channel.\r\n\r\n" +
-                    "Because Watcher can't distinguish between the important and unimportant " +
-                    "cookies, you can configure an inclusive or exclusive list of cookie names to watch below.";
-
-            return desc;
+            CheckCategory = WatcherCheckCategory.Cookie;
+            LongName = "Cookie - Look for cookies without the \"secure\" attribute.";
+            LongDescription = "This check identifes cookies set over SSL which don't set the 'secure' flag. When a cookie is set with the 'secure' flag, it instructs the browser that the cookie can only be accessed over secure SSL channels. This is an important security protection for session cookies and other sensitive cookies that should never leak or be passed over an unencrypted channel.  Because Watcher can't distinguish between the important and unimportant cookies, you can configure an inclusive or exclusive list of cookie names to watch.";
+            ShortName = "Cookie's secure flag was not set";
+            ShortDescription = "A response over TLS/SSL included a Set-Cookie header that did not include the secure attribute:\r\n\r\n";
+            Reference = "http://websecuritytool.codeplex.com/wikipage?title=Checks#cookie-not-setting-secure-flag";
+            Recommendation = "Always set the 'secure' flag for session cookies and other sensitive cookies that should never be sent over unencrypted channels.";
         }
 
         public override void Clear()
@@ -89,15 +80,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void AddAlert(Session session)
         {
-            String name = "Cookie's secure flag was not set";
+            String name = ShortName;
             String text =
-                "A response over TLS/SSL included a Set-Cookie header that did not include the secure attribute:\r\n\r\n" +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 "The cookie(s) returned were:\r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session, UtilityHtmlParser htmlparser)
@@ -114,7 +105,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             alertbody = "";
             findingnum = 0;
-            filter = configpanel.enablefiltercheckBox.Checked;
+            //filter = configpanel.enablefiltercheckBox.Checked;
+            filter = true; //Hack requested to always enable filtering
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {

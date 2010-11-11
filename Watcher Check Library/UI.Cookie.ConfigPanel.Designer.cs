@@ -117,6 +117,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             this.toolTipCookieConfigUI.SetToolTip(this.enablefiltercheckBox, "Filters out duplicate cookies. For example, cookies that are set to a new value e" +
                     "very request will only be reported the first time seen..");
             this.enablefiltercheckBox.UseVisualStyleBackColor = true;
+            this.enablefiltercheckBox.CheckedChanged += new System.EventHandler(this.enablefiltercheckBox_CheckedChanged);
             // 
             // filtertypecomboBox
             // 

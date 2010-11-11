@@ -52,6 +52,29 @@ namespace CasabaSecurity.Web.Watcher
     }
 
     /// <summary>
+    /// This type represents some category of technology or actions a check is concerned with.
+    /// </summary>
+    [Flags]
+    public enum WatcherCheckCategory
+    {
+        None                            = 0x0000,   // The check doesn't have a category defined.
+        AspNet                          = 0x0005,   // The check relates to ASP.NET
+        Charset                         = 0x0010,   // The check relates to charsets.
+        Cookie                          = 0x0020,   // The check relates to HTTP cookies.
+        CrossDomain                     = 0x0030,   // The check relates to cross-domain interactions.
+        Flash                           = 0x0040,   // The check relates to Adobe Flash.
+        Header                          = 0x0060,   // The check relates to HTTP headers.
+        InfoDisclosure                  = 0x0080,   // The check relates to information disclosure.
+        Java                            = 0x0100,   // The check relates to Java.
+        JavaScript                      = 0x0140,   // The check relates to JavaScript.
+        Sharepoint                      = 0x0180,   // The check relates to Sharepoint.
+        Silverlight                     = 0x0220,   // The check relates to Silverlight.
+        SSL                             = 0x0260,   // The check relates to SSL.
+        Unicode                         = 0x0280,   // The check relates to Unicode.
+        UserControlled                  = 0x0300,   // The check relates to user-controlled events.
+    }
+
+    /// <summary>
     /// This is the base class for Watcher Checks, which includes a set of virtual
     /// functions that should be implemented by checks.
     /// </summary>
@@ -59,13 +82,20 @@ namespace CasabaSecurity.Web.Watcher
     {
         #region Fields
         public Boolean _enabled = true;                                 // Is this check enabled?
+        private Boolean _noisy = false;                                  // Does the check generate a lot of noise?
         public int historysize = 1000;
+        private String _shortName = string.Empty;
+        private String _longName = string.Empty;
+        private String _shortDescription = string.Empty;
+        private String _longDescription = string.Empty;
+        private String _reference = string.Empty;
+        private String _recommendation = string.Empty;
         private WatcherCheckStandardsCompliance _standardsCompliance;   // Standards implemented by Watcher that this check conforms to
+        private WatcherCheckCategory _checkCategory;                    // How to categorize the check.
         #endregion
 
         #region Ctor(s)
 
-        // TODO: POTENTIALLY BREAKING CHANGE: public -> protected
         protected WatcherCheck()
         {
         }
@@ -81,6 +111,82 @@ namespace CasabaSecurity.Web.Watcher
         {
             get { return _enabled; }
             set { _enabled = value; }
+        }
+
+        /// <summary>
+        /// Set to true if the check will generate a lot of noise/results.  
+        /// Users may want to disable it based on this information, but ideally
+        /// the check author would implement some sort of noise-reduction filter.
+        /// </summary>
+        protected Boolean Noisy
+        {
+            get { return _noisy; }
+            set { _noisy = value; }
+        }
+
+        /// <summary>
+        /// Short name used in the results and findings.
+        /// </summary>
+        protected String ShortName
+        {
+            get { return _shortName; }
+            set { _shortName = value; }
+        }
+
+        /// <summary>
+        /// Short description used in places like the findings and results.
+        /// </summary>
+        protected String ShortDescription
+        {
+            get { return _shortDescription; }
+            set { _shortDescription = value; }
+        }
+
+        /// <summary>
+        /// Long name used in places like the main check configuration screen.
+        /// </summary>
+        protected String LongName
+        {
+            get { return _longName; }
+            set { _longName = value; }
+        }
+
+        /// <summary>
+        /// Long description used in places like the main check configuration.
+        /// </summary>
+        protected String LongDescription
+        {
+            get { return _longDescription; }
+            set { _longDescription = value; }
+        }
+
+        /// <summary>
+        /// The external reference that give more information about the check,
+        /// should go to the CodePlex wiki site.
+        /// </summary>
+        protected String Reference
+        {
+            get { return _reference; }
+            set { _reference = value; }
+        }
+
+        /// <summary>
+        /// Any recommendation for how to mitigate or defend against the issue.
+        /// </summary>
+        protected String Recommendation
+        {
+            get { return _recommendation; }
+            set { _recommendation = value; }
+        }
+
+        /// <summary>
+        /// Returns a bitmask of the category or categories that a check belongs to.
+        /// </summary>
+        public WatcherCheckCategory CheckCategory
+        {
+            get { return _checkCategory; }
+            protected set { _checkCategory = value; }
+
         }
 
         /// <summary>
@@ -100,88 +206,29 @@ namespace CasabaSecurity.Web.Watcher
         {
         }
 
+        public virtual String GetShortName()
+        {
+            return this.ShortName;
+        }
+
         public virtual String GetName()
         {
-            return base.ToString();
+            return this.LongName;
         }
 
         public virtual String GetDescription()
         {
-            return base.ToString();
+            return this.LongDescription;
+        }
+
+        public virtual String GetRefLink()
+        {
+            return this.Reference;
         }
 
         public virtual System.Windows.Forms.Panel GetConfigPanel()
         {
             return null;
-        }
-
-        public static NameValueCollection GetRequestParameters(Session session)
-        {
-            NameValueCollection nvc = null;
-            String qs = null;
-
-            // If this is GET request
-            if (session.HTTPMethodIs("GET"))
-            {
-                // ...and has query string
-                if (session.PathAndQuery.IndexOf("?") > 0)
-                {
-                    // Get the query string
-                    qs = session.PathAndQuery.Substring(session.PathAndQuery.IndexOf("?") + 1);
-                }
-            }
-
-            // If is a POST request
-            if (session.HTTPMethodIs("POST"))
-            {
-                // ...and has a content-type
-                if (session.oRequest.headers.Exists("content-type"))
-                {
-                    // ... and is urlencoded form data
-                    if (session.oRequest.headers["content-type"] == "application/x-www-form-urlencoded")
-                    {
-                        // TODO: is a decode needed?
-                        //session.utilDecodeRequest();
-
-                        // Get the request body as a string
-                        qs = System.Text.Encoding.UTF8.GetString(session.requestBodyBytes);
-                    }
-                }
-            }
-
-            // If we have a query string
-            if (qs != null)
-            {
-                // Parse it...
-                try
-                {
-                    nvc = HttpUtility.ParseQueryString(qs);
-
-                    // Remove any nulls from ill-formed query strings
-                    List<string> lst = new List<string>();
-
-                    foreach (String param in nvc.Keys)
-                    {
-                        if (param == null)
-                        {
-                            lst.Add(param);
-                        }
-                    }
-
-                    foreach (String param in lst)
-                    {
-                        nvc.Remove(param);
-                    }
-                }
-
-                // TODO: Could we be missing things here?  False negatives?
-                catch (ArgumentNullException ane)
-                {
-                    ExceptionLogger.HandleException(ane);// discard
-                }
-            }
-
-            return (nvc);
         }
 
         // This function should be thread safe
