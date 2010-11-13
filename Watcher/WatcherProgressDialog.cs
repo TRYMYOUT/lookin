@@ -13,7 +13,9 @@ namespace CasabaSecurity.Web.Watcher
     public partial class WatcherProgressDialog : Form
     {
         #region Field(s)
-        private const byte _increment = 10;      // Default amount to increment the progress bar
+        // private const byte _increment = 10;      // Default amount to increment the progress bar
+        private int _increment;
+
         #endregion
 
         #region Ctor/Dtor(s)
@@ -26,6 +28,24 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Maximum range for the progress bar.
+        /// </summary>
+        public int MaximumRange
+        {
+            get { return progressBar1.Maximum; }
+            set { progressBar1.Maximum = value; }
+        }
+
+        /// <summary>
+        /// Minimum range for the progress bar.
+        /// </summary>
+        public int MinimumRange
+        {
+            get { return progressBar1.Minimum; }
+            set { progressBar1.Minimum = value; }
+        }
 
         /// <summary>
         /// Get/set the current position of the progress bar.
@@ -41,11 +61,20 @@ namespace CasabaSecurity.Web.Watcher
                 if (value > progressBar1.Maximum || value < progressBar1.Minimum)
                 {
                     Random rnd = new Random();
-                    progressBar1.Value = rnd.Next(progressBar1.Minimum, progressBar1.Maximum);
+                    //progressBar1.Value = rnd.Next(progressBar1.Minimum, progressBar1.Maximum);
                 }
 
                 UpdateProgress();
             }
+        }
+
+        /// <summary>
+        /// How much do you want to increment by?  
+        /// </summary>
+        public int Increment
+        {
+            get { return _increment; }
+            set { _increment = value; }
         }
 
         #endregion

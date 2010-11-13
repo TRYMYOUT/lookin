@@ -66,7 +66,6 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // tabPage1
             // 
-            //this.tabPage1.BackColor = System.Drawing.SystemColors.Window;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
             this.tabPage1.Controls.Add(this.watcherConfigTab);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -86,10 +85,10 @@ namespace CasabaSecurity.Web.Watcher
             this.watcherConfigTab.Name = "watcherConfigTab";
             this.watcherConfigTab.Size = new System.Drawing.Size(592, 574);
             this.watcherConfigTab.TabIndex = 0;
+            this.watcherConfigTab.Load += new System.EventHandler(this.watcherConfigTab_Load);
             // 
             // tabPage3
             // 
-            //this.tabPage3.BackColor = System.Drawing.SystemColors.Window;
             this.tabPage3.BackColor = System.Drawing.Color.Transparent;
             this.tabPage3.Controls.Add(this.watcherCheckTab);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -110,7 +109,6 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // tabPage2
             // 
-            //this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
             this.tabPage2.BackColor = System.Drawing.Color.Transparent;
             this.tabPage2.Controls.Add(this.watcherResultsTab);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -134,7 +132,6 @@ namespace CasabaSecurity.Web.Watcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            //this.BackColor = System.Drawing.SystemColors.Window;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.watchertabControl);
             this.Name = "WatcherControl";
