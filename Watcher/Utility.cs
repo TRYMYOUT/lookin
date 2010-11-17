@@ -519,7 +519,7 @@ namespace CasabaSecurity.Web.Watcher
             int x = 0;
 
             // Match opening->closing tag, nested tags not handled
-            mc = Regex.Matches(body, @"<\s*?" + tagName + @"((\s*?)|(\s+?\w.*?))>.*?<\s*?\/\s*?" + tagName + @"\s*?>", RegexOptions.Singleline);
+            mc = Regex.Matches(body, @"<\s*?" + tagName + @"((\s*?)|(\s+?\w.*?))>.*?<\s*?\/\s*?" + tagName + @"\s*?>", RegexOptions.Singleline | RegexOptions.Compiled);
 
             if (mc != null && mc.Count > 0)
             {

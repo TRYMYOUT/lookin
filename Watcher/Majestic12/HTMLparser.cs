@@ -180,6 +180,8 @@ namespace Majestic12
 			}
 		}
 
+        bool _bDecodeMiniEntities = false;
+
 		/// <summary>
 		/// If true (default) then heuristics engine will be used to match tags and attributes quicker, it is
 		/// possible to add new tags to it, <see cref="oHE"/>

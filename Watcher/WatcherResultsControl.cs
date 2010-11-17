@@ -1,7 +1,7 @@
 ﻿// WATCHER
 //
-// WatcherTab.cs
-// Main implementation of WatcherTab UI.
+// WatcherResultsControl.cs
+// Main implementation of Watcher Results processing.
 //
 // Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
@@ -473,17 +473,7 @@ namespace CasabaSecurity.Web.Watcher
         /// </summary>
         private void FileSaveButton_Click(object sender, EventArgs e)
         {
-
-            // CHANGE - We used to just export selected items from Results, now we export all items.
-            /*
-            // If no alerts are selected, bail.
-            if (alertListView.SelectedItems.Count == 0)
-            {
-                MessageBox.Show("Nothing to export.  Please select one or more items to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-             */
-
+            
             // If no export method is selected, bail.
             if (cbExportMethod.SelectedItem == null)
             {
@@ -493,9 +483,7 @@ namespace CasabaSecurity.Web.Watcher
 
             // Gather the selected results
             WatcherResultCollection selectedResults = new WatcherResultCollection();
-
-            // CHANGE - We used to just export selected items from Results, now we export all items.
-            //foreach (AlertListViewItem item in alertListView.SelectedItems)
+            
             foreach (AlertListViewItem item in alertListView.Items)
             {
                 WatcherResult result = new WatcherResult();
@@ -545,7 +533,11 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             // This is the export progress dialog shown during the export process
+
+            // CHANGE - potentially breaking change, removing progress dialog
+            // which seems to be dreadfully slowing down real work.
             WatcherEngine.ProgressDialog.Show();
+            WatcherEngine.ProgressDialog.Title = "Export Data";
 
             // Perform the export asynchronously
             ExportResultsCallback callback = new ExportResultsCallback(ExportResults);
@@ -574,6 +566,7 @@ namespace CasabaSecurity.Web.Watcher
 
                     finally
                     {
+                        // CHANGE - see above breaking change, removing progress dialog.
                         WatcherEngine.ProgressDialog.Hide();
                     }
 

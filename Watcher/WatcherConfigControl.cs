@@ -370,7 +370,9 @@ done:
         {
             // Use a delegate to perform the operation asynchronously--since we're doing network IO,
             // this wastes a thread for the sake of simplicity.
-            ProcessOfflineSessions callback = ProcessSessions;
+            ProcessOfflineSessions callback = new ProcessOfflineSessions(ProcessSessions);
+
+            WatcherEngine.ProgressDialog.Show();
 
             // Invoke the update check asynchronously
             callback.BeginInvoke(
@@ -380,14 +382,14 @@ done:
                 {
                     try
                     {
-                        WatcherEngine.ProgressDialog.Show();
                         // Tidy up after the update check
                         ProcessOfflineSessions _callback = (ProcessOfflineSessions)ar.AsyncState;
                         _callback.EndInvoke(ar); // TODO: this will throw any exceptions that happened during the call
                     }
                     catch (WatcherException ex)
                     {
-                        Trace.TraceError("Exception: {0}", ex.Message);
+                        Trace.TraceError("Exception: {0}", ex.Message);    
+                        MessageBox.Show(this, String.Format("{0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                     finally
@@ -395,6 +397,7 @@ done:
                         // Inform the user of progress
                         WatcherEngine.ProgressDialog.Hide();
                     }
+                    MessageBox.Show(this, "Sessions successfully processed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 },
 
@@ -410,19 +413,18 @@ done:
         {
             Fiddler.Session[] sessions = Fiddler.FiddlerApplication.UI.GetAllSessions();
 
-            int count = 0;
+
+            // Reset the bar's progress position
+            WatcherEngine.ProgressDialog.ProgressValue = 0;
             WatcherEngine.ProgressDialog.MaximumRange = sessions.Length;
             WatcherEngine.ProgressDialog.MinimumRange = 0;
             WatcherEngine.ProgressDialog.Increment = 1;
+            WatcherEngine.ProgressDialog.Title = "Offline Session Analysis";
+            WatcherEngine.ProgressDialog.BodyText = "Processing session data:";
+            
 
             foreach (Fiddler.Session s in sessions)
             {
-                count++;
-
-                WatcherEngine.ProgressDialog.labelOperation.Text = "Processing Session ID: " + s.id;
-                WatcherEngine.ProgressDialog.ProgressValue = WatcherEngine.ProgressDialog.Increment;
-                WatcherEngine.ProgressDialog.UpdateProgress();
-
                 // Turn off streaming
                 // TODO: this may already be the case by the time this method is called...
                 s.bBufferResponse = true;
@@ -444,6 +446,10 @@ done:
 
                 // Run the enabled Watcher checks against the session
                 WatcherEngine.CheckManager.RunEnabledChecks(s);
+
+                WatcherEngine.ProgressDialog.labelOperation.Text = String.Format("Session ID: {0} of {1}", s.id, sessions.Length);
+                WatcherEngine.ProgressDialog.UpdateProgress();
+
             }
         }
     }

@@ -7,6 +7,7 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+
         /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
@@ -18,6 +19,15 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// TODO: Can we set ControlBox=True and disable the form from being closed and disposed?
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
         }
 
         #region Component Designer generated code
@@ -61,11 +71,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.ClientSize = new System.Drawing.Size(430, 108);
+            this.ControlBox = false;
             this.Controls.Add(this.labelOperation);
             this.Controls.Add(this.titlelabel);
             this.Controls.Add(this.progressBar1);
             this.DoubleBuffered = true;
+            this.Enabled = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "WatcherProgressDialog";
             this.ShowIcon = false;
@@ -80,7 +93,7 @@
         #endregion
 
         public System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label titlelabel;
+        public System.Windows.Forms.Label titlelabel;
         public System.Windows.Forms.Label labelOperation;
     }
 }
