@@ -57,6 +57,7 @@ namespace CasabaSecurity.Web.Watcher
             this.autosavecheckBox = new System.Windows.Forms.CheckBox();
             this.toolTipConfigControl = new System.Windows.Forms.ToolTip(this.components);
             this.watcherbackgroundbutton = new System.Windows.Forms.Button();
+            this.ProcessOffline = new System.Windows.Forms.Button();
             this.pnlCopyright = new System.Windows.Forms.Panel();
             this.rightslabel = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -89,6 +90,7 @@ namespace CasabaSecurity.Web.Watcher
             this.configGroupBox.TabIndex = 3;
             this.configGroupBox.TabStop = false;
             this.configGroupBox.Text = "Domains";
+            this.toolTipConfigControl.SetToolTip(this.configGroupBox, "Load a .SAZ file and then click to process those sessions offline.");
             // 
             // lblDomainsAcceptRegularExpressions
             // 
@@ -266,6 +268,19 @@ namespace CasabaSecurity.Web.Watcher
             this.watcherbackgroundbutton.UseVisualStyleBackColor = true;
             this.watcherbackgroundbutton.Click += new System.EventHandler(this.button1_Click);
             // 
+            // ProcessOffline
+            // 
+            this.ProcessOffline.BackColor = System.Drawing.Color.Transparent;
+            this.ProcessOffline.Location = new System.Drawing.Point(309, 5);
+            this.ProcessOffline.Name = "ProcessOffline";
+            this.ProcessOffline.Size = new System.Drawing.Size(138, 23);
+            this.ProcessOffline.TabIndex = 2;
+            this.ProcessOffline.Text = "Process Sessions Offline";
+            this.toolTipConfigControl.SetToolTip(this.ProcessOffline, "Process a .saz file (session archive) loaded offline into Fiddler.\r\nFirst click F" +
+                    "ile -> Load Archive in Fiddler\'s main menu to load the .saz file.");
+            this.ProcessOffline.UseVisualStyleBackColor = true;
+            this.ProcessOffline.Click += new System.EventHandler(this.ProcessOffline_Click);
+            // 
             // pnlCopyright
             // 
             this.pnlCopyright.BackColor = System.Drawing.Color.Transparent;
@@ -279,6 +294,7 @@ namespace CasabaSecurity.Web.Watcher
             this.pnlCopyright.Name = "pnlCopyright";
             this.pnlCopyright.Size = new System.Drawing.Size(600, 55);
             this.pnlCopyright.TabIndex = 7;
+            this.pnlCopyright.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCopyright_Paint);
             // 
             // rightslabel
             // 
@@ -328,6 +344,7 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel.Size = new System.Drawing.Size(228, 13);
             this.copyrightlabel.TabIndex = 0;
             this.copyrightlabel.Text = "Watcher Web Security Tool, Copyright © 2010";
+            this.copyrightlabel.Click += new System.EventHandler(this.copyrightlabel_Click);
             // 
             // uigroupBox
             // 
@@ -339,6 +356,7 @@ namespace CasabaSecurity.Web.Watcher
             this.uigroupBox.TabStop = false;
             this.uigroupBox.Text = "User Interface";
             this.uigroupBox.Visible = false;
+            this.uigroupBox.Enter += new System.EventHandler(this.uigroupBox_Enter);
             // 
             // pluginPanel
             // 
@@ -352,6 +370,7 @@ namespace CasabaSecurity.Web.Watcher
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.ProcessOffline);
             this.Controls.Add(this.pluginPanel);
             this.Controls.Add(this.uigroupBox);
             this.Controls.Add(this.pnlCopyright);
@@ -401,5 +420,6 @@ namespace CasabaSecurity.Web.Watcher
         private System.Windows.Forms.Button watcherbackgroundbutton;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.Panel pluginPanel;
+        private System.Windows.Forms.Button ProcessOffline;
     }
 }

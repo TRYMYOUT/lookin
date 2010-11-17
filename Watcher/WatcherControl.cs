@@ -93,5 +93,10 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         #endregion
+
+        private void watcherConfigTab_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

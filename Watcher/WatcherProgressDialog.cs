@@ -13,7 +13,9 @@ namespace CasabaSecurity.Web.Watcher
     public partial class WatcherProgressDialog : Form
     {
         #region Field(s)
-        private const byte _increment = 10;      // Default amount to increment the progress bar
+        // private const byte _increment = 10;      // Default amount to increment the progress bar
+        private int _increment;
+
         #endregion
 
         #region Ctor/Dtor(s)
@@ -28,29 +30,65 @@ namespace CasabaSecurity.Web.Watcher
         #region Public Properties
 
         /// <summary>
+        /// Maximum range for the progress bar.
+        /// </summary>
+        public int MaximumRange
+        {
+            get { return progressBar1.Maximum; }
+            set { progressBar1.Maximum = value; }
+        }
+
+        /// <summary>
+        /// Minimum range for the progress bar.
+        /// </summary>
+        public int MinimumRange
+        {
+            get { return progressBar1.Minimum; }
+            set { progressBar1.Minimum = value; }
+        }
+
+        /// <summary>
         /// Get/set the current position of the progress bar.
         /// </summary>
         public int ProgressValue
         {
             get { return progressBar1.Value; }
-            set 
-            {
-                // Adjust the progress bar position so that it does not exceed the
-                // progress bar maximum value.
-                // TODO: This code is somewhat redundant, given the code in UpdateProgressInternal().
-                if (value > progressBar1.Maximum || value < progressBar1.Minimum)
-                {
-                    Random rnd = new Random();
-                    progressBar1.Value = rnd.Next(progressBar1.Minimum, progressBar1.Maximum);
-                }
 
-                UpdateProgress();
-            }
+            // TODO: Should value ever exceed maximum?
+            set { progressBar1.Value = value; }
         }
+
+        /// <summary>
+        /// How much do you want to increment by?  
+        /// </summary>
+        public int Increment
+        {
+            get { return _increment; }
+            set { _increment = value; }
+        }
+
+        /// <summary>
+        /// Text inside the body of the window.
+        /// </summary>
+        public string BodyText
+        {
+            get { return titlelabel.Text; }
+            set { titlelabel.Text = value; }
+        }
+
+        /// <summary>
+        /// Text in the title bar of the window.
+        /// </summary>
+        public string Title
+        {
+            get { return this.Text; }
+            set { this.Text = value; }
+        }
+
 
         #endregion
 
-        #region Public Method(s)
+        #region Public Method(s)4
 
         // TODO: also need Text override
         // TODO: also need a "clear" override
@@ -60,9 +98,15 @@ namespace CasabaSecurity.Web.Watcher
             {
                 this.BeginInvoke(new ShowCallback(base.Show));
             }
-            else
+            else if (!this.IsDisposed)
             {
                 base.Show();
+            }
+            // The control must be disposed.
+            else
+            {
+                return;
+                // TODO: The ProgressBar is still hiding somewhere...
             }
         }
 
@@ -112,6 +156,7 @@ namespace CasabaSecurity.Web.Watcher
             {
                 labelOperation.Text = description;
             }
+            
 
             // Adjust the progress bar position so that it does not exceed the
             // progress bar maximum value.
@@ -125,8 +170,10 @@ namespace CasabaSecurity.Web.Watcher
 
             // Redraw and add a bit of pause.
             Refresh();
-            Thread.Sleep(175);
+            Thread.Sleep(25);
         }
+
+
 
         #endregion
 

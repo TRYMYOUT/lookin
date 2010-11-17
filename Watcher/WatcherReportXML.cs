@@ -39,10 +39,15 @@ namespace CasabaSecurity.Web.Watcher
 
         public override Stream SaveResult(WatcherResultCollection resultslist)
         {
+            // Reset the bar's progress position
+            WatcherEngine.ProgressDialog.ProgressValue = 0;
+            WatcherEngine.ProgressDialog.MaximumRange = resultslist.Count;
+            WatcherEngine.ProgressDialog.MinimumRange = 0;
+            WatcherEngine.ProgressDialog.Increment = 1;
+            WatcherEngine.ProgressDialog.BodyText = "Exporting results to XML:";
+
             MemoryStream s = new MemoryStream();
             XmlDocument doc = GetXmlReport(resultslist);
-
-            WatcherEngine.ProgressDialog.UpdateProgress("Saving XML document...");
 
             if (doc != null)
             {
@@ -83,8 +88,8 @@ namespace CasabaSecurity.Web.Watcher
 
             foreach (WatcherResult item in resultslist)
             {
-                WatcherEngine.ProgressDialog.labelOperation.Text = "Preparing element: " + item.Title;
-                WatcherEngine.ProgressDialog.ProgressValue = WatcherEngine.ProgressDialog.ProgressValue + (90 / resultslist.Count);
+                WatcherEngine.ProgressDialog.labelOperation.Text = "Saving Finding: " + item.Title;
+                WatcherEngine.ProgressDialog.UpdateProgress();
 
                 issue = doc.CreateElement("issue");
                 level = doc.CreateElement("level");

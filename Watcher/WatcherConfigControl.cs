@@ -335,5 +335,122 @@ done:
         }
 
         #endregion
+
+        private void uigroupBox_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyrightlabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlCopyright_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        #region Private Callback(s)
+
+        /// <summary>
+        /// This delegate is used to process sessions offline, like in the case of
+        /// someone loading a .SAZ (session archive) file.
+        /// </summary>
+        private delegate void ProcessOfflineSessions();
+
+        #endregion
+
+        /// <summary>
+        /// Setup a separate thread to process offline session data on asynchronously.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProcessOffline_Click(object sender, EventArgs e)
+        {
+            // Use a delegate to perform the operation asynchronously--since we're doing network IO,
+            // this wastes a thread for the sake of simplicity.
+            ProcessOfflineSessions callback = new ProcessOfflineSessions(ProcessSessions);
+
+            WatcherEngine.ProgressDialog.Show();
+
+            // Invoke the update check asynchronously
+            callback.BeginInvoke(
+
+                // This is the callback method
+                delegate(IAsyncResult ar)
+                {
+                    try
+                    {
+                        // Tidy up after the update check
+                        ProcessOfflineSessions _callback = (ProcessOfflineSessions)ar.AsyncState;
+                        _callback.EndInvoke(ar); // TODO: this will throw any exceptions that happened during the call
+                    }
+                    catch (WatcherException ex)
+                    {
+                        Trace.TraceError("Exception: {0}", ex.Message);    
+                        MessageBox.Show(this, String.Format("{0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    finally
+                    {
+                        // Inform the user of progress
+                        WatcherEngine.ProgressDialog.Hide();
+                    }
+                    MessageBox.Show(this, "Sessions successfully processed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                },
+
+                // This is the AsyncState seen in the callback method above
+                callback);
+        }
+
+        /// <summary>
+        /// Get all of the sessions in the session list and process them through Watcher's check engine
+        /// one at a time.  Useful for processing sessions stored in a .SAZ file or otherwise when offline.
+        /// </summary>
+        public void ProcessSessions()
+        {
+            Fiddler.Session[] sessions = Fiddler.FiddlerApplication.UI.GetAllSessions();
+
+
+            // Reset the bar's progress position
+            WatcherEngine.ProgressDialog.ProgressValue = 0;
+            WatcherEngine.ProgressDialog.MaximumRange = sessions.Length;
+            WatcherEngine.ProgressDialog.MinimumRange = 0;
+            WatcherEngine.ProgressDialog.Increment = 1;
+            WatcherEngine.ProgressDialog.Title = "Offline Session Analysis";
+            WatcherEngine.ProgressDialog.BodyText = "Processing session data:";
+            
+
+            foreach (Fiddler.Session s in sessions)
+            {
+                // Turn off streaming
+                // TODO: this may already be the case by the time this method is called...
+                s.bBufferResponse = true;
+
+                // Remove chunking and compression from the HTTP response
+                // Logging the return value may result in excessive verbosity: avoid it.
+                s.utilDecodeResponse();
+
+                // Add the specified session to the list of tracked sessions
+                // Do not store session responses greater than 200k
+                if (s.responseBodyBytes != null && s.responseBodyBytes.Length <= WatcherEngine.MaximumResponseLength)
+                {
+                    WatcherEngine.Sessions.Add(s);
+                }
+                else
+                {
+                    Trace.TraceWarning("Warning: Session ID {0} response body is null or exceeds maximum length; not storing in the session list.", s.id);
+                }
+
+                // Run the enabled Watcher checks against the session
+                WatcherEngine.CheckManager.RunEnabledChecks(s);
+
+                WatcherEngine.ProgressDialog.labelOperation.Text = String.Format("Session ID: {0} of {1}", s.id, sessions.Length);
+                WatcherEngine.ProgressDialog.UpdateProgress();
+
+            }
+        }
     }
 }
