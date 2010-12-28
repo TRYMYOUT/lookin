@@ -36,3 +36,7 @@ for %%A in (%*) DO (
 		exit /b %ERRORLEVEL%
 	)
 )
+
+REM Now copy dependency libraries Watcher has.
+
+copy /y ..\..\..\Watcher\HtmlAgilityPack\HtmlAgilityPack.dll "%CASABA_OUTPATH%"

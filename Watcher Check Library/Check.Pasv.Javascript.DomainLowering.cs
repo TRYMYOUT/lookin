@@ -11,6 +11,7 @@ using System;
 using System.Text.RegularExpressions;
 using Fiddler;
 using System.Diagnostics;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -58,6 +59,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Get the document.domain = "string" part from the javascript
             string documentDomain = string.Empty;
             string match = string.Empty;
+
+            if (String.IsNullOrEmpty(input)) return;
             
             try 
             {
@@ -114,31 +117,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String[] bods = null;
             String body = null;
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
+                    if (Utility.IsResponseHtml(session))
+                    {
+                        foreach (HtmlNode node in html.Nodes)
+                        {
+                            if (node.Name.ToLower() == "script")
+                            {
+                                CheckDomainLowering(session,node.InnerText);
+                            }
+                        }
+                    }
+                    if (Utility.IsResponseJavascript(session))
                     {
                         body = Utility.GetResponseText(session);
-                        if (body != null)
-                        {
-                            if (Utility.IsResponseHtml(session))
-                            {
-                                bods = Utility.GetHtmlTagBodies(body, "script");
-                                if (bods != null)
-                                    foreach (String b in bods)
-                                        CheckDomainLowering(session, b);
-                            }
-
-                            if (Utility.IsResponseJavascript(session))
-                                CheckDomainLowering(session, body);
-                        }
+                        CheckDomainLowering(session, body);
                     }
                 }
             }

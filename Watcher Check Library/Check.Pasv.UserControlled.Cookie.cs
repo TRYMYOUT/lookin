@@ -49,7 +49,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 String text =
 
                     "An attacker may be able to poison cookie values through POST parameters.  This was identified at: ." +
-                    "To test if this is a more serious issue, you should try resending that request " +
+                    "To verify this is an issue, you should try resending that request " +
                     "as a GET, with the POST parameter included as a query string parameter." + 
                     " For example:  http://nottrusted.com/page?value=maliciousInput.\r\n\r\n" +
                     "This was identified at:\r\n\r\n" +
@@ -96,7 +96,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             NameValueCollection parms = null;
             String cookie = null;

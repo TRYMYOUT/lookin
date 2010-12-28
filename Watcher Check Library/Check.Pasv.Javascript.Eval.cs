@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -50,6 +51,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void CheckJavascriptEvalUsage(Session session, String input)
         {
+            if (String.IsNullOrEmpty(input)) return;
+
             String[] funcs = { "eval", "setTimeout", "setInterval", "execScript" };
             //const string postPattern = @"((?'Open'\()+[^)]*(?'Close-Open'\))+)[^(]*(?(Open)(?!))";
 
@@ -65,9 +68,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String[] bods = null;
             String body = null;
             alertbody = "";
             findingnum = 0;
@@ -76,26 +78,24 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
+                    if (Utility.IsResponseHtml(session))
+                    {
+                        foreach (HtmlNode node in html.Nodes)
+                        {
+                            if (node.Name.ToLower() == "script")
+                            {
+                                CheckJavascriptEvalUsage(session, node.InnerText);
+                            }
+                        }
+                    }
+                    if (Utility.IsResponseJavascript(session))
                     {
                         body = Utility.GetResponseText(session);
-                        if (body != null)
-                        {
-                            if (Utility.IsResponseHtml(session))
-                            {
-                                bods = Utility.GetHtmlTagBodies(body, "script");
-                                if (bods != null)
-                                    foreach (String b in bods)
-                                        CheckJavascriptEvalUsage(session, b);
-                            }
-
-                            if (Utility.IsResponseJavascript(session))
-                                CheckJavascriptEvalUsage(session, body);
-                        }
-                        if (!String.IsNullOrEmpty(alertbody))
-                        {
-                            AddAlert(session);
-                        }
+                        CheckJavascriptEvalUsage(session, body);
+                    }
+                    if (!String.IsNullOrEmpty(alertbody))
+                    {
+                        AddAlert(session);
                     }
                 }
             }

@@ -74,11 +74,9 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             // Turn off streaming
-            // TODO: this may already be the case by the time this method is called; it may want to be set in AutoTamperRequestBefore/After
             oSession.bBufferResponse = true;
             
             // Remove chunking and compression from the HTTP response
-            // Logging the return value may result in excessive verbosity: avoid it.
             oSession.utilDecodeResponse();
 
             // Add the specified session to the list of tracked sessions

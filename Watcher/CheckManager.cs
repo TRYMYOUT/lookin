@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 using Fiddler;
 using CasabaSecurity.Web.Watcher.Collections;
@@ -36,7 +37,8 @@ namespace CasabaSecurity.Web.Watcher
         {
             public Session session;
             public WatcherCheck check;
-            public UtilityHtmlParser parser;
+            public UtilityHtmlDocument document;
+            //public UtilityHtmlDocument document;
         }
 
         #endregion
@@ -102,7 +104,7 @@ namespace CasabaSecurity.Web.Watcher
 
                 // Invoke the check
                 Debug.Print("Running check {0} on session ID {1}.", threadState.check.GetName(), threadState.session.id);
-                threadState.check.Check(threadState.session, threadState.parser);
+                threadState.check.Check(threadState.session, threadState.document);
             }
 
             catch (Exception e)
@@ -134,7 +136,15 @@ namespace CasabaSecurity.Web.Watcher
             {
                 WatcherCheckState state = new WatcherCheckState();
                 state.session = oSession;
-                state.parser = new UtilityHtmlParser(oSession);
+                try
+                {
+                    state.document = new UtilityHtmlDocument(oSession);
+                }
+                catch (WatcherException ex)
+                {
+                    Trace.TraceError("Exception: {0}", ex.Message);
+                    return;
+                }
 
                 // Enumerate the available checks
                 foreach (WatcherCheck check in Checks)

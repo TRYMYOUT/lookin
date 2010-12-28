@@ -61,7 +61,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
         }
 
-        public static bool IsDocLib(String body, Session session)
+        public static bool IsDocLib(Session session)
         {
             try
             {
@@ -77,6 +77,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     referrer = session.oRequest.headers["Referer"];
                     Session referrerSession = WatcherEngine.Sessions.Find(FindReferrerInSessionList);
+
+                    if (referrerSession == null)
+                    {
+                        return false;
+                    }
+
                     String referrerBody = Utility.GetResponseText(referrerSession);
 
                     foreach (String s in identifiers)
@@ -131,7 +137,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             return (System.Web.HttpUtility.UrlDecode(session.fullUrl) == doclibroot);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             findingnum = 0;
 
@@ -146,7 +152,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             // Document Libraries don't have to be called "Shared Documents"
                             // and the response may not include SharePoint's MicrosoftSharePointTeamServices 
                             // HTTP header, so try some other things here to find out what's up.
-                            if (IsDocLib(Utility.GetResponseText(session), session))
+                            if (IsDocLib(session))
                             {
                                 // Response doesn't include a "Content-Disposition: attachment" header.
                                 if (!session.oResponse.headers.ExistsAndContains("Content-Disposition", "attachment"))

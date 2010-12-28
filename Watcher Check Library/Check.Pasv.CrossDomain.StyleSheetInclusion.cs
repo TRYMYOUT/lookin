@@ -8,8 +8,11 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -82,13 +85,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             String bod = null;
             String src = null;
             String dom = null;
-            String rel = null;
-            String[] bods = null;
             alertbody = "";
             findingnum = 0;
 
@@ -96,36 +97,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                 {
-                    if (Utility.IsResponseHtml(session))
+                    if (Utility.IsResponseHtml(session) && html.Nodes.Count > 0)
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
+                        foreach (HtmlNode node in html.Nodes)
                         {
-
-                            // Check each style block for import directives
-                            bods = Utility.GetHtmlTagBodies(bod, "style");
-                            if (bods != null)
+                            if (node.Name.ToLower() == "style")
                             {
-                                foreach (String b in bods)
-                                {
-                                    CheckCssImport(session, b);
-                                }
+                                // Check each style block for import directives
+                                CheckCssImport(session, node.InnerHtml);
                             }
-                            foreach (Match m in Utility.GetHtmlTags(bod, "link"))
+
+                            if (node.Name.ToLower() == "link")
                             {
-                                rel = Utility.GetHtmlTagAttribute(m.ToString(), "rel");
-                                if (rel != null)
+                                if (node.HasAttributes)
                                 {
-                                    // Check is .css file for its origin
-                                    if (rel == "stylesheet")
+                                    // .Contains() should be case-insensitive
+                                    if (node.GetAttributeValue("rel", "").Contains("stylesheet"))
                                     {
-                                        src = Utility.GetHtmlTagAttribute(m.ToString(), "href");
+                                        src = node.GetAttributeValue("href", "");
                                         if (src != null)
                                         {
                                             dom = Utility.GetUriDomainName(src);
                                             if (dom != null)
                                                 if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                    AssembleAlert(dom, m.ToString());
+                                                    AssembleAlert(dom, node.OuterHtml);
                                         }
                                     }
                                 }

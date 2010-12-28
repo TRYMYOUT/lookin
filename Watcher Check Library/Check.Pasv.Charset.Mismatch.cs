@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Windows.Forms;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -111,12 +112,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
         }
 
         //public override void Check(WatcherEngine watcher, Session session, UtilityHtmlParser htmlparser)
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String body = null;
-            String hteq = null;
-            String cont = null;
-            String enc = null;
+            String value = null;
             String header = null;
             alertbody = String.Empty;
             findingnum = 0;
@@ -133,23 +131,18 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         if (Utility.IsResponseHtml(session))
                         {
                             header = session.oResponse.headers.GetTokenValue("Content-Type", "charset");
-                            body = Utility.GetResponseText(session);
 
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
-                            if (body != null && !String.IsNullOrEmpty(header))
+                            if (html.Nodes.Count > 0 && !String.IsNullOrEmpty(header))
                             {
-                                foreach (Match m in Utility.GetHtmlTags(body, "meta"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    hteq = Utility.GetHtmlTagAttribute(m.ToString(), "http-equiv");
-                                    if (hteq != null)
+                                    if (node.Name.ToLower() == "meta" && node.HasAttributes)
                                     {
-                                        if (Utility.CompareStrings(hteq.Trim(), "content-type", true))
+                                        value = node.GetAttributeValue("http-equiv", "");
+                                        if (!String.IsNullOrEmpty(value))
                                         {
-                                            cont = Utility.GetHtmlTagAttribute(m.ToString(), "content");
-                                            if (cont != null)
-                                            {
-                                                CheckContentTypeCharset(cont, "html", header);
-                                            }
+                                            CheckContentTypeCharset(node.GetAttributeValue("content", ""), "html", header);
                                         }
                                     }
                                 }
@@ -158,18 +151,22 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         else if (Utility.IsResponseXml(session))
                         {
                             header = session.oResponse.headers.GetTokenValue("Content-Type", "charset");
-                            body = Utility.GetResponseText(session);
 
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
-                            if (body != null && !String.IsNullOrEmpty(header))
+                            if (html.Nodes.Count > 0 && !String.IsNullOrEmpty(header))
                             {
-                                // need to escape the ? for the regex in GetHtmlTags()
-                                foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
-                                    if (enc != null)
+                                    if (node.HasAttributes)
                                     {
-                                        CheckContentTypeCharset(enc, "xml", header);
+                                        if (node.Name.ToLower() == "?xml")
+                                        {
+                                            value = node.GetAttributeValue("encoding", "");
+                                            if (!String.IsNullOrEmpty(value))
+                                            {
+                                                CheckContentTypeCharset(value, "xml", header);
+                                            }
+                                        }
                                     }
                                 }
                             }

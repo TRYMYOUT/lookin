@@ -11,6 +11,7 @@ using System;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -130,11 +131,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             NameValueCollection parms = null;
             String[] bods = null;
             String bod = null;
+            String script = String.Empty;
             alertbody = "";
             findingnum = 0;
 
@@ -153,14 +155,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             {
                                 if (Utility.IsResponseHtml(session))
                                 {
-                                    bods = Utility.GetHtmlTagBodies(bod, "script");
-                                    if (bods != null)
+                                    foreach (HtmlNode node in html.Nodes)
                                     {
-                                        foreach (String b in bods)
+                                        if (node.Name.ToLower() == "script")
                                         {
-                                            CheckUserControllableJavascriptReferenceProperty(parms, b, "src");
-                                            CheckUserControllableJavascriptReferenceProperty(parms, b, "href");
-                                            CheckUserControllableJavascriptReferenceWindowOpen(parms, b);
+                                            script = node.InnerText;
+                                            CheckUserControllableJavascriptReferenceProperty(parms, script, "src");
+                                            CheckUserControllableJavascriptReferenceProperty(parms, script, "href");
+                                            CheckUserControllableJavascriptReferenceWindowOpen(parms, script);
                                         }
                                     }
                                 }

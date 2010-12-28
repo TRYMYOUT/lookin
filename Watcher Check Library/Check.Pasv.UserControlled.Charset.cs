@@ -11,6 +11,7 @@ using System;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -44,6 +45,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
+        // TODO: Fix alert to describe HTTP Content-Type header, right now it's winging it as if it were
+        // an HTML node.
         private void AssembleAlert(String tag, String attribute, String parm, String val, String context)
         {
             findingnum++;
@@ -62,15 +65,13 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "\r\n\r\n\r\n";
         }
 
-        private void CheckCharset(NameValueCollection parms, String body, String element, String attribute)
+        private void CheckCharset(NameValueCollection parms, String body, String element, String attribute, UtilityHtmlDocument html)
         {
             String att = String.Empty;
             String val = String.Empty;
 
-            // Check HTTP header charset value.  
-            // It should come in here with the value of charset= extracted.
-            // So no additional parsing is necessary.
-            if (element.Equals("Content-Type"))
+            // Check the HTTP Content-Type header
+            if (element.ToLower().Equals("content-type"))
             {
                 foreach (String parm in parms.Keys)
                 {
@@ -82,24 +83,30 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 }
             }
 
+            // Check HTTP header charset value.  
+            // It should come in here with the value of charset= extracted.
+            // So no additional parsing is necessary.
             // Check meta tag charset value.
             else if (element.Equals("meta"))
             {
-                foreach (Match m in Utility.GetHtmlTags(body, element))
+                foreach (HtmlNode node in html.Nodes)
                 {
-                    att = Utility.GetHtmlTagAttribute(m.ToString(), attribute);
-
-                    // Only care about meta tags with a content attribute containing a charset value.
-                    if (att != null && att.Contains("charset="))
+                    if (node.Name.ToLower() == "meta")
                     {
-                        att = att.Substring(att.IndexOf("charset=", StringComparison.InvariantCultureIgnoreCase) + 8).Trim();
-
-                        foreach (String parm in parms.Keys)
+                        if (node.GetAttributeValue("http-equiv","").ToLower() == "content-type")
                         {
-                            val = parms.Get(parm).Trim();
+                            att = node.GetAttributeValue("content", "");
+                            if (!String.IsNullOrEmpty(att) && att.Contains("charset="))
+                            {
+                                att = att.Substring(att.IndexOf("charset=", StringComparison.InvariantCultureIgnoreCase) + 8).Trim();
+                                foreach (String parm in parms.Keys)
+                                {
+                                    val = parms.Get(parm).Trim();
 
-                            if (att.ToLower().Equals(val.ToLower()))
-                                AssembleAlert(element, attribute, parm, val, m.ToString());
+                                    if (att.ToLower().Equals(val.ToLower()))
+                                        AssembleAlert(element, attribute, parm, val, node.OuterHtml);
+                                }
+                            }
                         }
                     }
                 }
@@ -108,26 +115,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // check XML documents
             else if (element.Equals("\\?xml"))
             {
-                foreach (Match m in Utility.GetHtmlTags(body, element))
+                foreach (HtmlNode node in html.Nodes)
                 {
-                    att = Utility.GetHtmlTagAttribute(m.ToString(), attribute).Trim();
-
-                    // Only care about XML encoding declarations.
-                    if (att != null)
+                    if (node.Name.ToLower() == "?xml")
                     {
-                        foreach (String parm in parms.Keys)
+                        att = node.GetAttributeValue("encoding", "");
+                        if (!String.IsNullOrEmpty(att))
                         {
-                            val = parms.Get(parm).Trim();
+                            foreach (String parm in parms.Keys)
+                            {
+                                val = parms.Get(parm).Trim();
 
-                            if (att.ToLower().Equals(val.ToLower()))
-                                AssembleAlert(element, attribute, parm, val, m.ToString());
+                                if (att.ToLower().Equals(val.ToLower()))
+                                    AssembleAlert(element, attribute, parm, val, node.OuterHtml);
+                            }
                         }
                     }
                 }
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             NameValueCollection parms = null;
             String body = String.Empty;
@@ -152,16 +160,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             {
                                 if (Utility.IsResponseHtml(session))
                                 {
-                                    CheckCharset(parms, body, "meta", "content");
+                                    CheckCharset(parms, body, "meta", "content", html);
                                 }
                                 else if (Utility.IsResponseXml(session))
                                 {
-                                    CheckCharset(parms, body, "\\?xml", "encoding");
+                                    CheckCharset(parms, body, "\\?xml", "encoding", html);
                                 }
                             }
                             if (!String.IsNullOrEmpty(header) && parms != null && parms.Keys.Count > 0)
                             {
-                                CheckCharset(parms, body, "Content-Type", header);
+                                CheckCharset(parms, body, "Content-Type", header, html);
                             }
                             if (!String.IsNullOrEmpty(alertbody))
                             {

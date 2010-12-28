@@ -123,7 +123,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             NameValueCollection parms = null;
 

@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -70,7 +71,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             NameValueCollection parms = null;
             String body = null;
@@ -91,21 +92,19 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        if (html.Nodes.Count > 0)
                         {
                             parms = Utility.GetRequestParameters(session);
-
-                            if (parms != null && parms.Keys.Count > 0)
+                            if (parms != null & parms.Keys.Count > 0)
                             {
-                                foreach (Match m in Utility.GetHtmlTags(body, ".*?"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    foreach (String jsevent in eventlist) 
+                                    foreach (String jsevent in eventlist)
                                     {
-                                        if (m.ToString().ToLower().Contains(jsevent))
+                                        if (node.Attributes.Contains(jsevent))
                                         {
-                                            att = Utility.GetHtmlTagAttribute(m.ToString(), jsevent);
-                                            if (att.Length > 0)
+                                            att = node.GetAttributeValue(jsevent, "");
+                                            if (!String.IsNullOrEmpty(att))
                                             {
                                                 foreach (String parm in parms.Keys)
                                                 {
@@ -120,10 +119,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                     }
                                 }
                             }
-                            if (!String.IsNullOrEmpty(alertbody))
-                            {
-                                AddAlert(session);
-                            }
+                        }
+                        if (!String.IsNullOrEmpty(alertbody))
+                        {
+                            AddAlert(session);
                         }
                     }
                 }

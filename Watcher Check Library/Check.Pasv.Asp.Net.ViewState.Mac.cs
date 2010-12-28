@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Collections.Generic;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -207,10 +208,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             String bod = null;
-            String id  = null;
             String val = null;
 
             bool filter = configpanel.enablefiltercheckBox.Checked;
@@ -230,22 +230,25 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             if (bod != null)
                             {
                                 // Look at all <input> tags
-                                foreach (Match m in Utility.GetHtmlTags(bod, "input"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    id = Utility.GetHtmlTagAttribute(m.ToString(), "id");
-                                    // Find ones where id="__VIEWSTATE"
-                                    if (id != null && id.Equals("__VIEWSTATE",StringComparison.InvariantCultureIgnoreCase))
+                                    if (node.Name.ToLower() == "input")
                                     {
-                                        // Get the __VIEWSTATE value
-                                        val = Utility.GetHtmlTagAttribute(m.ToString(), "value");
-                                        // If the VIEWSTATE is not secured with a MAC, then raise an alert.
-                                        if (!IsViewStateSecure(val))
+                                        // Find ones where id="__VIEWSTATE"
+                                        if (node.GetAttributeValue("id", "") == "__VIEWSTATE")
                                         {
-                                            lock (hosts)
+                                            // Get the VIEWSTATE value
+                                            val = node.GetAttributeValue("value", "");
+
+                                            // If the VIEWSTATE is not secured with a MAC, then raise an alert.
+                                            if (!IsViewStateSecure(val))
                                             {
-                                                hosts.Add(session.hostname);
+                                                lock (hosts)
+                                                {
+                                                    hosts.Add(session.hostname);
+                                                }
+                                                AddAlert(session);
                                             }
-                                            AddAlert(session);
                                         }
                                     }
                                 }

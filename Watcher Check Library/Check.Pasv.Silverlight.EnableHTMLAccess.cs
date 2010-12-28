@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -93,7 +94,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void CheckEnableHtmlAccessValue(String value, String context)
         {
-            if (value != null || value != "")
+            if (!String.IsNullOrEmpty(value))
             {
                 if (value == "true")
                     alertbody = AssembleAlert(alertbody, "true", context);
@@ -105,70 +106,69 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-       
-        /// <summary>
+               /// <summary>
         /// Check the OBJECT tag for an enableHtmlAccess parameter set to 'true'.
         /// See http://msdn.microsoft.com/en-us/library/cc189089(VS.95).aspx
         /// </summary>
         /// <param name="bod">The OBJECT tag content</param>
-        private void CheckObjectTag(String bod)
+        private void CheckObjectTag(UtilityHtmlDocument html)
         {
-            String[] bods = null;
             String attr = null;
             String attr2 = null;
             String attr3 = null;
             String name = null;
             String enableHtmlAccessValue = null;
             String val = null;
+            String type = null;
             bool flag = false;
 
-            bods = Utility.GetHtmlTagBodies(bod, "object", false);
-            if (bods != null)
+            foreach (HtmlNode node in html.Nodes)
             {
-                foreach (String b in bods)
+                if (node.Name.ToLower() == "object")
                 {
-                    attr = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "classid"));
-                    attr2 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "type"));
-                    attr3 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "data"));
+                    attr = Utility.ToSafeLower(node.GetAttributeValue("classid", ""));
+                    attr2 = Utility.ToSafeLower(node.GetAttributeValue("type", ""));
+                    attr3 = Utility.ToSafeLower(node.GetAttributeValue("data", ""));
 
-                    if ((attr != null && attr == "clsid:89F4137D-6C26-4A84-BDB8-2E5A4BB71E00".ToLower()) || 
-                        (attr != null && (attr.Contains("x-silverlight"))) ||
-                        (attr2 != null && (attr2.Contains("x-silverlight"))) ||
-                        (attr3 != null && (attr2.Contains("x-silverlight")))
+                    if ((!String.IsNullOrEmpty(attr) && attr == "clsid:89F4137D-6C26-4A84-BDB8-2E5A4BB71E00".ToLower()) ||
+                        (!String.IsNullOrEmpty(attr) && (attr.Contains("x-silverlight"))) ||
+                        (!String.IsNullOrEmpty(attr2) && (attr2.Contains("x-silverlight"))) ||
+                        (!String.IsNullOrEmpty(attr3) && (attr2.Contains("x-silverlight")))
                         )
                     {
-                        foreach (Match param in Utility.GetHtmlTags(b, "param"))
+                        foreach (HtmlNode child in node.ChildNodes)
                         {
-                            name = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "name"));
-                            if (name != null)
+                            if (child.Name.ToLower() == "param")
                             {
-                                // The PARAM should contain an attribute named SOURCE pointing to
-                                // the .XAP or .XAML file to load.
-                                if (name == "source")
+                                name = Utility.ToSafeLower(child.GetAttributeValue("name", ""));
+                                if (!String.IsNullOrEmpty(name) && name.ToLower() == "source")
                                 {
-                                    val = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "value"));
-                                    if (val != null)
+                                    // The PARAM should contain an attribute named SOURCE pointing to
+                                    // the .XAP or .XAML file to load.
+                                    val = Utility.ToSafeLower(child.GetAttributeValue("value", ""));
+                                    if (!String.IsNullOrEmpty(val))
+                                    {
                                         if ((val.Trim().EndsWith(".xap")) || (val.Trim().EndsWith(".xaml")))
                                             flag = true;
+                                    }
                                 }
-
-                                if (name == "enablehtmlaccess")
+                                if (name.ToLower() == "enablehtmlaccess")
                                 {
-                                    enableHtmlAccessValue = Utility.ToSafeLower((Utility.GetHtmlTagAttribute(param.ToString(), "value")));
+                                    enableHtmlAccessValue = Utility.ToSafeLower(child.GetAttributeValue("value",""));
                                 }
                             }
                         }
-
+                        
                         if (flag)
                         {
-                            CheckEnableHtmlAccessValue(enableHtmlAccessValue, b);
+                            CheckEnableHtmlAccessValue(enableHtmlAccessValue, node.OuterHtml);
                         }
                     }
-                    String type = null;
-                    type = Utility.GetHtmlTagAttribute(b, "type");
-                    if (type != null)
+                    
+                    type = node.GetAttributeValue("type","");
+                    if (!String.IsNullOrEmpty(type))
                         if (type.ToLower().Contains("x-silverlight"))
-                            CheckEnableHtmlAccessValue(Utility.GetHtmlTagAttribute(b, "enablehtmlaccess"), b);
+                            CheckEnableHtmlAccessValue(node.GetAttributeValue("enablehtmlaccess",""),node.OuterHtml);
                 }
             }
         }
@@ -179,21 +179,23 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// See http://www.informit.com/articles/article.aspx?p=1078181
         /// </summary>
         /// <param name="bod"></param>
-        private void CheckEmbedTag(String bod)
+        private void CheckEmbedTag(UtilityHtmlDocument html)
         {
             String value = null;
 
-            foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+            foreach (HtmlNode node in html.Nodes)
             {
-                value = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(m.ToString(), "enablehtmlaccess"));
-                if (value != null)
-                    CheckEnableHtmlAccessValue(value, m.ToString());
+                if (node.Name.ToLower() == "embed")
+                {
+                    value = Utility.ToSafeLower(node.GetAttributeValue("enablehtmlaccess", ""));
+                    if (!String.IsNullOrEmpty(value))
+                        CheckEnableHtmlAccessValue(value, node.OuterHtml);
+                }
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String bod = null;
             alertbody = "";
             alertbody2 = "";
             findingnum = 0;
@@ -204,14 +206,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
+                        if (html.Nodes.Count > 0)
                         {
-                            bod = Utility.ToSafeLower(bod); ;
-
-                            CheckObjectTag(bod);
-                            CheckEmbedTag(bod);
+                            CheckObjectTag(html);
+                            CheckEmbedTag(html);
                         }
+
                         if (!String.IsNullOrEmpty(alertbody))
                         {
                             AddAlert(session, WatcherResultSeverity.Medium, alertbody);

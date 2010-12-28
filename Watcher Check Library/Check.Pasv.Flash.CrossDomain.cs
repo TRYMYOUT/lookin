@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -71,7 +72,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                  "\r\n\r\n";
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             String pat = null;
             String bod = null;
@@ -91,31 +92,37 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
                         if (pat != null && pat.ToLower() == "crossdomain.xml")
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
+                            foreach (HtmlNode node in html.Nodes)
                             {
-                                foreach (String b in Utility.GetHtmlTagBodies(bod, "cross-domain-policy"))
+                                if (node.Name.ToLower() == "cross-domain-policy")
                                 {
-                                    foreach (Match m in Utility.GetHtmlTags(b, "allow-access-from"))
+                                    foreach(HtmlNode childNode in node.ChildNodes)
                                     {
-                                        dom = Utility.GetHtmlTagAttribute(m.ToString(), "domain");
-                                        if (dom != null)
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, m.ToString());
+                                        if (childNode.Name.ToLower() == "allow-access-from")
+                                        {
+                                            dom = childNode.GetAttributeValue("domain", "");
+                                            if (!String.IsNullOrEmpty(dom))
+                                                if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                    AssembleAlert(dom, childNode.OuterHtml);
+                                        }
+                                    }
+                                    foreach (HtmlNode childNode in node.ChildNodes)
+                                    {
+                                        if (childNode.Name.ToLower() == "allow-http-request-headers-from")
+                                        {
+                                            dom = childNode.GetAttributeValue("domain", "");
+                                            if (!String.IsNullOrEmpty(dom))
+                                                if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                    AssembleAlert(dom, childNode.OuterHtml);
+                                        }
                                     }
 
-                                    foreach (Match m in Utility.GetHtmlTags(b, "allow-http-request-headers-from"))
-                                    {
-                                        dom = Utility.GetHtmlTagAttribute(m.ToString(), "domain");
-                                        if (dom != null)
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, m.ToString());
-                                    }
                                 }
-                                if (!String.IsNullOrEmpty(alertbody))
-                                {
-                                    AddAlert(session);
-                                }
+                            }
+
+                            if (!String.IsNullOrEmpty(alertbody))
+                            {
+                                AddAlert(session);
                             }
                         }
                     }

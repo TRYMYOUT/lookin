@@ -233,7 +233,7 @@ namespace CasabaSecurity.Web.Watcher
 
         // This function should be thread safe
         // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter
-        public abstract void Check(Session session, UtilityHtmlParser htmlParser);
+        public abstract void Check(Session session, UtilityHtmlDocument htmlParser);
 
         public virtual void UpdateWordList()
         {

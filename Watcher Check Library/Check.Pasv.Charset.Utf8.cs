@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Windows.Forms;
+using HtmlAgilityPack;
+using System.Linq;
 using Fiddler;
 
 namespace CasabaSecurity.Web.Watcher.Checks
@@ -130,12 +132,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String body = null;
-            String hteq = null;
-            String cont = null;
-            String enc = null;
+            String value = null;
             bool flag = false;
             alertbody = "";
             findingnum = 0;
@@ -160,35 +159,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         // And, there's a separate check to detect a mismatch.
                         if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
                         {
-                            body = Utility.GetResponseText(session);
 
-                            // Ignore empty response body
-                            if (!String.IsNullOrEmpty(body))
+                            if (html.Nodes.Count > 0 )
                             {
-                                foreach (Match m in Utility.GetHtmlTags(body, "meta"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    hteq = Utility.GetHtmlTagAttribute(m.ToString(), "http-equiv");
-                                    if (hteq != null)
+                                    if (node.Name.ToLower() == "meta" && node.HasAttributes)
                                     {
-                                        if (hteq.Trim().ToLower(CultureInfo.InvariantCulture) == "content-type")
+                                        value = node.GetAttributeValue("http-equiv", "");
+                                        if (!String.IsNullOrEmpty(value))
                                         {
-                                            cont = Utility.GetHtmlTagAttribute(m.ToString(), "content");
-                                            if (cont != null)
-                                            {
-                                                IsCharsetUTF8(cont, "html");
-
-                                                flag = true;
-                                            }
+                                            IsCharsetUTF8(node.GetAttributeValue("content", ""), "html");
+                                            flag = true;
                                         }
                                     }
                                 }
+                            }
 
-                                if (!flag)
-                                {
-                                    findingnum++;
-                                    //AddAlert(watcher, session, "Content type and/or charset not defined in meta tag.");
-                                    alertbody = alertbody + findingnum.ToString() + ") A content type and/or charset was not defined in the meta tag.\r\n";
-                                }
+                            if (!flag)
+                            {
+                                findingnum++;
+                                //AddAlert(watcher, session, "Content type and/or charset not defined in meta tag.");
+                                alertbody = alertbody + findingnum.ToString() + ") A content type and/or charset was not defined in the meta tag.\r\n";
                             }
                         }
                     }
@@ -203,19 +195,21 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     // And, there's a separate check to detect a mismatch.
                     if (!IsCharsetUTF8(session.oResponse.headers["content-type"], "header"))
                     {
-                        body = Utility.GetResponseText(session);
-
-                        // Ignore empty response body
-                        if (!String.IsNullOrEmpty(body))
+                        if (html.Nodes.Count > 0)
                         {
-                            // need to escape the ? for the regex in GetHtmlTags()
-                            foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
+                            foreach (HtmlNode node in html.Nodes)
                             {
-                                enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
-                                if (enc != null)
+                                if (node.HasAttributes)
                                 {
-                                    IsCharsetUTF8(enc, "xml");
-                                    flag = true;
+                                    if (node.Name.ToLower() == "?xml")
+                                    {
+                                        value = node.GetAttributeValue("encoding", "");
+                                        if (!String.IsNullOrEmpty(value))
+                                        {
+                                            IsCharsetUTF8(value, "xml");
+                                            flag = true;
+                                        }
+                                    }
                                 }
                             }
 
@@ -228,10 +222,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         }
                     }
                 }
-                    if (!String.IsNullOrEmpty(alertbody))
-                    {
-                        AddAlert(session);
-                    }
+                if (!String.IsNullOrEmpty(alertbody))
+                {
+                    AddAlert(session);
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using Fiddler;
 
 namespace CasabaSecurity.Web.Watcher.Checks
@@ -38,10 +39,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
                 ShortDescription +
                 session.fullUrl + 
-                "\r\n\r\nappears to include user input in: \r\n\r\n" +
+                "\r\n\r\nappears to include user-controlled input in: \r\n\r\n" +
                 alertbody;
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         private void AssembleAlert(String tag, String attribute, String parm, String val, String context)
@@ -73,14 +74,73 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// <param name="attribute"></param>
         /// <param name="requiredAttribute"></param>
         /// <param name="requiredAttributeValue"></param>
-        private void CheckTags(NameValueCollection parms, List<HtmlElement> listOfTags)
+        /// 
+      
+        private void CheckAttributeValues(NameValueCollection parms, UtilityHtmlDocument html)
         {
+            /// The attribute value
             String att = null;
             String val = null;
-            String pro = null;
-            String dom = null;
-            String tok = null;
 
+            foreach (HtmlNode node in html.Nodes)
+            {
+                foreach (HtmlAttribute attribute in node.Attributes)
+                {
+                    att = Utility.ToSafeLower(attribute.Value);
+                    if (!String.IsNullOrEmpty(att))
+                    {
+                        foreach (String parm in parms.Keys)
+                        {
+                            val = parms.Get(parm);
+                            val = Utility.ToSafeLower(val);
+
+                            // Special handling of meta tag.
+                            // If I were just looking to see if the meta tag 'contains' the user input,
+                            // we'd wind up with lots of false positives.
+                            // To avoid this, I  parse the meta tag values based on a set of delimeters,
+                            // such as ; =  and ,.  This is similar to what the Cookie poisoning 
+                            // check does.
+                            if (node.Name.ToLower() == "meta" && attribute.Name.ToLower() == "content")
+                            {
+                                // False Positive Reduction
+                                // We have a check for meta tag charset already, so get out of here.
+                                if (att.Contains("charset")) continue;
+
+
+                                string[] split = att.Split(new Char[] { ';', '=', ',' });
+
+                                foreach (String s in split)
+                                {
+                                    if (s.Equals(val))
+                                        AssembleAlert(node.Name, attribute.Name, parm, val, att);
+                                }
+                            }
+
+                            // False Positive Reduction
+                            // I want the value length to be greater than 1 to avoid all the false positives
+                            // we're seeing when the input is limited to a single character.
+                            if (val != null && val.Length > 1)
+                            {
+                                // See if the user-input can control the start of the attribute data.
+                                if (att.StartsWith(val) || att.Equals(val) || att.Contains(val))
+                                {
+                                    AssembleAlert(node.Name, attribute.Name, parm, val, att);
+                                }
+                            }
+                            // Make up for the false positive reduction by by being 
+                            // sure to catch cases where a single character may control the attribute.
+                            // UPDATE: This case is too common and annoyingly rife with false positives.
+
+                            // if (val.Length == 1 && att.Equals(val) )
+                            // {
+                            //    AssembleAlert(element.tag, attribute, parm, val, value);
+                            // }
+                        }
+                    }
+                }
+            }
+
+            /*
             foreach (HtmlElement element in listOfTags)
             {
                 Dictionary<String, List<String>>.KeyCollection keyCollAtt = element.att.Keys;
@@ -176,27 +236,28 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     }
                 }
             }
+            */
         }
-
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+       
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             NameValueCollection parms = null;
             alertbody = "";
             findingnum = 0;
-            List<HtmlElement> htmlElements = htmlparser.HtmlElementCollection;
+
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
                 if (session.responseCode == 200)
                 {
                     // Make sure that we have at least one HTML element.
-                    if (htmlElements.Count >= 1)
+                    if (html.Nodes.Count > 0)
                     {
                         parms = Utility.GetRequestParameters(session);
 
                         if (parms != null && parms.Keys.Count > 0)
                         {
-                            CheckTags(parms, htmlElements);
+                            CheckAttributeValues(parms, html);
                         }
                         if (!String.IsNullOrEmpty(alertbody))
                         {

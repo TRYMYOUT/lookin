@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -57,9 +58,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "\r\n\r\n";
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String bod = null;
             String act = null;
             String dom = null;
 
@@ -72,24 +72,26 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
+                        // Get all the <form> nodes 
+                        foreach (HtmlNode node in html.Nodes)
                         {
-                            foreach (Match m in Utility.GetHtmlTags(bod, "form"))
+                            // Get all the 'action' attribute values from each <form> node
+                            if (node.Name.ToLower() == "form")
                             {
-                                act = Utility.GetHtmlTagAttribute(m.ToString(), "action");
-                                if (act != null)
+                                act = node.GetAttributeValue("action", "");
+                                if (!String.IsNullOrEmpty(act))
                                 {
                                     dom = Utility.GetUriDomainName(act);
                                     if (dom != null)
+                                        // Compare the 'action' domain to the origin domain
                                         if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                            AssembleAlert(dom, m.ToString());
+                                            AssembleAlert(dom, node.OuterHtml);
                                 }
                             }
-                            if (!String.IsNullOrEmpty(alertbody))
-                            {
-                                AddAlert(session);
-                            }
+                        }
+                        if (!String.IsNullOrEmpty(alertbody))
+                        {
+                            AddAlert(session);
                         }
                     }
                 }

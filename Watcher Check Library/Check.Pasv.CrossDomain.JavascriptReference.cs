@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -94,10 +95,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, CasabaSecurity.Web.Watcher.UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String[] bods = null;
             String body = null;
+            String js = null;
 
             alertbody = "";
             findingnum = 0;
@@ -108,18 +109,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        foreach (HtmlNode node in html.Nodes)
                         {
-                            bods = Utility.GetHtmlTagBodies(body, "script");
-                            if (bods != null)
+                            if (node.Name.ToLower() == "script")
                             {
-                                foreach (String b in bods)
-                                {
-                                    CheckJavascriptCrossDomainReferenceProperty(session, b, "src");
-                                    CheckJavascriptCrossDomainReferenceProperty(session, b, "href");
-                                    CheckJavascriptCrossDomainReferenceWindowOpen(session, b);
-                                }
+                                js = node.InnerText;
+                                CheckJavascriptCrossDomainReferenceProperty(session, js, "src");
+                                CheckJavascriptCrossDomainReferenceProperty(session, js, "href");
+                                CheckJavascriptCrossDomainReferenceWindowOpen(session, js);
                             }
                         }
                     }

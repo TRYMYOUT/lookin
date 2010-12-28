@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -76,7 +77,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void CheckAllowScriptAccessValue(String allowScriptAccessValue, String context)
         {
-            if (allowScriptAccessValue != null)
+            if (!String.IsNullOrEmpty(allowScriptAccessValue))
             {
                 allowScriptAccessValue = Utility.ToSafeLower(allowScriptAccessValue);
                 if (allowScriptAccessValue == "always")
@@ -91,77 +92,89 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        private void CheckObjectTag(String bod)
+        private void CheckObjectTag(UtilityHtmlDocument html)
         {
-            String[] bods = null;
             String attr = null;
+            String attr2 = null;
             String name = null;
             String allowScriptAccessValue = null;
             String val = null;
             bool flag = false;
 
-            bods = Utility.GetHtmlTagBodies(bod, "object", false);
-            if (bods != null)
+            foreach (HtmlNode node in html.Nodes)
             {
-                foreach (String b in bods)
+                if (node.Name.ToLower() == "object")
                 {
-                    attr = Utility.GetHtmlTagAttribute(b, "classid");
-                    if (attr != null)
+                    attr = node.GetAttributeValue("classid", "");
+                    attr2 = node.GetAttributeValue("type", "");
+                    if (!String.IsNullOrEmpty(attr) || !String.IsNullOrEmpty(attr2))
                     {
-                        attr = Utility.ToSafeLower(attr);
-
-                        if ((attr == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000") || (attr == "x-shockwave-flash")) // flash clsid
+                        if ((attr == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000") || (attr2.Contains("x-shockwave-flash"))) // flash clsid
                         {
-                            foreach (Match param in Utility.GetHtmlTags(b, "param"))
+                            foreach (HtmlNode childnode in node.ChildNodes)
                             {
-                                name = Utility.GetHtmlTagAttribute(param.ToString(), "name");
-                                if (name != null)
+                                if (childnode.Name.ToLower() == "param")
                                 {
-                                    name = Utility.ToSafeLower(name);
-                                    if (name == "movie")
+                                    name = childnode.GetAttributeValue("name", "");
+                                    if (!String.IsNullOrEmpty(name))
                                     {
-                                        val = Utility.GetHtmlTagAttribute(param.ToString(), "value");
-                                        if (val != null)
-                                            val = Utility.ToSafeLower(val);
+                                        if (String.Equals("movie",name,StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            val = childnode.GetAttributeValue("value", "");
+                                            if (!String.IsNullOrEmpty(val))
+                                                val = Utility.ToSafeLower(val);
                                             if (val.Trim().EndsWith(".swf"))
                                                 flag = true;
-                                    }
+                                        }
 
-                                    if (name == "allowscriptaccess")
-                                        allowScriptAccessValue = Utility.GetHtmlTagAttribute(param.ToString(), "value");
+                                        if (String.Equals("allowscriptaccess",name, StringComparison.InvariantCultureIgnoreCase))
+                                            allowScriptAccessValue = childnode.GetAttributeValue("value", "");
+                                    }
                                 }
                             }
 
                             if (flag)
-                                CheckAllowScriptAccessValue(allowScriptAccessValue, b);
+                                CheckAllowScriptAccessValue(allowScriptAccessValue, node.OuterHtml);
                         }
                     }
                     String type = null;
-                    type = Utility.GetHtmlTagAttribute(b, "type");
-                    if (type != null)
+                    // If the object node calls  Flash type application
+                    type = node.GetAttributeValue("type", "");
+                    if (!String.IsNullOrEmpty(type))
                         type = Utility.ToSafeLower(type);
-                        if (type == "application/x-shockwave-flash")
-                            CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(b, "allowscriptaccess"), b);
+                    if (type == "application/x-shockwave-flash")
+
+                        foreach (HtmlNode child in node.ChildNodes)
+                        {
+                            if (child.Name.ToLower() == "param" && child.GetAttributeValue("name", "").ToLower() == "allowscriptaccess")
+                            {
+                                allowScriptAccessValue = child.GetAttributeValue("value","");
+                                CheckAllowScriptAccessValue(allowScriptAccessValue, node.OuterHtml);
+                            }
+                        }
                 }
             }
         }
 
-        private void CheckEmbedxTag(String bod)
+        private void CheckEmbedxTag(UtilityHtmlDocument html)
         {
-            String type = null;
+            String value = null;
 
-            foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+            foreach (HtmlNode node in html.Nodes)
             {
-                type = Utility.GetHtmlTagAttribute(m.ToString(), "allowscriptaccess");
-                if (type != null)
-                    type = Utility.ToSafeLower(type);
-                    CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(type, m.ToString()), m.ToString());
+                if (node.Name.ToLower() == "embed")
+                {
+                    value = node.GetAttributeValue("allowscriptaccess", "");
+                    if (value != null)
+                    {
+                        CheckAllowScriptAccessValue(value, node.OuterHtml);
+                    }
+                }
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String bod = null;
             alertbody = "";
             alertbody2 = "";
             alertbody3 = "";
@@ -173,13 +186,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
+                        if (html.Nodes.Count > 0)
                         {
-                            bod = bod.ToLower();
 
-                            CheckObjectTag(bod);
-                            CheckEmbedxTag(bod);
+                            CheckObjectTag(html);
+                            CheckEmbedxTag(html);
                         }
                         if (!String.IsNullOrEmpty(alertbody))
                         {

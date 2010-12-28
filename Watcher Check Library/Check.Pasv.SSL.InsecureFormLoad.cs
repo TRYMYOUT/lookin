@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -45,9 +46,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String bod = null;
             String act = null;
             findingnum = 0;
 
@@ -59,15 +59,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     {
                         if (Utility.IsResponseHtml(session))
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
+                            foreach (HtmlNode node in html.Nodes)
                             {
-                                foreach (Match m in Utility.GetHtmlTags(bod, "form"))
+                                if (node.Name.ToLower() == "form")
                                 {
-                                    act = Utility.GetHtmlTagAttribute(m.ToString(), "action");
-                                    if (act != null)
+                                    act = node.GetAttributeValue("action", "");
+                                    if (!String.IsNullOrEmpty(act))
+                                    {
                                         if (act.Trim().ToLower().IndexOf("https://") == 0)
-                                            AddAlert(session, m.ToString());
+                                            AddAlert(session, node.OuterHtml);
+                                    }
                                 }
                             }
                         }

@@ -58,7 +58,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             String pa = null;
             String cc = null;

@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Collections.Generic;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -225,9 +226,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
-            String bod = null;
             String id  = null;
             String val = null;
 
@@ -244,43 +244,45 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     {
                         if(!filter || SiteNotChecked(session.hostname)) 
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
+                            if (html.Nodes.Count > 0)
                             {
-                                // Look at all <input> tags
-                                foreach (Match m in Utility.GetHtmlTags(bod, "input"))
+                                foreach (HtmlNode node in html.Nodes)
                                 {
-                                    id = Utility.GetHtmlTagAttribute(m.ToString(), "id");
-                                    // Find ones where id="javax.faces.ViewState"
-                                    //
-                                    // TODO: Other possible field names include:
-                                    // jsf_state_64
-                                    // jsf_sequence
-                                    // jsf_tree
-                                    // jsf_tree_64
-                                    // jsf_viewid
-                                    // jsf_state
-
-                                    if (id != null && (id.ToLower() == "javax.faces.viewstate"))
+                                    // Look at all <input> tags
+                                    if (node.Name.ToLower() == "input")
                                     {
-                                        // Get the ViewState value
-                                        val = Utility.GetHtmlTagAttribute(m.ToString(), "value");
-                                        // Server-side ViewState usually comes down as an ID value like
-                                        //    _id16683
-                                        // Ignoring these for now.  Underscore is not a valid Base64 character
-                                        // so it's safe to ignore this.
-                                        if (val != null && val.StartsWith("_"))
+                                        id = node.GetAttributeValue("id", "");
+
+                                        // Find ones where id="javax.faces.ViewState"
+                                        //
+                                        // TODO: Other possible field names include:
+                                        // jsf_state_64
+                                        // jsf_sequence
+                                        // jsf_tree
+                                        // jsf_tree_64
+                                        // jsf_viewid
+
+                                        if (!String.IsNullOrEmpty(id) && (id.ToLower() == "javax.faces.viewstate"))
                                         {
-                                            return;
-                                        }
-                                        // If the ViewState is not secured cryptographic protections then raise an alert.
-                                        if (!IsViewStateSecure(val))
-                                        {
-                                            lock (hosts)
+                                            // Get the ViewState value
+                                            val = node.GetAttributeValue("value", "");
+                                            // Server-side ViewState usually comes down as an ID value like
+                                            //    _id16683
+                                            // Ignoring these for now.  Underscore is not a valid Base64 character
+                                            // so it's safe to ignore this.
+                                            if (!String.IsNullOrEmpty(val) && val.StartsWith("_"))
                                             {
-                                                hosts.Add(session.hostname);
+                                                return;
                                             }
-                                            AddAlert(session);
+                                            // If the ViewState is not secured cryptographic protections then raise an alert.
+                                            if (!IsViewStateSecure(val))
+                                            {
+                                                lock (hosts)
+                                                {
+                                                    hosts.Add(session.hostname);
+                                                }
+                                                AddAlert(session);
+                                            }
                                         }
                                     }
                                 }

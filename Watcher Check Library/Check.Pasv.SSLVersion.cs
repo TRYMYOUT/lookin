@@ -101,7 +101,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             client.Close();
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             alertbody = "";
             findingnum = 0;

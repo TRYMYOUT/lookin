@@ -16,7 +16,9 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using HtmlAgilityPack;
 using Fiddler;
+using System.Linq;
 
 namespace CasabaSecurity.Web.Watcher
 {
@@ -118,8 +120,9 @@ namespace CasabaSecurity.Web.Watcher
 
         public static String GetResponseContentType(Session session)
         {
-            if (session.oResponse.headers.Exists("content-type"))
-                return (session.oResponse.headers["content-type"].ToLower());
+            if (session.oResponse.headers != null)
+                if (session.oResponse.headers.Exists("content-type"))
+                    return (session.oResponse.headers["content-type"].ToLower());
 
             return (null);
         }
@@ -360,7 +363,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// TODO: Update with balanced group constructs
+        /// DEPRECATED, use UtilityHtmlDocument instead to parse HTML documents.  TODO: Update with balanced group constructs
         /// </summary>
         /// <param name="body"></param>
         /// <param name="tagName"></param>
@@ -456,6 +459,12 @@ namespace CasabaSecurity.Web.Watcher
             return (Regex.Matches(body, @"(//.*)", RegexOptions.Compiled));
         }
 
+        /// <summary>
+        /// Deprecated, use UtilityHtmlDocument instead.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
         public static String GetHtmlTagAttribute(String tag, String attributeName)
         {
             String attribute = null;
@@ -505,7 +514,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// TODO: Update with balanced group constructs
+        /// DEPRECATED, use UtilityHtmlDocument instead to parse HTML documents.  TODO: Update with balanced group constructs
         /// </summary>
         /// <param name="body"></param>
         /// <param name="tagName"></param>
@@ -546,6 +555,12 @@ namespace CasabaSecurity.Web.Watcher
             return bodies;
         }
 
+        /// <summary>
+        /// DEPRECATED, use UtilityHtmlDocument instead to parse HTML documents.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         public static String[] GetHtmlTagBodies(String body, String tagName)
         {
             return (GetHtmlTagBodies(body, tagName, true));
@@ -603,6 +618,12 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+        /// <summary>
+        /// Get the user-controlled query string and/or POST body parameters. 
+        /// TODO: Should we treat Cookie or other HTTP header data user-controlled?  Probably...
+        /// </summary>
+        /// <param name="session">The current session.</param>
+        /// <returns>Collection of user-controlled name-value pairs.</returns>
         public static NameValueCollection GetRequestParameters(Session session)
         {
             NameValueCollection nvc = null;

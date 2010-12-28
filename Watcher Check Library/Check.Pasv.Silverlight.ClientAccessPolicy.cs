@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -63,10 +64,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 context;
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             String pat = null;
-            String bod = null;
             String dom = null;
             alertbody = "";
             findingnum = 0;
@@ -81,8 +81,31 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     {
                         pat = Path.GetFileName(session.PathAndQuery);
 
-                        if (pat != null && pat.ToLower() == "clientaccesspolicy.xml")
+                        if (pat != null && pat.ToLower() == "clientaccesspolicy.xml" && html.Nodes.Count > 0)
                         {
+                            foreach (HtmlNode node in html.Nodes)
+                            {
+                                if (node.Name.ToLower() == "allow-from")
+                                {
+                                    foreach (HtmlNode child in node.ChildNodes)
+                                    {
+                                        if (child.Name.ToLower() == "domain")
+                                        {
+                                            dom = child.GetAttributeValue("uri", "");
+                                            if (!String.IsNullOrEmpty(dom))
+                                            {
+                                                if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                    AssembleAlert(dom, child.OuterHtml);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (!String.IsNullOrEmpty(alertbody))
+                            {
+                                AddAlert(session);
+                            }
+                            /*
                             bod = Utility.GetResponseText(session);
                             if (bod != null)
                             {
@@ -101,6 +124,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                     AddAlert(session);
                                 }
                             }
+                            */
                         }
                     }
                 }

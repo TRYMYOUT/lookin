@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Security;
+using HtmlAgilityPack;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -120,11 +121,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument html)
         {
             String body = null;
+            String script = null;
             String comment = null;
-            String[] scriptBlocks = null;
 
             alertbody = "";
             findingnum = 0;
@@ -133,67 +134,59 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
+                    if (Utility.IsResponseHtml(session) && html.Nodes.Count > 0)
+                    {
+                        foreach (HtmlNode node in html.Nodes)
+                        {
+                            if (node.NodeType == HtmlNodeType.Comment)
+                            {
+                                comment = node.InnerText;
+                                if (!String.IsNullOrEmpty(comment))
+                                    CheckComment(session, comment);
+                            }
+                            else if (node.Name.ToLower() == "script")
+                            {
+                                script = node.InnerText;
+                                if (!String.IsNullOrEmpty(script))
+                                {
+                                    foreach (Match comments in Utility.GetJavascriptMultiLineComment(script))
+                                    {
+                                        comment = comments.ToString();
+                                        CheckComment(session, comment);
+                                    }
+                                    foreach (Match comments in Utility.GetJavascriptSingleLineComment(script))
+                                    {
+                                        comment = comments.ToString();
+                                        CheckComment(session, comment);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Look at application/javascript responses
+                    if (Utility.IsResponseJavascript(session))
                     {
                         body = Utility.GetResponseText(session);
-                        if (body != null)
+                        foreach (Match comments in Utility.GetJavascriptMultiLineComment(body))
                         {
-                            // Look at text/html responses
-                            if (Utility.IsResponseHtml(session))
+                            comment = comments.ToString();
+                            if (comment != null)
                             {
-                                foreach (Match comments in Utility.GetHtmlComment(body))
-                                {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
-                                }
-
-                                scriptBlocks = Utility.GetHtmlTagBodies(body, "script");
-                                if (scriptBlocks != null)
-                                {
-                                    foreach (String s in scriptBlocks)
-                                    {
-                                        foreach (Match comments in Utility.GetJavascriptMultiLineComment(s))
-                                        {
-                                            comment = comments.ToString();
-                                            CheckComment(session, comment);
-                                        }
-                                        foreach (Match comments in Utility.GetJavascriptSingleLineComment(s))
-                                        {
-                                            comment = comments.ToString();
-                                            CheckComment(session, comment);
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Look at application/javascript responses
-                            if (Utility.IsResponseJavascript(session))
-                            {
-                                foreach (Match comments in Utility.GetJavascriptMultiLineComment(body))
-                                {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
-                                }
-                                foreach (Match comments in Utility.GetJavascriptSingleLineComment(body))
-                                {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
-                                }
+                                CheckComment(session, comment);
                             }
                         }
-                        if (!String.IsNullOrEmpty(alertbody))
+                        foreach (Match comments in Utility.GetJavascriptSingleLineComment(body))
                         {
-                            AddAlert(session);
+                            comment = comments.ToString();
+                            if (comment != null)
+                            {
+                                CheckComment(session, comment);
+                            }
                         }
+                    }
+                    if (!String.IsNullOrEmpty(alertbody))
+                    {
+                        AddAlert(session);
                     }
                 }
             }

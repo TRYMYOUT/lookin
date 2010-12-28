@@ -61,7 +61,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, 1, Reference);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlDocument htmlparser)
         {
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
                 if (session.responseCode == 200 || session.responseCode == 401)
