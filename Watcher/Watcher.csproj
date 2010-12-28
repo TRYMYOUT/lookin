@@ -113,6 +113,7 @@
       <DependentUpon>WarningDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="WatcherException.cs" />
+    <Compile Include="WatcherOffline.cs" />
     <Compile Include="WatcherReportHTML.cs" />
     <Compile Include="OutputPluginManager.cs" />
     <Compile Include="ResultsManager.cs" />

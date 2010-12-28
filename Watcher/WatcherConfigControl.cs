@@ -370,7 +370,7 @@ done:
         {
             // Use a delegate to perform the operation asynchronously--since we're doing network IO,
             // this wastes a thread for the sake of simplicity.
-            ProcessOfflineSessions callback = new ProcessOfflineSessions(ProcessSessions);
+            ProcessOfflineSessions callback = new ProcessOfflineSessions(new WatcherOffline().ProcessSessions);
 
             WatcherEngine.ProgressDialog.Show();
 
@@ -403,54 +403,6 @@ done:
 
                 // This is the AsyncState seen in the callback method above
                 callback);
-        }
-
-        /// <summary>
-        /// Get all of the sessions in the session list and process them through Watcher's check engine
-        /// one at a time.  Useful for processing sessions stored in a .SAZ file or otherwise when offline.
-        /// </summary>
-        public void ProcessSessions()
-        {
-            Fiddler.Session[] sessions = Fiddler.FiddlerApplication.UI.GetAllSessions();
-
-
-            // Reset the bar's progress position
-            WatcherEngine.ProgressDialog.ProgressValue = 0;
-            WatcherEngine.ProgressDialog.MaximumRange = sessions.Length;
-            WatcherEngine.ProgressDialog.MinimumRange = 0;
-            WatcherEngine.ProgressDialog.Increment = 1;
-            WatcherEngine.ProgressDialog.Title = "Offline Session Analysis";
-            WatcherEngine.ProgressDialog.BodyText = "Processing session data:";
-            
-
-            foreach (Fiddler.Session s in sessions)
-            {
-                // Turn off streaming
-                // TODO: this may already be the case by the time this method is called...
-                s.bBufferResponse = true;
-
-                // Remove chunking and compression from the HTTP response
-                // Logging the return value may result in excessive verbosity: avoid it.
-                s.utilDecodeResponse();
-
-                // Add the specified session to the list of tracked sessions
-                // Do not store session responses greater than 200k
-                if (s.responseBodyBytes != null && s.responseBodyBytes.Length <= WatcherEngine.MaximumResponseLength)
-                {
-                    WatcherEngine.Sessions.Add(s);
-                }
-                else
-                {
-                    Trace.TraceWarning("Warning: Session ID {0} response body is null or exceeds maximum length; not storing in the session list.", s.id);
-                }
-
-                // Run the enabled Watcher checks against the session
-                WatcherEngine.CheckManager.RunEnabledChecks(s);
-
-                WatcherEngine.ProgressDialog.labelOperation.Text = String.Format("Session ID: {0} of {1}", s.id, sessions.Length);
-                WatcherEngine.ProgressDialog.UpdateProgress();
-
-            }
         }
     }
 }
