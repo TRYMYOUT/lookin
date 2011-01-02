@@ -508,7 +508,11 @@ namespace Majestic12
 			bHashMode=p_bHashMode;
 			
 			if(bHashMode)
-				oParams=new Hashtable();
+                // Modified by Chris Weber 1/1/2011.
+                // Replacing default Hashtable constructor with one useful
+                // for case insensitive sarching.
+                // oParams = new Hashtable();
+                oParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
 		}
 
 	}

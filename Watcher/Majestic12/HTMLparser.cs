@@ -4,6 +4,16 @@ using System.Collections;
 using System.Text;
 
 /*
+ * 
+ * Modification History by Chris Weber
+ * 
+ * 12/31/2010 * Line 510 in HTMLchunk.cs 
+ *              Changed new Hashtable to constructor for case-insensitive matching.
+ *              
+ * 12/29/2010 ! Line 499 in TagParser.cs
+ *              Added case to handle hyphens in tag names.
+ *              
+/*
 
 Copyright (c) Alex Chudnovsky, Majestic-12 Ltd (UK). 2005+ All rights reserved
 Web:		http://www.majestic12.co.uk

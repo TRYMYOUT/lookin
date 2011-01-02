@@ -183,6 +183,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             NameValueCollection parms = null;
             alertbody = "";
             findingnum = 0;
+            
             List<HtmlElement> htmlElements = htmlparser.HtmlElementCollection;
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))

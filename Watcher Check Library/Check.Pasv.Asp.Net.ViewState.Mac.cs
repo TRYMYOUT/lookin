@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Collections.Generic;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -207,9 +208,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlParser htmlParser)
         {
-            String bod = null;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             String id  = null;
             String val = null;
 
@@ -226,26 +228,32 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     {
                         if(!filter || SiteNotChecked(session.hostname)) 
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
+                            HTMLchunk chunk;
+                            while ((chunk = htmlParser.Parser.ParseNextTag()) != null)
                             {
-                                // Look at all <input> tags
-                                foreach (Match m in Utility.GetHtmlTags(bod, "input"))
+                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "input")
                                 {
-                                    id = Utility.GetHtmlTagAttribute(m.ToString(), "id");
-                                    // Find ones where id="__VIEWSTATE"
-                                    if (id != null && id.Equals("__VIEWSTATE",StringComparison.InvariantCultureIgnoreCase))
+                                    if (chunk.oParams.ContainsKey("id"))
                                     {
-                                        // Get the __VIEWSTATE value
-                                        val = Utility.GetHtmlTagAttribute(m.ToString(), "value");
-                                        // If the VIEWSTATE is not secured with a MAC, then raise an alert.
-                                        if (!IsViewStateSecure(val))
+                                        id = chunk.oParams["id"].ToString();
+
+                                        // Find ones where id="__VIEWSTATE"
+                                        if (id.Equals("__VIEWSTATE", StringComparison.InvariantCultureIgnoreCase))
                                         {
-                                            lock (hosts)
+                                            // Get the __VIEWSTATE value
+                                            if (chunk.oParams.ContainsKey("value"))
                                             {
-                                                hosts.Add(session.hostname);
+                                                val = chunk.oParams["value"].ToString();
+                                                // If the VIEWSTATE is not secured with a MAC, then raise an alert.
+                                                if (!IsViewStateSecure(val))
+                                                {
+                                                    lock (hosts)
+                                                    {
+                                                        hosts.Add(session.hostname);
+                                                    }
+                                                    AddAlert(session);
+                                                }
                                             }
-                                            AddAlert(session);
                                         }
                                     }
                                 }
@@ -254,6 +262,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     }
                 }
             }
+            sw.Stop();
+            long time = sw.ElapsedMilliseconds;
         }
     }
 }
