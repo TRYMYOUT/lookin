@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -74,12 +75,14 @@ namespace CasabaSecurity.Web.Watcher
         UserControlled                  = 0x0300,   // The check relates to user-controlled events.
     }
 
+
     /// <summary>
     /// This is the base class for Watcher Checks, which includes a set of virtual
     /// functions that should be implemented by checks.
     /// </summary>
     public abstract class WatcherCheck
     {
+        Stopwatch sw = new Stopwatch();
         #region Fields
         public Boolean _enabled = true;                                 // Is this check enabled?
         private Boolean _noisy = false;                                  // Does the check generate a lot of noise?
@@ -99,7 +102,9 @@ namespace CasabaSecurity.Web.Watcher
         protected WatcherCheck()
         {
         }
+        #endregion
 
+        #region Dtor(s)
         #endregion
 
         #region Public Properties
@@ -233,8 +238,22 @@ namespace CasabaSecurity.Web.Watcher
 
         // This function should be thread safe
         // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter
-        public abstract void Check(Session session, UtilityHtmlParser htmlParser);
+        public abstract void Check(Session session, UtilityHtmlParser html);
 
+        public void Start()
+        {
+            sw.Reset();
+            sw.Start();
+        }
+
+        public void End(String url)
+        {
+            sw.Stop();
+            if (sw.ElapsedMilliseconds > 0)
+            {
+                Debug.Print("[*] In Check Timing: {0} took {1} ms to complete on {2}.", GetShortName(), sw.ElapsedMilliseconds, url);
+            }
+        }
         public virtual void UpdateWordList()
         {
         }

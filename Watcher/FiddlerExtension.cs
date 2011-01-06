@@ -31,6 +31,10 @@ namespace CasabaSecurity.Web.Watcher
     /// </summary>
     public class FiddlerWatcherExtension : Fiddler.IAutoTamper
     {
+        // Trace debugging info
+
+        //TextWriterTraceListener tw = new TextWriterTraceListener("C:\\Users\\chris\\Documents\\Fiddler2\\Scripts\\trace\\trace.txt");
+
         #region Ctor(s)
         public FiddlerWatcherExtension()
         {
@@ -112,6 +116,8 @@ namespace CasabaSecurity.Web.Watcher
         /// </summary>
         void IFiddlerExtension.OnBeforeUnload()
         {
+            //tw.Flush();
+            //tw.Close();
         }
 
         /// <summary>
@@ -120,6 +126,7 @@ namespace CasabaSecurity.Web.Watcher
         void IFiddlerExtension.OnLoad()
         {
             WatcherEngine.Init();
+            //Trace.Listeners.Add(tw);
         }
 
         #endregion

@@ -101,8 +101,13 @@ namespace CasabaSecurity.Web.Watcher
                 WatcherCheckState threadState = (WatcherCheckState)threadContext;
 
                 // Invoke the check
-                Debug.Print("Running check {0} on session ID {1}.", threadState.check.GetName(), threadState.session.id);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 threadState.check.Check(threadState.session, threadState.parser);
+                sw.Stop(); if (sw.ElapsedMilliseconds > 0)
+                {
+                    Debug.Print("[*] Timing: {0} took {1} ms to complete on {2}.", threadState.check.GetShortName(), sw.ElapsedMilliseconds, threadState.session.url);
+                }
             }
 
             catch (Exception e)
@@ -154,7 +159,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// An API for getting a comman separated list of the enabled checks by name.
+        /// An API for getting a comma separated list of the enabled checks by name.
         /// </summary>
         /// <returns>Comma-separated list of enabled checks by name.</returns>
         public string GetEnabledChecksAsString()
