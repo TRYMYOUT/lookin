@@ -61,7 +61,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
             
             try 
             {
-	            match = Regex.Match(input, @"document\.domain\s*=\s*['""].*['""]", RegexOptions.Multiline).Value;
+                if (!String.IsNullOrEmpty(input))
+                {
+                    match = Regex.Match(input, @"document\.domain\s*=\s*['""].*['""]", RegexOptions.Multiline).Value;
+                }
             } 
             catch (ArgumentException e) 
             {

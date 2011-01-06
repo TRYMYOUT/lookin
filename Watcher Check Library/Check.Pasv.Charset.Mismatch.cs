@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Windows.Forms;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -111,8 +112,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
         }
 
         //public override void Check(WatcherEngine watcher, Session session, UtilityHtmlParser htmlparser)
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session, UtilityHtmlParser html)
         {
+            Start();
             String body = null;
             String hteq = null;
             String cont = null;
@@ -133,22 +135,26 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         if (Utility.IsResponseHtml(session))
                         {
                             header = session.oResponse.headers.GetTokenValue("Content-Type", "charset");
-                            body = Utility.GetResponseText(session);
 
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
-                            if (body != null && !String.IsNullOrEmpty(header))
+                            if (session.responseBodyBytes.Length > 0 && !String.IsNullOrEmpty(header))
                             {
-                                foreach (Match m in Utility.GetHtmlTags(body, "meta"))
+                                HTMLchunk chunk;
+                                while ((chunk = html.Parser.ParseNextTag()) != null)
                                 {
-                                    hteq = Utility.GetHtmlTagAttribute(m.ToString(), "http-equiv");
-                                    if (hteq != null)
+                                    if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "meta")
                                     {
-                                        if (Utility.CompareStrings(hteq.Trim(), "content-type", true))
+                                        if (chunk.oParams.ContainsKey("http-equiv") && chunk.oParams.ContainsKey("content"))
                                         {
-                                            cont = Utility.GetHtmlTagAttribute(m.ToString(), "content");
-                                            if (cont != null)
+                                            hteq = chunk.oParams["http-equiv"].ToString();
+                                            if (hteq.ToString().Equals("content-type", StringComparison.InvariantCultureIgnoreCase))
                                             {
-                                                CheckContentTypeCharset(cont, "html", header);
+                                                cont = chunk.oParams["content"].ToString();
+                                                if (!String.IsNullOrEmpty(cont))
+                                                {
+                                                    CheckContentTypeCharset(cont, "html", header);
+                                                }
+
                                             }
                                         }
                                     }
@@ -158,18 +164,23 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         else if (Utility.IsResponseXml(session))
                         {
                             header = session.oResponse.headers.GetTokenValue("Content-Type", "charset");
-                            body = Utility.GetResponseText(session);
 
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
-                            if (body != null && !String.IsNullOrEmpty(header))
+                            if (session.responseBodyBytes.Length > 0 && !String.IsNullOrEmpty(header))
                             {
-                                // need to escape the ? for the regex in GetHtmlTags()
-                                foreach (Match m in Utility.GetHtmlTags(body, "\\?xml"))
+                                HTMLchunk chunk;
+                                while ((chunk = html.Parser.ParseNextTag()) != null)
                                 {
-                                    enc = Utility.GetHtmlTagAttribute(m.ToString(), "encoding");
-                                    if (enc != null)
+                                    if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "?xml")
                                     {
-                                        CheckContentTypeCharset(enc, "xml", header);
+                                        if (chunk.oParams.ContainsKey("encoding"))
+                                        {
+                                            enc = chunk.oParams["encoding"].ToString();
+                                            if (!String.IsNullOrEmpty(enc))
+                                            {
+                                                CheckContentTypeCharset(enc, "xml", header);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -181,6 +192,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     }
                 }
             }
+            End(session.url);
         }
     }
 }

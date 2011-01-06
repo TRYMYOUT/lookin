@@ -106,7 +106,7 @@ namespace CasabaSecurity.Web.Watcher
                 threadState.check.Check(threadState.session, threadState.parser);
                 sw.Stop(); if (sw.ElapsedMilliseconds > 0)
                 {
-                    Debug.Print("[*] Timing: {0} took {1} ms to complete on {2}.", threadState.check.GetShortName(), sw.ElapsedMilliseconds, threadState.session.url);
+                    Debug.Print("[*] Timing:{0}:{1}:{2}", threadState.check.GetShortName(), sw.ElapsedMilliseconds, threadState.session.url);
                 }
             }
 

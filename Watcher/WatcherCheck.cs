@@ -251,7 +251,7 @@ namespace CasabaSecurity.Web.Watcher
             sw.Stop();
             if (sw.ElapsedMilliseconds > 0)
             {
-                Debug.Print("[*] In Check Timing: {0} took {1} ms to complete on {2}.", GetShortName(), sw.ElapsedMilliseconds, url);
+                Debug.Print("[*] In Check Timing:{0}:{1}:{2}.", GetShortName(), sw.ElapsedMilliseconds, url);
             }
         }
         public virtual void UpdateWordList()

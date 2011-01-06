@@ -60,7 +60,7 @@ namespace CasabaSecurity.Web.Watcher
         {
             String charset = String.Empty;
             Parser = new HTMLparser();
-            if (Utility.IsResponseHtml(session))
+            if (Utility.IsResponseHtml(session) || Utility.IsResponseXml(session))
             {
                 Parser.Init(session.responseBodyBytes == null ? new byte[] { } : session.responseBodyBytes);
 
