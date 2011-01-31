@@ -32,6 +32,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         public List<String> Urls { get { return this.urls; } }
         [ThreadStatic] static private String alertbody;
         [ThreadStatic] static private int findingnum;
+        //[ThreadStatic] UtilityHtmlParser parser = new UtilityHtmlParser();
 
         public CheckPasvCharsetMismatch()
         {
@@ -112,9 +113,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
         }
 
         //public override void Check(WatcherEngine watcher, Session session, UtilityHtmlParser htmlparser)
-        public override void Check(Session session, UtilityHtmlParser html)
+        public override void Check(Session session)
         {
-            Start();
             String body = null;
             String hteq = null;
             String cont = null;
@@ -139,8 +139,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
                             if (session.responseBodyBytes.Length > 0 && !String.IsNullOrEmpty(header))
                             {
+                                UtilityHtmlParser parser = new UtilityHtmlParser();
+                                parser.Open(session);
                                 HTMLchunk chunk;
-                                while ((chunk = html.Parser.ParseNextTag()) != null)
+                                while ((chunk = parser.Parser.ParseNextTag()) != null)
                                 {
                                     if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "meta")
                                     {
@@ -159,6 +161,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                         }
                                     }
                                 }
+                                parser.Close();
                             }
                         }
                         else if (Utility.IsResponseXml(session))
@@ -168,8 +171,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             // skip cases where the HTTP Header is null or empty, these are covered by another check.
                             if (session.responseBodyBytes.Length > 0 && !String.IsNullOrEmpty(header))
                             {
+                                UtilityHtmlParser parser = new UtilityHtmlParser();
+                                parser.Open(session);
                                 HTMLchunk chunk;
-                                while ((chunk = html.Parser.ParseNextTag()) != null)
+                                while ((chunk = parser.Parser.ParseNextTag()) != null)
                                 {
                                     if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "?xml")
                                     {
@@ -183,6 +188,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                         }
                                     }
                                 }
+                                parser.Close();
                             }
                         }
                         if (!String.IsNullOrEmpty(alertbody))
@@ -192,7 +198,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     }
                 }
             }
-            End(session.url);
         }
     }
 }

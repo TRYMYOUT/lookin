@@ -91,7 +91,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.Medium, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String[] parts = null;
             String cookie = null;

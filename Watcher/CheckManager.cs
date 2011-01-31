@@ -36,7 +36,7 @@ namespace CasabaSecurity.Web.Watcher
         {
             public Session session;
             public WatcherCheck check;
-            public UtilityHtmlParser parser;
+            //public UtilityHtmlParser parser;
         }
 
         #endregion
@@ -101,13 +101,16 @@ namespace CasabaSecurity.Web.Watcher
                 WatcherCheckState threadState = (WatcherCheckState)threadContext;
 
                 // Invoke the check
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                threadState.check.Check(threadState.session, threadState.parser);
-                sw.Stop(); if (sw.ElapsedMilliseconds > 0)
-                {
-                    Debug.Print("[*] Timing:{0}:{1}:{2}", threadState.check.GetShortName(), sw.ElapsedMilliseconds, threadState.session.url);
-                }
+                //Stopwatch sw = new Stopwatch();
+                //sw.Start();
+                //threadState.parser.Open(threadState.session);
+                threadState.check.Check(threadState.session);
+                // Must close the parser when done.
+                // Stop the stopwatch and print the elapsed time for the check to complete (and the threads to be handled).
+                //sw.Stop(); if (sw.ElapsedMilliseconds > 0)
+                //{
+                //    Debug.Print("[*] Timing:{0}:{1}:{2}", threadState.check.GetShortName(), sw.ElapsedMilliseconds, threadState.session.url);
+                //}
             }
 
             catch (Exception e)
@@ -139,7 +142,7 @@ namespace CasabaSecurity.Web.Watcher
             {
                 WatcherCheckState state = new WatcherCheckState();
                 state.session = oSession;
-                state.parser = new UtilityHtmlParser(oSession);
+                //state.parser = new UtilityHtmlParser();
 
                 // Enumerate the available checks
                 foreach (WatcherCheck check in Checks)
@@ -159,7 +162,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// An API for getting a comma separated list of the enabled checks by name.
+        /// Get a comma separated list of the enabled checks by name.
         /// </summary>
         /// <returns>Comma-separated list of enabled checks by name.</returns>
         public string GetEnabledChecksAsString()

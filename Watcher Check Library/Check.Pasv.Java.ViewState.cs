@@ -225,7 +225,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String bod = null;
             String id  = null;

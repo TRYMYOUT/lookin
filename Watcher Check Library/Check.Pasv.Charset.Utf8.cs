@@ -130,7 +130,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String body = null;
             String hteq = null;
@@ -139,6 +139,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             bool flag = false;
             alertbody = "";
             findingnum = 0;
+
+
 
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {

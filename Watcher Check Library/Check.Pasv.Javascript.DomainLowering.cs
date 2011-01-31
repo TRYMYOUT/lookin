@@ -58,6 +58,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Get the document.domain = "string" part from the javascript
             string documentDomain = string.Empty;
             string match = string.Empty;
+            string[] documentDomainLabels = { };
             
             try 
             {
@@ -93,7 +94,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
             originDomainLabels = originDomain.Split('.');            
             
             // Assuming hostname is www.foo.bar, split domain name into subdomains
-            string[] documentDomainLabels = documentDomain.Split('.');
+            if (!String.IsNullOrEmpty(documentDomain))
+            {
+                documentDomainLabels = documentDomain.Split('.');
+            }
 
 
             // Domain lowering should have fewer sub-domains
@@ -117,7 +121,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String[] bods = null;
             String body = null;

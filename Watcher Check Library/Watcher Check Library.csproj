@@ -136,7 +136,7 @@
     <Compile Include="Check.Pasv.SSL.CertValidation.cs" />
     <Compile Include="Check.Pasv.UserControlled.Charset.cs" />
     <Compile Include="Check.Pasv.UserControlled.JavascriptProperty.cs" />
-    <None Include="Check.Pasv.UserControlled.HtmlAttributes.cs_" />
+    <Compile Include="Check.Pasv.UserControlled.HtmlAttributes.cs" />
     <Compile Include="Check.Pasv.UserControlled.OpenRedirect.cs" />
   </ItemGroup>
   <ItemGroup>

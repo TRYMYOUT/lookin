@@ -56,7 +56,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 "\r\n\r\n";
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String bod = null;
             String src = null;

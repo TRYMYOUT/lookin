@@ -38,6 +38,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         //[ThreadStatic] static private int findingnum;
         private EnableCheckConfigPanel configpanel;
         static private List<String> hosts = new List<String>();
+        //[ThreadStatic] UtilityHtmlParser parser = new UtilityHtmlParser();
 
         public CheckPasvAspNetViewStateMac()
         {
@@ -208,9 +209,8 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser html)
+        public override void Check(Session session)
         {
-            Start();
             String id  = null;
             String val = null;
 
@@ -223,12 +223,16 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session))
+                    if (Utility.IsResponseHtml(session) && session.responseBodyBytes.Length > 0)
                     {
-                        if(!filter || SiteNotChecked(session.hostname)) 
+                        if(!filter || SiteNotChecked(session.hostname))
                         {
+                            UtilityHtmlParser parser = new UtilityHtmlParser();
+                            parser.Open(session);
+                            if (parser.Parser == null) return;
+
                             HTMLchunk chunk;
-                            while ((chunk = html.Parser.ParseNextTag()) != null)
+                            while ((chunk = parser.Parser.ParseNext()) != null)
                             {
                                 if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "input")
                                 {
@@ -257,11 +261,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                     }
                                 }
                             }
+                            parser.Close();
                         }
                     }
                 }
             }
-            End(session.url);
         }
     }
 }

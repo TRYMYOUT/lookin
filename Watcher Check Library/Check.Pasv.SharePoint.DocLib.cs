@@ -131,7 +131,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             return (System.Web.HttpUtility.UrlDecode(session.fullUrl) == doclibroot);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             findingnum = 0;
 

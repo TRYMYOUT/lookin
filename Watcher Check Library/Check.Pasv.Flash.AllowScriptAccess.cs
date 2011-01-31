@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Fiddler;
 
@@ -150,16 +151,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             String type = null;
 
-            foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+            if (!String.IsNullOrEmpty(bod))
             {
-                type = Utility.GetHtmlTagAttribute(m.ToString(), "allowscriptaccess");
-                if (type != null)
-                    type = Utility.ToSafeLower(type);
-                    CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(type, m.ToString()), m.ToString());
+                foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+                {
+                    try
+                    {
+                        type = Utility.GetHtmlTagAttribute(m.ToString(), "allowscriptaccess");
+                        if (!String.IsNullOrEmpty(type))
+                            type = Utility.ToSafeLower(type);
+                        CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(type, m.ToString()), m.ToString());
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", e.Message);
+                        ExceptionLogger.HandleException(e);
+                    }
+                }
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String bod = null;
             alertbody = "";

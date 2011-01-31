@@ -235,12 +235,12 @@ namespace CasabaSecurity.Web.Watcher
             error.AppendLine("Stack Traces:");
             error.Append(GetExceptionCallStack(exception));
             error.AppendLine("");
-            error.AppendLine("Loaded Modules:");
-            Process thisProcess = Process.GetCurrentProcess();
-            foreach (ProcessModule module in thisProcess.Modules)
-            {
-                error.AppendLine(module.FileName + " " + module.FileVersionInfo.FileVersion);
-            }
+            //error.AppendLine("Loaded Modules:");
+            //Process thisProcess = Process.GetCurrentProcess();
+            //foreach (ProcessModule module in thisProcess.Modules)
+            //{
+            //    error.AppendLine(module.FileName + " " + module.FileVersionInfo.FileVersion);
+            //}
 
             return error.ToString();
         }

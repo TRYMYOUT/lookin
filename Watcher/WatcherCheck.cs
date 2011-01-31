@@ -238,14 +238,22 @@ namespace CasabaSecurity.Web.Watcher
 
         // This function should be thread safe
         // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter
-        public abstract void Check(Session session, UtilityHtmlParser html);
+        public abstract void Check(Session session);
+        //public abstract void Check(Session session, UtilityHtmlParser parser);
 
+        /// <summary>
+        /// Start a stopwatch.
+        /// </summary>
         public void Start()
         {
             sw.Reset();
             sw.Start();
         }
 
+        /// <summary>
+        /// Stop the stopwatch.
+        /// </summary>
+        /// <param name="url">The URL of the current session.</param>
         public void End(String url)
         {
             sw.Stop();

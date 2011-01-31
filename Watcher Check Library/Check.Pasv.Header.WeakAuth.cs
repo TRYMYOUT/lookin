@@ -57,7 +57,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             bool authBasic = session.oResponse.headers.ExistsAndContains("WWW-Authenticate", "Basic");
             bool authDigest = session.oResponse.headers.ExistsAndContains("WWW-Authenticate", "Digest");

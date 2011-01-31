@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Security;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -28,6 +29,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         String[] defaultstrings = { "BUG", "TODO", "HACK", "FIX", "XXX", "DEBUG", "dumb", "crap", "sucks", "holy", "stupid" };
         [ThreadStatic] static private string alertbody = "";
         [ThreadStatic] static private int findingnum;
+        //[ThreadStatic] UtilityHtmlParser parser = new UtilityHtmlParser();
 
 
         private volatile List<string> wordlist = new List<string>();
@@ -87,7 +89,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void CheckComment(Session session, String comment)
         {
-            StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
             int length;
             // modify this list of words to find what you want
             List<string> words;
@@ -120,11 +121,11 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             String body = null;
             String comment = null;
-            String[] scriptBlocks = null;
+            String script = null;
 
             alertbody = "";
             findingnum = 0;
@@ -133,67 +134,70 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
+                    if (Utility.IsResponseHtml(session) && session.responseBodyBytes.Length > 0)
+                    {
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        HTMLchunk chunk;
+                        while ((chunk = parser.Parser.ParseNext()) != null)
+                        {
+                            if (chunk.oType == HTMLchunkType.Comment)
+                            {
+                                // TODO: Must call Finalise() first!
+                                comment = chunk.oHTML;
+                                if (comment != null)
+                                {
+                                    CheckComment(session, comment);
+                                }
+                            }
+                            if (chunk.oType == HTMLchunkType.Script)
+                            {
+                                script = chunk.oHTML.Trim();
+                                if (script != null)
+                                {
+                                    foreach (Match comments in Utility.GetJavascriptMultiLineComment(script))
+                                    {
+                                        comment = comments.ToString();
+                                        CheckComment(session, comment);
+                                    }
+                                    foreach (Match comments in Utility.GetJavascriptSingleLineComment(script))
+                                    {
+                                        comment = comments.ToString();
+                                        CheckComment(session, comment);
+                                    }
+                                }
+                            }
+                        }
+                        parser.Close();
+                    }
+                    if (Utility.IsResponseJavascript(session))
                     {
                         body = Utility.GetResponseText(session);
-                        if (body != null)
-                        {
-                            // Look at text/html responses
-                            if (Utility.IsResponseHtml(session))
-                            {
-                                foreach (Match comments in Utility.GetHtmlComment(body))
-                                {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
-                                }
 
-                                scriptBlocks = Utility.GetHtmlTagBodies(body, "script");
-                                if (scriptBlocks != null)
+                        // Look at application/javascript responses
+                        if (Utility.IsResponseJavascript(session))
+                        {
+                            foreach (Match comments in Utility.GetJavascriptMultiLineComment(body))
+                            {
+                                comment = comments.ToString();
+                                if (comment != null)
                                 {
-                                    foreach (String s in scriptBlocks)
-                                    {
-                                        foreach (Match comments in Utility.GetJavascriptMultiLineComment(s))
-                                        {
-                                            comment = comments.ToString();
-                                            CheckComment(session, comment);
-                                        }
-                                        foreach (Match comments in Utility.GetJavascriptSingleLineComment(s))
-                                        {
-                                            comment = comments.ToString();
-                                            CheckComment(session, comment);
-                                        }
-                                    }
+                                    CheckComment(session, comment);
                                 }
                             }
-
-                            // Look at application/javascript responses
-                            if (Utility.IsResponseJavascript(session))
+                            foreach (Match comments in Utility.GetJavascriptSingleLineComment(body))
                             {
-                                foreach (Match comments in Utility.GetJavascriptMultiLineComment(body))
+                                comment = comments.ToString();
+                                if (comment != null)
                                 {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
-                                }
-                                foreach (Match comments in Utility.GetJavascriptSingleLineComment(body))
-                                {
-                                    comment = comments.ToString();
-                                    if (comment != null)
-                                    {
-                                        CheckComment(session, comment);
-                                    }
+                                    CheckComment(session, comment);
                                 }
                             }
                         }
-                        if (!String.IsNullOrEmpty(alertbody))
-                        {
-                            AddAlert(session);
-                        }
+                    }
+                    if (!String.IsNullOrEmpty(alertbody))
+                    {
+                        AddAlert(session);
                     }
                 }
             }

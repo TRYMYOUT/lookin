@@ -336,7 +336,7 @@ namespace CasabaSecurity.Web.Watcher
 
             catch (ArgumentException e)
             {
-                // Thrown if the GetEncoding argument is invalid
+                // Thrown if the GetEncoding argument is invalid, default to UTF-8 below.
                 Trace.TraceError("Error: ArgumentException: {0}", e.Message);
             }
 

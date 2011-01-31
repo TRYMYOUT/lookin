@@ -68,7 +68,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, url, name, text, StandardsCompliance, findingnum, Reference);
         }
 
-        public override void Check(Session session, UtilityHtmlParser htmlparser)
+        public override void Check(Session session)
         {
             findingnum = 0;
             if (session.oRequest.headers.ExistsAndContains("User-Agent", "MSIE 8.0")) 
