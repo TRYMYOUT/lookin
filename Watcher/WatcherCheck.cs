@@ -9,13 +9,7 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Web;
-using System.Collections.Specialized;
-using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using Fiddler;
 
 namespace CasabaSecurity.Web.Watcher
@@ -49,7 +43,7 @@ namespace CasabaSecurity.Web.Watcher
         OwaspAppSecVerificationLevel2B = 0x0020,
         OwaspAppSecVerificationLevel3  = 0x0030,
         OwaspAppSecVerificationLevel4  = 0x0080,
-        MicrosoftSDL                   = 0x0100,    // The check conforms to a Microsoft SDL requirement or recommendation.
+        MicrosoftSdl                   = 0x0100,    // The check conforms to a Microsoft SDL requirement or recommendation.
     }
 
     /// <summary>
@@ -70,7 +64,7 @@ namespace CasabaSecurity.Web.Watcher
         JavaScript                      = 0x0140,   // The check relates to JavaScript.
         Sharepoint                      = 0x0180,   // The check relates to Sharepoint.
         Silverlight                     = 0x0220,   // The check relates to Silverlight.
-        SSL                             = 0x0260,   // The check relates to SSL.
+        Ssl                             = 0x0260,   // The check relates to SSL.
         Unicode                         = 0x0280,   // The check relates to Unicode.
         UserControlled                  = 0x0300,   // The check relates to user-controlled events.
     }
@@ -237,9 +231,8 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         // This function should be thread safe
-        // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter
+        // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter, UtilityHtmlParser parameter
         public abstract void Check(Session session);
-        //public abstract void Check(Session session, UtilityHtmlParser parser);
 
         /// <summary>
         /// Start a stopwatch.
@@ -282,9 +275,9 @@ namespace CasabaSecurity.Web.Watcher
 
             // If the check is compliant with the specified standard, add the canonical name (retrieved 
             // from the resource file) of the standard to the string returned.
-            if (IsCompliant(WatcherCheckStandardsCompliance.MicrosoftSDL))
+            if (IsCompliant(WatcherCheckStandardsCompliance.MicrosoftSdl))
             {
-                standardsCompliance.AppendFormat("{0}, ", GetResourceComplianceString(WatcherCheckStandardsCompliance.MicrosoftSDL));
+                standardsCompliance.AppendFormat("{0}, ", GetResourceComplianceString(WatcherCheckStandardsCompliance.MicrosoftSdl));
             }
 
             if (IsCompliant(WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel1))

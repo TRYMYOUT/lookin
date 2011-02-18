@@ -27,7 +27,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public CheckPasvSSLVersion()
         {
-            CheckCategory = WatcherCheckCategory.SSL;
+            CheckCategory = WatcherCheckCategory.Ssl;
             LongName = "SSL - SSLv2 protocol check.";
             LongDescription = "When an SSL connection is initiated, this check attempts to connect to the server using the insecure SSL v2 protocol. If the server allows this, a finding is reported. Most servers today should support SSL v3 and disallow the legacy versions of SSL.";
             ShortName = "Insecure SSLv2 was allowed";

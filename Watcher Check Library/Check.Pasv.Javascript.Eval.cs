@@ -23,7 +23,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             // Complies with Microsoft SDL
             StandardsCompliance =
-                WatcherCheckStandardsCompliance.MicrosoftSDL;
+                WatcherCheckStandardsCompliance.MicrosoftSdl;
 
             CheckCategory = WatcherCheckCategory.JavaScript;
             LongName = "Javascript - Examine javascript code for use of dangerous eval() methods.";

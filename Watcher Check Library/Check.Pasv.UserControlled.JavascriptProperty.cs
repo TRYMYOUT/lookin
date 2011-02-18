@@ -11,6 +11,7 @@ using System;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -68,9 +69,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             if (att.Length > 0)
             {
-                pro = null;
-                dom = null;
-                tok = null;
 
                 // if contains protocol/domain name separator
                 if (att.IndexOf("://") > 0)
@@ -133,7 +131,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
         public override void Check(Session session)
         {
             NameValueCollection parms = null;
-            String[] bods = null;
             String bod = null;
             alertbody = "";
             findingnum = 0;
@@ -142,40 +139,40 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 if (session.responseCode == 200)
                 {
-                    if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
+                    parms = Utility.GetRequestParameters(session);
+
+                    if (parms != null && parms.Keys.Count > 0)
                     {
-                        parms = Utility.GetRequestParameters(session);
-
-                        if (parms != null && parms.Keys.Count > 0)
+                        if (Utility.IsResponseHtml(session))
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
-                            {
-                                if (Utility.IsResponseHtml(session))
-                                {
-                                    bods = Utility.GetHtmlTagBodies(bod, "script");
-                                    if (bods != null)
-                                    {
-                                        foreach (String b in bods)
-                                        {
-                                            CheckUserControllableJavascriptReferenceProperty(parms, b, "src");
-                                            CheckUserControllableJavascriptReferenceProperty(parms, b, "href");
-                                            CheckUserControllableJavascriptReferenceWindowOpen(parms, b);
-                                        }
-                                    }
-                                }
+                            UtilityHtmlParser parser = new UtilityHtmlParser();
+                            parser.Open(session);
+                            // Need this true to keep the inline javascript
+                            parser.Parser.bAutoKeepScripts = true;
+                            if (parser.Parser == null) return;
+                            HTMLchunk chunk;
 
-                                if (Utility.IsResponseJavascript(session))
+                            while ((chunk = parser.Parser.ParseNext()) != null)
+                            {
+                                if (chunk.oType == HTMLchunkType.Script)
                                 {
-                                    CheckUserControllableJavascriptReferenceProperty(parms, bod, "src");
-                                    CheckUserControllableJavascriptReferenceProperty(parms, bod, "href");
-                                    CheckUserControllableJavascriptReferenceWindowOpen(parms, bod);
-                                }
-                                if (!String.IsNullOrEmpty(alertbody))
-                                {
-                                    AddAlert(session);
+                                    CheckUserControllableJavascriptReferenceProperty(parms, chunk.oHTML, "src");
+                                    CheckUserControllableJavascriptReferenceProperty(parms, chunk.oHTML, "href");
+                                    CheckUserControllableJavascriptReferenceWindowOpen(parms, chunk.oHTML);
                                 }
                             }
+                            parser.Close();
+                        }
+
+                        if (Utility.IsResponseJavascript(session))
+                        {
+                            CheckUserControllableJavascriptReferenceProperty(parms, bod, "src");
+                            CheckUserControllableJavascriptReferenceProperty(parms, bod, "href");
+                            CheckUserControllableJavascriptReferenceWindowOpen(parms, bod);
+                        }
+                        if (!String.IsNullOrEmpty(alertbody))
+                        {
+                            AddAlert(session);
                         }
                     }
                 }

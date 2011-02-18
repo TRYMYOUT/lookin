@@ -21,7 +21,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public CheckPasvSSLInsecureFormLoad()
         {
-            CheckCategory = WatcherCheckCategory.SSL;
+            CheckCategory = WatcherCheckCategory.Ssl;
             LongName = "SSL - Look for insecure transition from HTTP to HTTPS during Form Post.";
             LongDescription = "This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.";
             ShortName = "HTTP to HTTPS insecure transition in form post";

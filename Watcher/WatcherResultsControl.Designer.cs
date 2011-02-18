@@ -1050,19 +1050,9 @@ namespace CasabaSecurity.Web.Watcher
             #endregion
 
             #region Ctor(s)
-            public AlertListViewItem(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count)
-            {
-                _id = id;
-                _severity = severity;
-                _url = url;
-                _name = name;
-                _description = description;
-                _count = count;
-                _reflink = String.Empty;
 
-                // Set the item text to the canonical version of the WatcherResutlSeverity
-                this.Text = severity.ToString();
-            }
+            public AlertListViewItem(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count)
+                : this(severity, id, name, url, description, count, String.Empty) {}
 
             public AlertListViewItem(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count, String reflink)
             {

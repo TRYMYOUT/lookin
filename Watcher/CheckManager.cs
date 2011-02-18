@@ -8,13 +8,7 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Security;
-using System.Text;
 using System.Threading;
 
 using Fiddler;
@@ -42,7 +36,7 @@ namespace CasabaSecurity.Web.Watcher
         #endregion
 
         #region Fields
-        private Object _lock = new Object();     // Use this object to provide synchronization
+        private readonly Object _lock = new Object();     // Use this object to provide synchronization
         private WatcherCheckCollection _checks;  // Master list of checks
         #endregion
 

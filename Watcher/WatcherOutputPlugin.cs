@@ -28,7 +28,6 @@ namespace CasabaSecurity.Web.Watcher
 
         #region Ctor(s)
 
-        // TODO: POTENTIALLY BREAKING CHANGE: public -> protected
         protected WatcherOutputPlugin()
         {
         }

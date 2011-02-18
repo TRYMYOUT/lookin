@@ -11,6 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -92,81 +93,93 @@ namespace CasabaSecurity.Web.Watcher.Checks
             }
         }
 
-        private void CheckObjectTag(String bod)
+        private void CheckObjectTag(HTMLchunk chunk, ref UtilityHtmlParser parser)
         {
             String[] bods = null;
             String attr = null;
-            String name = null;
+            String html = null;
             String allowScriptAccessValue = null;
-            String val = null;
             bool flag = false;
 
-            bods = Utility.GetHtmlTagBodies(bod, "object", false);
-            if (bods != null)
+            string b = chunk.oHTML;
+
+            // Check the param elements of an object element
+            if (chunk.oParams.ContainsKey("classid"))
             {
-                foreach (String b in bods)
+                attr = chunk.oParams["classid"].ToString();
+                if ((attr == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000") || (attr == "x-shockwave-flash")) // flash clsid
                 {
-                    attr = Utility.GetHtmlTagAttribute(b, "classid");
-                    if (attr != null)
-                    {
-                        attr = Utility.ToSafeLower(attr);
+                    allowScriptAccessValue = GetAllowScriptAccessValue(ref parser, ref flag, allowScriptAccessValue, ref html);
 
-                        if ((attr == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000") || (attr == "x-shockwave-flash")) // flash clsid
-                        {
-                            foreach (Match param in Utility.GetHtmlTags(b, "param"))
-                            {
-                                name = Utility.GetHtmlTagAttribute(param.ToString(), "name");
-                                if (name != null)
-                                {
-                                    name = Utility.ToSafeLower(name);
-                                    if (name == "movie")
-                                    {
-                                        val = Utility.GetHtmlTagAttribute(param.ToString(), "value");
-                                        if (val != null)
-                                            val = Utility.ToSafeLower(val);
-                                            if (val.Trim().EndsWith(".swf"))
-                                                flag = true;
-                                    }
+                    if (flag)
+                        CheckAllowScriptAccessValue(allowScriptAccessValue, b);
+                }
+            }
 
-                                    if (name == "allowscriptaccess")
-                                        allowScriptAccessValue = Utility.GetHtmlTagAttribute(param.ToString(), "value");
-                                }
-                            }
-
-                            if (flag)
-                                CheckAllowScriptAccessValue(allowScriptAccessValue, b);
-                        }
-                    }
-                    String type = null;
-                    type = Utility.GetHtmlTagAttribute(b, "type");
-                    if (type != null)
-                        type = Utility.ToSafeLower(type);
-                        if (type == "application/x-shockwave-flash")
-                            CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(b, "allowscriptaccess"), b);
+            // Otherwise check the attributes of the object element
+            if (chunk.oParams.ContainsKey("type"))
+            {
+                string type = chunk.oParams["type"].ToString();
+                if (Utility.ToSafeLower(type) == "application/x-shockwave-flash" && chunk.oParams.ContainsKey("allowscriptaccess"))
+                {
+                    allowScriptAccessValue = chunk.oParams["allowscriptaccess"].ToString();
+                    CheckAllowScriptAccessValue(allowScriptAccessValue, chunk.oHTML);
+                }
+                // Start looking through the param elements.
+                else if (Utility.ToSafeLower(type) == "application/x-shockwave-flash")
+                {
+                    allowScriptAccessValue = GetAllowScriptAccessValue(ref parser, ref flag, allowScriptAccessValue, ref html);
+                    CheckAllowScriptAccessValue(allowScriptAccessValue, html);
                 }
             }
         }
 
-        private void CheckEmbedxTag(String bod)
+        private string GetAllowScriptAccessValue(ref UtilityHtmlParser parser, ref bool flag, string allowScriptAccessValue, ref string html)
         {
-            String type = null;
-
-            if (!String.IsNullOrEmpty(bod))
+            String name = null;
+            String val = null;
+            HTMLchunk chunk;
+            while ((chunk = parser.Parser.ParseNext()) != null)
             {
-                foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+                if (chunk.sTag == "param" && chunk.oParams.ContainsKey("name") && chunk.oParams.ContainsKey("value"))
                 {
-                    try
+                    name = chunk.oParams["name"].ToString();
+                    if (Utility.ToSafeLower(name) == "movie")
                     {
-                        type = Utility.GetHtmlTagAttribute(m.ToString(), "allowscriptaccess");
-                        if (!String.IsNullOrEmpty(type))
-                            type = Utility.ToSafeLower(type);
-                        CheckAllowScriptAccessValue(Utility.GetHtmlTagAttribute(type, m.ToString()), m.ToString());
+                        val = chunk.oParams["value"].ToString();
+                        val = Utility.ToSafeLower(val);
+                        if (val.Trim().EndsWith(".swf"))
+                            flag = true;
                     }
-                    catch (Exception e)
+                    if (Utility.ToSafeLower(name) == "allowscriptaccess")
                     {
-                        Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", e.Message);
-                        ExceptionLogger.HandleException(e);
+                        allowScriptAccessValue = chunk.oParams["value"].ToString();
+                        // Return the HTML where we want to report an issue.
+                        html = chunk.oHTML;
                     }
+                }
+            }
+            return allowScriptAccessValue;
+        }
+
+        private void CheckEmbedxTag(HTMLchunk chunk)
+        {
+            String value = null;
+
+            if (chunk.oParams.ContainsKey("allowscriptaccess"))
+            {
+                try
+                {
+                    value = chunk.oParams["allowscriptaccess"].ToString();
+
+                    if (!String.IsNullOrEmpty(value))
+                        value = Utility.ToSafeLower(value);
+                    CheckAllowScriptAccessValue(value, chunk.oHTML.ToString());
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", e.Message);
+                    ExceptionLogger.HandleException(e);
                 }
             }
         }
@@ -185,14 +198,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
-                        {
-                            bod = bod.ToLower();
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        parser.Parser.bKeepRawHTML = true;
+                        if (parser.Parser == null) return;
 
-                            CheckObjectTag(bod);
-                            CheckEmbedxTag(bod);
+                        HTMLchunk chunk;
+                        while ((chunk = parser.Parser.ParseNext()) !=null)
+                        {
+                            if (chunk.oType == HTMLchunkType.OpenTag)
+                            {
+                                if (chunk.sTag == "object")
+                                {
+                                    CheckObjectTag(chunk, ref parser);
+                                }
+                                if (chunk.sTag == "embed")
+                                {
+                                    CheckEmbedxTag(chunk);
+                                }
+                            }
                         }
+
                         if (!String.IsNullOrEmpty(alertbody))
                         {
                             AddAlert(session, WatcherResultSeverity.Medium, alertbody);

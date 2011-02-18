@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -108,20 +109,36 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        parser.Parser.bAutoKeepScripts = true;
+                        if (parser.Parser == null) return;
+                        HTMLchunk chunk;
+
+                        while ((chunk = parser.Parser.ParseNext()) != null)
                         {
-                            bods = Utility.GetHtmlTagBodies(body, "script");
-                            if (bods != null)
+                            if (chunk.oType == HTMLchunkType.Script)
                             {
-                                foreach (String b in bods)
-                                {
-                                    CheckJavascriptCrossDomainReferenceProperty(session, b, "src");
-                                    CheckJavascriptCrossDomainReferenceProperty(session, b, "href");
-                                    CheckJavascriptCrossDomainReferenceWindowOpen(session, b);
-                                }
+                                CheckJavascriptCrossDomainReferenceProperty(session, chunk.oHTML, "src");
+                                CheckJavascriptCrossDomainReferenceProperty(session, chunk.oHTML, "href");
+                                CheckJavascriptCrossDomainReferenceWindowOpen(session, chunk.oHTML);
                             }
                         }
+                        parser.Close();
+                        //body = Utility.GetResponseText(session);
+                        //if (body != null)
+                        //{
+                        //    bods = Utility.GetHtmlTagBodies(body, "script");
+                        //    if (bods != null)
+                        //    {
+                        //        foreach (String b in bods)
+                        //        {
+                        //            CheckJavascriptCrossDomainReferenceProperty(session, b, "src");
+                        //            CheckJavascriptCrossDomainReferenceProperty(session, b, "href");
+                        //            CheckJavascriptCrossDomainReferenceWindowOpen(session, b);
+                        //        }
+                        //    }
+                        //}
                     }
 
                     if (Utility.IsResponseJavascript(session))

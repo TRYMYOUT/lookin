@@ -8,16 +8,13 @@
 //
 
 using System;
-using System.Text.RegularExpressions;
 using Fiddler;
 using System.IO;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Reflection;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -56,7 +53,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             configpanel = new EnableCheckConfigPanel(this, "SSL CRL Validation", "Enable full CRL validation of SSL Certificate Chains");
             configpanel.Init();
 
-            CheckCategory = WatcherCheckCategory.SSL;
+            CheckCategory = WatcherCheckCategory.Ssl;
             LongName = "SSL - Look for certificate validation issues.";
             LongDescription = "This check validates SSL certificates and reports a finding when validation errors such as host name mis-match and expiration are found. If configured, this check will also attempt to walk the certificate chain and perform CRL revocation checking.";
             ShortName = "SSL - SSL certificate validation";
@@ -82,22 +79,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 ShortDescription +
                 session.host +		// don't change this or we'll get duplicate alerts
                 "\r\n\r\n" +
-                context;
-
-            // don't change session.host or we'll get duplicate alerts
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, 1, Reference);
-        }
-
-        // we only want to check the SSL handshake once per host
-        private void AddAlert(WatcherEngine watcher, Session session, String name, String context)
-        {
-            findingnum++;
-            String text =
-
-                "SSL issues were identified with host: \r\n" +
-                session.host +		// don't change this or we'll get duplicate alerts
-                "\r\n\r\n" +
-                findingnum.ToString() + ") " + "The issue was: \r\n" +
                 context;
 
             // don't change session.host or we'll get duplicate alerts

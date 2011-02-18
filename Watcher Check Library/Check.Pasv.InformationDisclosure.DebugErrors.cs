@@ -38,7 +38,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             // Complies with OWASP ASVL 1 & 2 (DVR 8.9)
             StandardsCompliance =
-                WatcherCheckStandardsCompliance.MicrosoftSDL |
+                WatcherCheckStandardsCompliance.MicrosoftSdl |
                 WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel1 |
                 WatcherCheckStandardsCompliance.OwaspAppSecVerificationLevel2;
 

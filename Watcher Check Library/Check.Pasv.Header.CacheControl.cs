@@ -47,7 +47,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             string name = ShortName;
             findingnum++;
             string text =
-                Reference + ShortName +
+                ShortDescription +
                 session.fullUrl +
                 "\r\n\r\n" +
                 findingnum.ToString() + ") " +

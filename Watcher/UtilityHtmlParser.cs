@@ -9,8 +9,6 @@
 // Author: Chris Weber (chris@casabasecurity.com)
 
 using System;
-using System.Collections.Generic;
-using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using Fiddler;
@@ -21,7 +19,7 @@ namespace CasabaSecurity.Web.Watcher
     public class UtilityHtmlParser
     {
         #region Fields
-        private static Char[] whitespace = { ' ', '\r', '\n', '\t' };
+
         private HTMLparser parser;
 
         #endregion

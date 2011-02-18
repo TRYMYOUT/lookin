@@ -25,7 +25,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             // Complies with Microsoft SDL
             StandardsCompliance =
-                WatcherCheckStandardsCompliance.MicrosoftSDL;
+                WatcherCheckStandardsCompliance.MicrosoftSdl;
 
             CheckCategory = WatcherCheckCategory.Silverlight;
             LongName = "Silverlight - Search for insecure domain references in Silverlight client access policy.";

@@ -27,7 +27,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             // Complies with Microsoft SDL
             StandardsCompliance =
-                WatcherCheckStandardsCompliance.MicrosoftSDL;
+                WatcherCheckStandardsCompliance.MicrosoftSdl;
 
             CheckCategory = WatcherCheckCategory.Flash;
             LongName = "Flash - Look for issues with the Flash cross-domain policy file.";

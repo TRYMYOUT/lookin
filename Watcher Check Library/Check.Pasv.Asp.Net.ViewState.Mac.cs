@@ -11,9 +11,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Fiddler;
 using Majestic12;
 
@@ -23,7 +23,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
     /// Look for ASP.NET VIEWSTATE that has the MAC protection disabled.  When disabled, the VIEWSTATE is vulnerable to tampering
     /// and XSS attacks - see the advisory https://www.trustwave.com/spiderlabs/advisories/TWSL2010-001.txt.
     /// 
-    /// TODO: test if this works in all framework scenarios:
     /// .NET 4.0 - pass
     /// .NET 3.5 - pass
     /// .NET 3.0 - pass
@@ -36,7 +35,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
     {
         //[ThreadStatic] static private string alertbody = "";
         //[ThreadStatic] static private int findingnum;
-        private EnableCheckConfigPanel configpanel;
+        private readonly EnableCheckConfigPanel configpanel;
         static private List<String> hosts = new List<String>();
         //[ThreadStatic] UtilityHtmlParser parser = new UtilityHtmlParser();
 
@@ -57,8 +56,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override System.Windows.Forms.Panel GetConfigPanel()
         {
-            System.Windows.Forms.Panel panel = new System.Windows.Forms.Panel();
-            panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            Panel panel = new System.Windows.Forms.Panel {Dock = System.Windows.Forms.DockStyle.Fill};
             configpanel.Dock = System.Windows.Forms.DockStyle.Fill;
             panel.Controls.Add(configpanel);
             return panel;
@@ -97,15 +95,15 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// </summary>
         /// <param name="val">The VIEWSTATE value as a base64 encoded string</param>
         /// <returns></returns>
-        private bool IsViewStateSecure(string val)
+        private static bool IsViewStateSecure(string val)
         {
             if (String.IsNullOrEmpty(val))
             {
                 return true;
             }
 
-            byte[] viewStateDeserialized = { };
-            byte[] viewStateReSerialized = { };
+            byte[] viewStateDeserialized;
+            byte[] viewStateReSerialized;
 
             // Patrick Toomey seemed to have a good method for detecting whether MAC
             // validation was enabled or not.  See source code from:
@@ -115,9 +113,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
             // Conversion may fail so catch exceptions.
             try
             {
-                viewStateDeserialized = System.Convert.FromBase64String(val);
+                viewStateDeserialized = Convert.FromBase64String(val);
                 // If the value is null or byte array length is zero then bail.
-                if (viewStateDeserialized == null || viewStateDeserialized.Length == 0)
+                if (viewStateDeserialized.Length == 0)
                 {
                     return true;
                 }
@@ -146,10 +144,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             try
             {
-                viewStateReSerialized = System.Convert.FromBase64String(sb.ToString());
+                viewStateReSerialized = Convert.FromBase64String(sb.ToString());
 
                 // If the value is null or byte array length is zero then bail.
-                if (viewStateReSerialized == null || viewStateReSerialized.Length == 0)
+                if (viewStateReSerialized.Length == 0)
                 {
                     return true;
                 }
@@ -173,15 +171,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             if (viewStateDeserialized.Length != viewStateReSerialized.Length)
             {
-                if (viewStateDeserialized.Length - viewStateReSerialized.Length == 20)
+                switch (viewStateDeserialized.Length - viewStateReSerialized.Length)
                 {
-                    // VIEWSTATE has MAC protection enabled
-                    return true;
-                }
-                else if (viewStateDeserialized.Length - viewStateReSerialized.Length == 32)
-                {
-                    // VIEWSTATE has MAC protection enabled
-                    return true;
+                    case 20:
+                        return true;
+                    case 32:
+                        return true;
                 }
             }
 
@@ -201,18 +196,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 }
 
                 // host has not been checked yet
-                else
-                {
-                    // Only add the hostname if a finding was recorded
-                    return true;
-                }
+                // Only add the hostname if a finding was recorded
+                return true;
             }
         }
 
         public override void Check(Session session)
         {
-            String id  = null;
-            String val = null;
+            String id;
 
             bool filter = configpanel.enablefiltercheckBox.Checked;
 
@@ -246,7 +237,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                             // Get the __VIEWSTATE value
                                             if (chunk.oParams.ContainsKey("value"))
                                             {
-                                                val = chunk.oParams["value"].ToString();
+                                                String val = chunk.oParams["value"].ToString();
                                                 // If the VIEWSTATE is not secured with a MAC, then raise an alert.
                                                 if (!IsViewStateSecure(val))
                                                 {
