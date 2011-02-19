@@ -147,8 +147,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
                         {
                             UtilityHtmlParser parser = new UtilityHtmlParser();
                             parser.Open(session);
-                            // Need this true to keep the inline javascript
-                            parser.Parser.bAutoKeepScripts = true;
                             if (parser.Parser == null) return;
                             HTMLchunk chunk;
 

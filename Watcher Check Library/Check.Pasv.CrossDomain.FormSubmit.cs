@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -59,7 +60,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         public override void Check(Session session)
         {
-            String bod = null;
             String act = null;
             String dom = null;
 
@@ -72,24 +72,33 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
+
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        parser.Parser.bKeepRawHTML = true;
+                        if (parser.Parser == null) return;
+                        HTMLchunk chunk;
+
+                        while ((chunk = parser.Parser.ParseNext()) != null)
                         {
-                            foreach (Match m in Utility.GetHtmlTags(bod, "form"))
+                            if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag.ToLower() == "form" && chunk.oParams.ContainsKey("action"))
                             {
-                                act = Utility.GetHtmlTagAttribute(m.ToString(), "action");
-                                if (act != null)
+                                act = chunk.oParams["action"].ToString();
+                                if (!String.IsNullOrEmpty(act))
                                 {
                                     dom = Utility.GetUriDomainName(act);
-                                    if (dom != null)
+                                    if (!String.IsNullOrEmpty(dom))
+                                    {
                                         if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                            AssembleAlert(dom, m.ToString());
+                                            AssembleAlert(dom, chunk.oHTML);
+                                    }
                                 }
                             }
-                            if (!String.IsNullOrEmpty(alertbody))
-                            {
-                                AddAlert(session);
-                            }
+                        }
+                        parser.Close();
+                        if (!String.IsNullOrEmpty(alertbody))
+                        {
+                            AddAlert(session);
                         }
                     }
                 }
