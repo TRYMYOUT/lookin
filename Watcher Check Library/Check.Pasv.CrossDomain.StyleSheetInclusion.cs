@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -98,39 +99,37 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
-                        {
 
-                            // Check each style block for import directives
-                            bods = Utility.GetHtmlTagBodies(bod, "style");
-                            if (bods != null)
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        parser.Parser.bKeepRawHTML = true;
+                        HTMLchunk chunk;
+                        while ((chunk = parser.Parser.ParseNext()) != null)
+                        {
+                            if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "style")
                             {
-                                foreach (String b in bods)
-                                {
-                                    CheckCssImport(session, b);
-                                }
+                                // Get the stuff between style tags
+                                chunk = parser.Parser.ParseNext();
+                                CheckCssImport(session, chunk.oHTML);
                             }
-                            foreach (Match m in Utility.GetHtmlTags(bod, "link"))
+                            if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "link" && chunk.oParams.ContainsKey("rel"))
                             {
-                                rel = Utility.GetHtmlTagAttribute(m.ToString(), "rel");
-                                if (rel != null)
+                                rel = chunk.oParams["rel"].ToString().ToLower();
+                                if (rel == "stylesheet" && chunk.oParams.ContainsKey("href"))
                                 {
-                                    // Check is .css file for its origin
-                                    if (rel == "stylesheet")
+                                    src = chunk.oParams["href"].ToString();
+                                    if (!String.IsNullOrEmpty(src))
                                     {
-                                        src = Utility.GetHtmlTagAttribute(m.ToString(), "href");
-                                        if (src != null)
-                                        {
-                                            dom = Utility.GetUriDomainName(src);
-                                            if (dom != null)
-                                                if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                    AssembleAlert(dom, m.ToString());
-                                        }
+                                        dom = Utility.GetUriDomainName(src);
+                                        if (dom != null)
+                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                AssembleAlert(dom, chunk.oHTML);
                                     }
                                 }
                             }
                         }
+                        // close the parser
+                        parser.Close();
                     }
                     if (Utility.IsResponseCss(session))
                     {

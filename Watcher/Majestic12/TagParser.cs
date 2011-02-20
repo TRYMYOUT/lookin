@@ -494,6 +494,14 @@ namespace Majestic12
                     continue;
                 }
 
+                // Chris Weber patch for handling the hyphen in tag names. 
+                // 12/29/2010 
+                if (cChar == (byte)'-')
+                {
+                    sText.bBuffer[sText.iBufPos++] = cChar;
+                    continue;
+                } 
+
 				// nope, we have got upper cased ASCII char	- this seems to be LESS likely than > and /
 				//if(cChar>=65 && cChar<=90)
 				if(bCharType>32)
@@ -514,6 +522,8 @@ namespace Majestic12
                     sText.bBuffer[sText.iBufPos++]=(byte)':';
                     continue;
                 }
+
+
 
 				// ok, we have got some other char - we break out to deal with it in attributes part
 				break;

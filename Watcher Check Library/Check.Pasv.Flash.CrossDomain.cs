@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -91,30 +92,52 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
                         if (pat != null && pat.ToLower() == "crossdomain.xml")
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
-                            {
-                                foreach (String b in Utility.GetHtmlTagBodies(bod, "cross-domain-policy"))
-                                {
-                                    foreach (Match m in Utility.GetHtmlTags(b, "allow-access-from"))
-                                    {
-                                        dom = Utility.GetHtmlTagAttribute(m.ToString(), "domain");
-                                        if (dom != null)
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, m.ToString());
-                                    }
 
-                                    foreach (Match m in Utility.GetHtmlTags(b, "allow-http-request-headers-from"))
-                                    {
-                                        dom = Utility.GetHtmlTagAttribute(m.ToString(), "domain");
-                                        if (dom != null)
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, m.ToString());
-                                    }
-                                }
-                                if (!String.IsNullOrEmpty(alertbody))
+                            UtilityHtmlParser parser = new UtilityHtmlParser();
+                            parser.Open(session);
+                            parser.Parser.bKeepRawHTML = true;
+                            HTMLchunk chunk;
+                            while ((chunk = parser.Parser.ParseNext()) != null)
+                            {
+                                // Check if this is a Flash cross-domain-policy
+                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "cross-domain-policy")
                                 {
-                                    AddAlert(session);
+                                    // If so, then there can be an unbounded amount of allow-access-from directives
+                                    while ((chunk = parser.Parser.ParseNext()) != null 
+                                        && !(String.Equals(chunk.sTag, "cross-domain-policy"))
+                                        && chunk.oType != HTMLchunkType.CloseTag)
+                                    {
+                                        if (chunk.sTag == "allow-access-from")
+                                        {
+                                            try
+                                            {
+                                                dom = chunk.oParams["domain"].ToString();
+                                            }
+                                            catch (ArgumentOutOfRangeException)
+                                            {
+                                                continue;
+                                            }
+                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                AssembleAlert(dom, chunk.oHTML);
+                                        }
+                                        if (chunk.sTag == "allow-http-request-headers-from")
+                                        {
+                                            try
+                                            {
+                                                dom = chunk.oParams["domain"].ToString();
+                                            }
+                                            catch (ArgumentOutOfRangeException)
+                                            {
+                                                continue;
+                                            }
+                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                                AssembleAlert(dom, chunk.oHTML);
+                                        }
+                                    }
+                                    if (!String.IsNullOrEmpty(alertbody))
+                                    {
+                                        AddAlert(session);
+                                    }
                                 }
                             }
                         }

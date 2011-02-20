@@ -142,7 +142,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                 UtilityHtmlParser parser = new UtilityHtmlParser();
                                 parser.Open(session);
                                 HTMLchunk chunk;
-                                while ((chunk = parser.Parser.ParseNextTag()) != null)
+                                while ((chunk = parser.Parser.ParseNext()) != null)
                                 {
                                     if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "meta")
                                     {
@@ -174,7 +174,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                                 UtilityHtmlParser parser = new UtilityHtmlParser();
                                 parser.Open(session);
                                 HTMLchunk chunk;
-                                while ((chunk = parser.Parser.ParseNextTag()) != null)
+                                while ((chunk = parser.Parser.ParseNext()) != null)
                                 {
                                     if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "?xml")
                                     {
