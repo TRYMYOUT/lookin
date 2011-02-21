@@ -10,6 +10,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -78,24 +79,27 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session) || Utility.IsResponseJavascript(session))
                     {
-                        body = Utility.GetResponseText(session);
-                        if (body != null)
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        if (parser.Parser == null) return;
+                        HTMLchunk chunk;
+                        while ((chunk = parser.Parser.ParseNext()) != null)
                         {
-                            if (Utility.IsResponseHtml(session))
+                            if (chunk.oType == HTMLchunkType.Script)
                             {
-                                bods = Utility.GetHtmlTagBodies(body, "script");
-                                if (bods != null)
-                                    foreach (String b in bods)
-                                        CheckJavascriptEvalUsage(session, b);
+                                CheckJavascriptEvalUsage(session,chunk.oHTML);
                             }
-
-                            if (Utility.IsResponseJavascript(session))
-                                CheckJavascriptEvalUsage(session, body);
                         }
-                        if (!String.IsNullOrEmpty(alertbody))
-                        {
-                            AddAlert(session);
-                        }
+                        parser.Close();
+                    }
+                    if (Utility.IsResponseJavascript(session))
+                    {
+                        body = Utility.GetResponseText(session);
+                        CheckJavascriptEvalUsage(session, body);
+                    }
+                    if (!String.IsNullOrEmpty(alertbody))
+                    {
+                        AddAlert(session);
                     }
                 }
             }

@@ -9,9 +9,8 @@
 
 using System;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -93,84 +92,119 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private void CheckEnableHtmlAccessValue(String value, String context)
         {
-            if (value != null || value != "")
-            {
-                if (value == "true")
-                    alertbody = AssembleAlert(alertbody, "true", context);
-
-            }
-            else
-            {
-                alertbody2 = AssembleAlert(alertbody2, "No value set", context);
-            }
+            if (value == "true")
+                alertbody = AssembleAlert(alertbody, "true", context);
         }
 
-       
+
         /// <summary>
         /// Check the OBJECT tag for an enableHtmlAccess parameter set to 'true'.
         /// See http://msdn.microsoft.com/en-us/library/cc189089(VS.95).aspx
         /// </summary>
         /// <param name="bod">The OBJECT tag content</param>
-        private void CheckObjectTag(String bod)
+        private void CheckObjectTag(UtilityHtmlParser parser, HTMLchunk chunk)
         {
-            String[] bods = null;
             String attr = null;
             String attr2 = null;
             String attr3 = null;
-            String name = null;
             String enableHtmlAccessValue = null;
             String val = null;
             bool flag = false;
 
-            bods = Utility.GetHtmlTagBodies(bod, "object", false);
-            if (bods != null)
+            // Get the attributes from the object tag
+
+            if (chunk.oParams.ContainsKey("classid")) attr = chunk.oParams["classid"].ToString();
+            if (chunk.oParams.ContainsKey("type")) attr2 = chunk.oParams["type"].ToString();
+            if (chunk.oParams.ContainsKey("data")) attr3 = chunk.oParams["data"].ToString();
+
+
+            if ((attr != null && attr == "clsid:89F4137D-6C26-4A84-BDB8-2E5A4BB71E00".ToLower()) ||
+                (attr != null && (attr.Contains("x-silverlight"))) ||
+                (attr2 != null && (attr2.Contains("x-silverlight"))) ||
+                (attr3 != null && (attr3.Contains("x-silverlight")))
+                )
             {
-                foreach (String b in bods)
+                while ((chunk = parser.Parser.ParseNext()) != null)
                 {
-                    attr = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "classid"));
-                    attr2 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "type"));
-                    attr3 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "data"));
+                    // Get out if we reach the end of the object tag
+                    if (chunk.oType == HTMLchunkType.CloseTag && chunk.sTag == "object") break;
 
-                    if ((attr != null && attr == "clsid:89F4137D-6C26-4A84-BDB8-2E5A4BB71E00".ToLower()) || 
-                        (attr != null && (attr.Contains("x-silverlight"))) ||
-                        (attr2 != null && (attr2.Contains("x-silverlight"))) ||
-                        (attr3 != null && (attr2.Contains("x-silverlight")))
-                        )
+                    if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "param")
                     {
-                        foreach (Match param in Utility.GetHtmlTags(b, "param"))
+                        String name = chunk.oParams["name"].ToString();
+
+                        // The PARAM should contain an attribute named SOURCE pointing to
+                        // the .XAP or .XAML file to load.
+                        if (name == "source")
                         {
-                            name = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "name"));
-                            if (name != null)
-                            {
-                                // The PARAM should contain an attribute named SOURCE pointing to
-                                // the .XAP or .XAML file to load.
-                                if (name == "source")
-                                {
-                                    val = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "value"));
-                                    if (val != null)
-                                        if ((val.Trim().EndsWith(".xap")) || (val.Trim().EndsWith(".xaml")))
-                                            flag = true;
-                                }
-
-                                if (name == "enablehtmlaccess")
-                                {
-                                    enableHtmlAccessValue = Utility.ToSafeLower((Utility.GetHtmlTagAttribute(param.ToString(), "value")));
-                                }
-                            }
+                            val = chunk.oParams["value"].ToString().ToLower();
+                            if ((val.Trim().EndsWith(".xap")) || (val.Trim().EndsWith(".xaml")))
+                                flag = true;
                         }
-
+                        if (name == "enablehtmlaccess")
+                        {
+                            enableHtmlAccessValue = chunk.oParams["value"].ToString().ToLower();
+                        }
                         if (flag)
                         {
-                            CheckEnableHtmlAccessValue(enableHtmlAccessValue, b);
+                            CheckEnableHtmlAccessValue(enableHtmlAccessValue, chunk.oHTML);
                         }
                     }
-                    String type = null;
-                    type = Utility.GetHtmlTagAttribute(b, "type");
-                    if (type != null)
-                        if (type.ToLower().Contains("x-silverlight"))
-                            CheckEnableHtmlAccessValue(Utility.GetHtmlTagAttribute(b, "enablehtmlaccess"), b);
+
                 }
             }
+
+
+
+            //bods = Utility.GetHtmlTagBodies(bod, "object", false);
+            //if (bods != null)
+            //{
+            //    foreach (String b in bods)
+            //    {
+            //        attr = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "classid"));
+            //        attr2 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "type"));
+            //        attr3 = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(b, "data"));
+
+            //        if ((attr != null && attr == "clsid:89F4137D-6C26-4A84-BDB8-2E5A4BB71E00".ToLower()) || 
+            //            (attr != null && (attr.Contains("x-silverlight"))) ||
+            //            (attr2 != null && (attr2.Contains("x-silverlight"))) ||
+            //            (attr3 != null && (attr2.Contains("x-silverlight")))
+            //            )
+            //        {
+            //            foreach (Match param in Utility.GetHtmlTags(b, "param"))
+            //            {
+            //                name = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "name"));
+            //                if (name != null)
+            //                {
+            //                    // The PARAM should contain an attribute named SOURCE pointing to
+            //                    // the .XAP or .XAML file to load.
+            //                    if (name == "source")
+            //                    {
+            //                        val = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(param.ToString(), "value"));
+            //                        if (val != null)
+            //                            if ((val.Trim().EndsWith(".xap")) || (val.Trim().EndsWith(".xaml")))
+            //                                flag = true;
+            //                    }
+
+            //                    if (name == "enablehtmlaccess")
+            //                    {
+            //                        enableHtmlAccessValue = Utility.ToSafeLower((Utility.GetHtmlTagAttribute(param.ToString(), "value")));
+            //                    }
+            //                }
+            //            }
+
+            //            if (flag)
+            //            {
+            //                CheckEnableHtmlAccessValue(enableHtmlAccessValue, b);
+            //            }
+            //        }
+            //        String type = null;
+            //        type = Utility.GetHtmlTagAttribute(b, "type");
+            //        if (type != null)
+            //            if (type.ToLower().Contains("x-silverlight"))
+            //                CheckEnableHtmlAccessValue(Utility.GetHtmlTagAttribute(b, "enablehtmlaccess"), b);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -179,16 +213,21 @@ namespace CasabaSecurity.Web.Watcher.Checks
         /// See http://www.informit.com/articles/article.aspx?p=1078181
         /// </summary>
         /// <param name="bod"></param>
-        private void CheckEmbedTag(String bod)
+        /// <param name="chunk"></param>
+        private void CheckEmbedTag(HTMLchunk chunk)
         {
-            String value = null;
-
-            foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+            if (chunk.oParams.ContainsKey("enablehtmlaccess"))
             {
-                value = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(m.ToString(), "enablehtmlaccess"));
-                if (value != null)
-                    CheckEnableHtmlAccessValue(value, m.ToString());
+                String value = chunk.oParams["enablehtmlaccess"].ToString();
+                CheckEnableHtmlAccessValue(value, chunk.oHTML);
             }
+
+            //foreach (Match m in Utility.GetHtmlTags(bod, "embed"))
+            //{
+            //    value = Utility.ToSafeLower(Utility.GetHtmlTagAttribute(m.ToString(), "enablehtmlaccess"));
+            //    if (value != null)
+            //        CheckEnableHtmlAccessValue(value, m.ToString());
+            //}
         }
 
         public override void Check(Session session)
@@ -204,14 +243,32 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 {
                     if (Utility.IsResponseHtml(session))
                     {
-                        bod = Utility.GetResponseText(session);
-                        if (bod != null)
-                        {
-                            bod = Utility.ToSafeLower(bod); ;
 
-                            CheckObjectTag(bod);
-                            CheckEmbedTag(bod);
+                        UtilityHtmlParser parser = new UtilityHtmlParser();
+                        parser.Open(session);
+                        parser.Parser.bKeepRawHTML = true;
+                        HTMLchunk chunk;
+                        while ((chunk = parser.Parser.ParseNext()) != null)
+                        {
+                            if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "object")
+                            {
+                                CheckObjectTag(parser, chunk);
+                            }
+
+                            if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "embed")
+                            {
+                                CheckEmbedTag(chunk);
+                            }
+
                         }
+                        //bod = Utility.GetResponseText(session);
+                        //if (bod != null)
+                        //{
+                        //    bod = Utility.ToSafeLower(bod); ;
+
+                        //    CheckObjectTag(bod);
+                        //    CheckEmbedTag(bod);
+                        //}
                         if (!String.IsNullOrEmpty(alertbody))
                         {
                             AddAlert(session, WatcherResultSeverity.Medium, alertbody);

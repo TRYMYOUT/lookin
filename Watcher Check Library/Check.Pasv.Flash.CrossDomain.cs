@@ -99,46 +99,43 @@ namespace CasabaSecurity.Web.Watcher.Checks
                             HTMLchunk chunk;
                             while ((chunk = parser.Parser.ParseNext()) != null)
                             {
+
                                 // Check if this is a Flash cross-domain-policy
-                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "cross-domain-policy")
+                                //if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "cross-domain-policy")
+                                //{
+                                    
+                                //}
+                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "allow-access-from")
                                 {
-                                    // If so, then there can be an unbounded amount of allow-access-from directives
-                                    while ((chunk = parser.Parser.ParseNext()) != null 
-                                        && !(String.Equals(chunk.sTag, "cross-domain-policy"))
-                                        && chunk.oType != HTMLchunkType.CloseTag)
+                                    try
                                     {
-                                        if (chunk.sTag == "allow-access-from")
-                                        {
-                                            try
-                                            {
-                                                dom = chunk.oParams["domain"].ToString();
-                                            }
-                                            catch (ArgumentOutOfRangeException)
-                                            {
-                                                continue;
-                                            }
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, chunk.oHTML);
-                                        }
-                                        if (chunk.sTag == "allow-http-request-headers-from")
-                                        {
-                                            try
-                                            {
-                                                dom = chunk.oParams["domain"].ToString();
-                                            }
-                                            catch (ArgumentOutOfRangeException)
-                                            {
-                                                continue;
-                                            }
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, chunk.oHTML);
-                                        }
+                                        dom = chunk.oParams["domain"].ToString();
                                     }
-                                    if (!String.IsNullOrEmpty(alertbody))
+                                    catch (ArgumentOutOfRangeException)
                                     {
-                                        AddAlert(session);
+                                        continue;
                                     }
+                                    if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                        AssembleAlert(dom, chunk.oHTML);
                                 }
+                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "allow-http-request-headers-from")
+                                {
+                                    try
+                                    {
+                                        dom = chunk.oParams["domain"].ToString();
+                                    }
+                                    catch (ArgumentOutOfRangeException)
+                                    {
+                                        continue;
+                                    }
+                                    if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                        AssembleAlert(dom, chunk.oHTML);
+                                }
+                            }
+                            parser.Close();
+                            if (!String.IsNullOrEmpty(alertbody))
+                            {
+                                AddAlert(session);
                             }
                         }
                     }

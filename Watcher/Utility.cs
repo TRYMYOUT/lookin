@@ -505,7 +505,7 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// TODO: Update with balanced group constructs
+        /// DEPRECATED Get all of the HTML text between any opening and closing tag.
         /// </summary>
         /// <param name="body"></param>
         /// <param name="tagName"></param>
@@ -546,6 +546,12 @@ namespace CasabaSecurity.Web.Watcher
             return bodies;
         }
 
+        /// <summary>
+        /// DEPRECATED Get all of the HTML text between any opening and closing tag.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         public static String[] GetHtmlTagBodies(String body, String tagName)
         {
             return (GetHtmlTagBodies(body, tagName, true));

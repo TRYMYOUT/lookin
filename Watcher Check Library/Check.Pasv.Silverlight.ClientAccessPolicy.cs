@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using Majestic12;
 
 namespace CasabaSecurity.Web.Watcher.Checks
 {
@@ -73,6 +74,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             // This is a check for cross-domain issues.  So if Watcher is not configured with 
             // an origin domain, treat the session response hostname as the origin.
+            //
+            // For details of the Silverlight clientaccesspolicy.xml DTD see:
+            // http://msdn.microsoft.com/en-us/library/cc645032(v=vs.95).aspx
+            //
             if (WatcherEngine.Configuration.IsOriginDomain(session.hostname, session.hostname))
             {
                 if (session.responseCode == 200)
@@ -83,23 +88,26 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
                         if (pat != null && pat.ToLower() == "clientaccesspolicy.xml")
                         {
-                            bod = Utility.GetResponseText(session);
-                            if (bod != null)
+                            UtilityHtmlParser parser = new UtilityHtmlParser();
+                            parser.Open(session);
+                            parser.Parser.bKeepRawHTML = true;
+                            HTMLchunk chunk;
+                            while ((chunk = parser.Parser.ParseNext()) != null)
                             {
-                                foreach (String b in Utility.GetHtmlTagBodies(bod, "allow-from"))
+                                // The easy thing to do here is just scan for all 'domain uri' declarations
+                                if (chunk.oType == HTMLchunkType.OpenTag && chunk.sTag == "domain" && chunk.oParams.ContainsKey("uri"))
                                 {
-                                    foreach (Match m in Utility.GetHtmlTags(bod, "domain"))
-                                    {
-                                        dom = Utility.GetHtmlTagAttribute(m.ToString(), "uri");
-                                        if (dom != null)
-                                            if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
-                                                AssembleAlert(dom, m.ToString());
-                                    }
+                                    dom = chunk.oParams["uri"].ToString();
+                                    if (!WatcherEngine.Configuration.IsOriginDomain(dom, session.hostname) && !WatcherEngine.Configuration.IsTrustedDomain(dom))
+                                        AssembleAlert(dom, chunk.oHTML);
                                 }
-                                if (!String.IsNullOrEmpty(alertbody))
-                                {
-                                    AddAlert(session);
-                                }
+                                
+                            }
+                            parser.Close();
+
+                            if (!String.IsNullOrEmpty(alertbody))
+                            {
+                                AddAlert(session);
                             }
                         }
                     }
