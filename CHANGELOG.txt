@@ -1,9 +1,9 @@
 Program   Watcher
           Passive Web Security Tool for Fiddler 
-Version   1.4.1
-Release   11-Nov-2010
+Version   1.5.1
+Release   21-Feb-2011
 License   Custom Open Source
-Authors   Chris Weber, Samuel Bucholtz, Robert Mooney
+Authors   Chris Weber
 Testers   Chris Weber
 Contact   watcher@casabasecurity.com
 Website   http://websecuritytool.codeplex.com/
@@ -19,6 +19,15 @@ Copyright (c) 2010 Casaba Security, LLC.  All Rights Reserved.
     % improved performance or quality
     ! fixed minor bug
   !!! fixed major bug
+
+v1.5.1 - 2011-02-21
+   % Moving checks to Majestic12 HtmlParser to overcome some bottlenecks.
+   % Deprecating some Utility.cs functions.
+   ! Fixing various minor bugs.
+
+v1.5.0 - 2010-11-17
++++ Added a button to process sessions offline. Now a user can load a .SAZ (session archive) file and process the data offline in Fiddler/Watcher.
+% Fixed the ProgressDialog control to move incrementally.
 
 v1.4.1 - 2010-11-09
    * Exporting results now includes all results rather than just those selected.

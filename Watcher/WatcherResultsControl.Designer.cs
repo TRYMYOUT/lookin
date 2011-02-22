@@ -502,6 +502,7 @@ namespace CasabaSecurity.Web.Watcher
             this.resultPanel = new System.Windows.Forms.Panel();
             this.alertTextBox = new System.Windows.Forms.TextBox();
             this.referencepanel = new System.Windows.Forms.Panel();
+            this.reflinkLabel = new System.Windows.Forms.LinkLabel();
             this.referencelabel = new System.Windows.Forms.Label();
             this.pnlCopyright = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -516,10 +517,10 @@ namespace CasabaSecurity.Web.Watcher
             this.lowerpanel = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.alertListView = new System.Windows.Forms.ListView();
-            this.severityColumnHeader = new System.Windows.Forms.ColumnHeader();
-            this.sessionIdColumnHeader = new System.Windows.Forms.ColumnHeader();
-            this.typeColumnHeader = new System.Windows.Forms.ColumnHeader();
-            this.urlColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.severityColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.sessionIdColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.typeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.urlColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonpanel = new System.Windows.Forms.Panel();
             this.exportlabel = new System.Windows.Forms.Label();
             this.cbExportMethod = new System.Windows.Forms.ComboBox();
@@ -534,7 +535,6 @@ namespace CasabaSecurity.Web.Watcher
             this.mediumcountlabel = new System.Windows.Forms.Label();
             this.highcountlabel = new System.Windows.Forms.Label();
             this.toolTipResultsControl = new System.Windows.Forms.ToolTip(this.components);
-            this.reflinkLabel = new System.Windows.Forms.LinkLabel();
             this.resultPanel.SuspendLayout();
             this.referencepanel.SuspendLayout();
             this.pnlCopyright.SuspendLayout();
@@ -586,12 +586,21 @@ namespace CasabaSecurity.Web.Watcher
             this.referencepanel.Size = new System.Drawing.Size(851, 33);
             this.referencepanel.TabIndex = 8;
             // 
+            // reflinkLabel
+            // 
+            this.reflinkLabel.AutoSize = true;
+            this.reflinkLabel.Location = new System.Drawing.Point(71, 10);
+            this.reflinkLabel.Name = "reflinkLabel";
+            this.reflinkLabel.Size = new System.Drawing.Size(0, 13);
+            this.reflinkLabel.TabIndex = 2;
+            this.reflinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.reflinkLabel_LinkClicked);
+            // 
             // referencelabel
             // 
             this.referencelabel.AutoSize = true;
             this.referencelabel.Location = new System.Drawing.Point(3, 10);
             this.referencelabel.Name = "referencelabel";
-            this.referencelabel.Size = new System.Drawing.Size(141, 13);
+            this.referencelabel.Size = new System.Drawing.Size(63, 13);
             this.referencelabel.TabIndex = 1;
             this.referencelabel.Text = "Reference: ";
             // 
@@ -763,9 +772,9 @@ namespace CasabaSecurity.Web.Watcher
             this.alertListView.TabIndex = 7;
             this.alertListView.UseCompatibleStateImageBehavior = false;
             this.alertListView.View = System.Windows.Forms.View.Details;
+            this.alertListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.alertListView_ColumnClick);
             this.alertListView.SelectedIndexChanged += new System.EventHandler(this.alertListView_SelectedIndexChanged);
             this.alertListView.DoubleClick += new System.EventHandler(this.alertListViewDoubleClick);
-            this.alertListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.alertListView_ColumnClick);
             // 
             // severityColumnHeader
             // 
@@ -864,6 +873,7 @@ namespace CasabaSecurity.Web.Watcher
             this.filterpanel.Name = "filterpanel";
             this.filterpanel.Size = new System.Drawing.Size(851, 63);
             this.filterpanel.TabIndex = 2;
+            this.toolTipResultsControl.SetToolTip(this.filterpanel, "Clears any selected results, or all results if none are selected.");
             // 
             // informationalcountlabel
             // 
@@ -884,9 +894,9 @@ namespace CasabaSecurity.Web.Watcher
             this.btnClearResults.AutoSize = true;
             this.btnClearResults.Location = new System.Drawing.Point(6, 35);
             this.btnClearResults.Name = "btnClearResults";
-            this.btnClearResults.Size = new System.Drawing.Size(300, 23);
+            this.btnClearResults.Size = new System.Drawing.Size(124, 23);
             this.btnClearResults.TabIndex = 8;
-            this.btnClearResults.Text = "Clear Selected Results (All selected results if none selected)";
+            this.btnClearResults.Text = "Clear Selected Results";
             this.toolTipResultsControl.SetToolTip(this.btnClearResults, "Selected selectedResults will be removed. If none are selected all selectedResult" +
                     "s will be removed.");
             this.btnClearResults.UseVisualStyleBackColor = true;
@@ -956,16 +966,6 @@ namespace CasabaSecurity.Web.Watcher
             this.highcountlabel.Text = "High: ";
             this.toolTipResultsControl.SetToolTip(this.highcountlabel, "(Alerts, Individual Issues)");
             this.highcountlabel.Click += new System.EventHandler(this.highcountlabel_Click);
-            // 
-            // reflinkLabel
-            // 
-            this.reflinkLabel.AutoSize = true;
-            // Position the check's reference link over past the "Reference: " introduction
-            this.reflinkLabel.Location = new System.Drawing.Point(71, 10);
-            this.reflinkLabel.Name = "reflinkLabel";
-            this.reflinkLabel.Size = new System.Drawing.Size(0, 13);
-            this.reflinkLabel.TabIndex = 2;
-            this.reflinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.reflinkLabel_LinkClicked);
             // 
             // WatcherResultsControl
             // 
