@@ -125,6 +125,8 @@ namespace CasabaSecurity.Web.Watcher
                 this.label3.Text = this.label3.Text.Insert(index, " v" + currentver.ToString());
             }
 
+            textBoxSearchResults.TextChanged += new EventHandler(textBoxSearchResults_TextChanged);
+
  	        base.OnLoad(e);
         }
 
@@ -743,5 +745,33 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         #endregion
+
+        private void textBoxSearchResults_TextChanged(object sender, EventArgs e)
+        {
+
+            string search = textBoxSearchResults.Text;
+
+            this.alertListView.BeginUpdate();
+            foreach (ListViewItem item in this.alertListView.Items)
+            {
+                this.alertListView.Items.Remove(item);
+                this.alertTextBox.Clear();
+            }
+
+            foreach (AlertListViewItem item in alerts)
+            {
+                if(item.TypeX.Contains(search) || item.Description.Contains(search))
+                {
+                    this.alertListView.Items.Add(item);
+                }
+            }
+            this.alertListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+            alertListView.EndUpdate();
+        }
+
+        private void filterpanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

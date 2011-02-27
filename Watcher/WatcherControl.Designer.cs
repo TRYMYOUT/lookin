@@ -104,7 +104,7 @@ namespace CasabaSecurity.Web.Watcher
             this.watcherCheckTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.watcherCheckTab.Location = new System.Drawing.Point(0, 0);
             this.watcherCheckTab.Name = "watcherCheckTab";
-            this.watcherCheckTab.Size = new System.Drawing.Size(592, 574);
+            this.watcherCheckTab.Size = new System.Drawing.Size(192, 74);
             this.watcherCheckTab.TabIndex = 0;
             // 
             // tabPage2
