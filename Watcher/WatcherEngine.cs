@@ -209,6 +209,9 @@ namespace CasabaSecurity.Web.Watcher
                     // Instantiate and initialize the Watcher UI
                     _WatcherControl = new WatcherControl();
 
+                    // Initialize the disconnected database for results
+                    ResultsData.BuildTable();
+
                     _Initialized = true;
                 }
             }

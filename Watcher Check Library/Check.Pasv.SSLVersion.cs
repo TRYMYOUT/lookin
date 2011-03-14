@@ -59,7 +59,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 alertbody;
 
             // don't change session.host or we'll get duplicate alerts
-            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.host, name, text, StandardsCompliance, findingnum, Reference);
+            WatcherEngine.Results.Add(WatcherResultSeverity.High, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Clear()

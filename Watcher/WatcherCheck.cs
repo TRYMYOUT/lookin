@@ -22,10 +22,10 @@ namespace CasabaSecurity.Web.Watcher
     /// </remarks>
     public enum WatcherResultSeverity
     {
-        Informational = 0,
-        Low,
-        Medium,
-        High
+        Informational   = 0,
+        Low             = 1,
+        Medium          = 2,
+        High            = 3
     }
 
     /// <summary>

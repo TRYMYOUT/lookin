@@ -39,8 +39,15 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="count">The number of times the finding was discovered.</param>
         public void Add(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink)
         {
-            WatcherResultsControl control = WatcherEngine.UI.WatcherResultsControl;
+            
+            // Add a result record to the database
+            Result result = new Result(resultSeverity,sessionId,checkName,sessionUrl,resultDescription,count, compliesWith, refLink);
+            ResultsData.AddResult(result);
 
+            // TODO: ResultsData.cs Update: The AddAlert calls below should be changed to use the data from the data table.
+
+            WatcherResultsControl control = WatcherEngine.UI.WatcherResultsControl;
+            
             // A control cannot be updated from a non-UI thread.  If the InvokeRequired property is set,
             // we are on a non-UI thread and must post a message to the UI thread to handle the update on
             // our behalf.  According to Richter, this is one of the few instances where BeginInvoke can
@@ -49,11 +56,13 @@ namespace CasabaSecurity.Web.Watcher
             {
                 // We're not the UI thread: marshall an update to the control asynchronously
                 control.BeginInvoke(new AddAlertCallback(control.AddAlert), new Object[] { resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink });
+               // control.BeginInvoke(new AddResultCallback(control.AddResultToTreeView), result);
             }
             else
             {
                 // We're the UI thread, update the control directly
                 control.AddAlert(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink);
+                //control.AddResultToTreeView(result);
             }
         }
 
@@ -94,6 +103,8 @@ namespace CasabaSecurity.Web.Watcher
         /// This callback is used to update UI controls from a non-UI thread.
         /// </summary>
         private delegate void AddAlertCallback(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String checkDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink);
+        // TODO: Get rid of AddAlertCallback in place of AddResultCallback
+        //private delegate void AddResultCallback(Result result);
 
         #endregion
     }

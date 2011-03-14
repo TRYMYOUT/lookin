@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using System.Data;
 using Fiddler;
 using CasabaSecurity.Web.Watcher.Collections;
 
@@ -155,6 +156,8 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="count">The number of times the finding was discovered.</param>
         public void AddAlert(WatcherResultSeverity resultSeverity, int sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, int count, String reflink)
         {
+            // Build a Result object and pass it to the treeview
+            //RefreshTreeView(new Result(resultSeverity,sessionId,checkName,sessionUrl,resultDescription,count,compliesWith,reflink));
             AlertListViewItem alvi = null;
 
             int highincrement = 0;
@@ -244,8 +247,10 @@ namespace CasabaSecurity.Web.Watcher
                     this.alertListView.EnsureVisible(alertListView.Items.Count - 1);
                 }
                 this.alertListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-                this.alertListView.EndUpdate();
+                this.alertListView.EndUpdate();    
             }
+            
+
         }
 
         #endregion
@@ -625,11 +630,12 @@ namespace CasabaSecurity.Web.Watcher
             }
 
             this.alertListView.BeginUpdate();
-            foreach (ListViewItem item in this.alertListView.Items)
-            {
-                this.alertListView.Items.Remove(item);
-                this.alertTextBox.Clear();
-            }
+            //foreach (ListViewItem item in this.alertListView.Items)
+            //{
+            //    this.alertListView.Items.Remove(item);
+            //    this.alertTextBox.Clear();
+            //}
+            this.alertListView.Items.Clear();
 
             foreach (AlertListViewItem item in alerts)
             {
@@ -640,6 +646,9 @@ namespace CasabaSecurity.Web.Watcher
             }
             this.alertListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
             this.alertListView.EndUpdate();
+
+            // Also update the TreeView
+            RefreshTreeView((Int32)this.noisereduction);
 
             WatcherEngine.Configuration.Remove("DefaultFilter");
             WatcherEngine.Configuration.Add("DefaultFilter", this.noisereductioncomboBox.SelectedItem.ToString());      
@@ -770,6 +779,157 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         private void filterpanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Build the TreeView display from the results data set.
+        /// </summary>
+        /// <param name="filter">Apply the severity filter available through the UI.</param>
+        public void RefreshTreeView(Int32 filter)
+        {
+            treeViewResults.Nodes.Clear();
+
+            try
+            {
+                foreach (DataRow row in ResultsData.ResultsDataSet.Tables["Results"].Rows)
+                {
+                    String url = row["Url"].ToString();
+                    String checkName = row["Name"].ToString();
+                    Int32 severity = (Int32)row["Severity"];
+                    // Use the unique record ID to lookup description and reference
+                    Int32 id = (Int32)row["Id"];
+
+                    Uri uri;
+                    String domain;
+
+                    // Skip this result if it doesn't match the filter
+                    if (severity < filter) continue;
+
+                    try
+                    {
+                        uri = new Uri(url);
+                        // TreeView is organized by domain name first
+                        domain = uri.Host;
+                    }
+                    catch (UriFormatException ex)
+                    {
+                        uri = new Uri("error://");
+                        domain = "error";
+                    }
+
+
+                    // Build the treenode
+                    TreeNode nodeDomain = new TreeNode(domain);
+                    TreeNode nodeType = new TreeNode(checkName);
+                    TreeNode nodeUrl = new TreeNode(url);
+                    nodeDomain.Name = domain;
+                    nodeType.Name = checkName;
+                    nodeUrl.Name = url;
+
+                    // Color the Type node
+                    if (severity == 0)
+                    {
+                        nodeType.ForeColor = Color.Green;
+                    }
+                    if (severity == 1)
+                    {
+                        nodeType.ForeColor = Color.Blue;
+                    }
+                    if (severity == 2)
+                    {
+                        nodeType.ForeColor = Color.Orange;
+                    }
+                    if (severity == 3)
+                    {
+                        nodeType.ForeColor = Color.Red;
+                    }
+
+                    // Begin an update
+                    treeViewResults.BeginUpdate();
+                    // first check if subnode name exists
+                    if (treeViewResults.Nodes.ContainsKey(domain))
+                    {
+                        // if the domain key existed already did insert subnode data into it
+                        // first see if the same title already exists
+                        // if so insert the URL as as subnode of it
+                        if (treeViewResults.Nodes[domain].Nodes.ContainsKey(checkName))
+                        {
+                            treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
+                        }
+                        else
+                        {
+                            // Insert new subnode and its subnode
+                            treeViewResults.Nodes[domain].Nodes.Add(nodeType);
+                            treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
+                        }
+
+                    }
+                    // only insert the node if one of the same name doesn't exist
+                    else
+                    {
+                        treeViewResults.Nodes.Add(nodeDomain);
+                        // Insert new subnode and its subnode
+                        treeViewResults.Nodes[domain].Nodes.Add(nodeType);
+                        treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
+
+                    }
+                    // End the update
+                    treeViewResults.Sort();
+                    treeViewResults.EndUpdate();
+
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", ex.Message);
+                ExceptionLogger.HandleException(ex);
+            }
+        }
+
+        private void linkLabelTreeView_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            RefreshTreeView((Int32)this.noisereduction);
+            // Need to make the listview hide but not the export buttons
+            // need to make the treeview visible over listview, and auto size to window
+            // Then add items inside the AddAlert method
+            if (alertListView.Visible)
+            {
+                alertListView.Hide();
+                treeViewResults.Show();
+            }
+            else
+            {
+                alertListView.Show();
+                treeViewResults.Hide();
+            }
+            
+        }
+
+        void treeViewResults_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            //this.alertTextBox.Text = treeViewResults.SelectedNode
+            try
+            {
+                if (this.treeViewResults.SelectedNode.Name == "URL")
+                {
+                    //this.reflinkLabel.Text = this.treeViewResults.SelectedNode
+                }
+            }
+            catch (Exception)
+            {
+                
+            }
+            //this.reflinkLabel.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).refLink;
+        }
+        
+        private void treeViewResults_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void alertTextBox_TextChanged(object sender, EventArgs e)
         {
 
         }

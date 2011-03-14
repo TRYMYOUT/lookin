@@ -103,6 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResultsData.cs" />
     <Compile Include="CheckManager.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="FiddlerExtension.cs" />

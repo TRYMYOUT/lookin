@@ -516,6 +516,7 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel = new System.Windows.Forms.Label();
             this.lowerpanel = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.treeViewResults = new System.Windows.Forms.TreeView();
             this.alertListView = new System.Windows.Forms.ListView();
             this.severityColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sessionIdColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -527,6 +528,7 @@ namespace CasabaSecurity.Web.Watcher
             this.FileSaveButton = new System.Windows.Forms.Button();
             this.autoscrollcheckBox = new System.Windows.Forms.CheckBox();
             this.filterpanel = new System.Windows.Forms.Panel();
+            this.linkLabelTreeView = new System.Windows.Forms.LinkLabel();
             this.labelSearchFilter = new System.Windows.Forms.Label();
             this.textBoxSearchResults = new System.Windows.Forms.TextBox();
             this.informationalcountlabel = new System.Windows.Forms.Label();
@@ -575,6 +577,7 @@ namespace CasabaSecurity.Web.Watcher
             this.alertTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.alertTextBox.Size = new System.Drawing.Size(851, 223);
             this.alertTextBox.TabIndex = 0;
+            this.alertTextBox.TextChanged += new System.EventHandler(this.alertTextBox_TextChanged);
             this.alertTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.resultcopyToClipboard);
             // 
             // referencepanel
@@ -740,6 +743,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.treeViewResults);
             this.splitContainer.Panel1.Controls.Add(this.alertListView);
             this.splitContainer.Panel1.Controls.Add(this.buttonpanel);
             this.splitContainer.Panel1.Controls.Add(this.filterpanel);
@@ -750,6 +754,17 @@ namespace CasabaSecurity.Web.Watcher
             this.splitContainer.Size = new System.Drawing.Size(851, 653);
             this.splitContainer.SplitterDistance = 338;
             this.splitContainer.TabIndex = 0;
+            // 
+            // treeViewResults
+            // 
+            this.treeViewResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewResults.Location = new System.Drawing.Point(0, 63);
+            this.treeViewResults.Name = "treeViewResults";
+            this.treeViewResults.Size = new System.Drawing.Size(851, 246);
+            this.treeViewResults.TabIndex = 12;
+            this.treeViewResults.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewResults_AfterSelect);
+            this.treeViewResults.NodeMouseClick +=
+                new TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseClick);
             // 
             // alertListView
             // 
@@ -863,6 +878,7 @@ namespace CasabaSecurity.Web.Watcher
             // filterpanel
             // 
             this.filterpanel.BackColor = System.Drawing.Color.Transparent;
+            this.filterpanel.Controls.Add(this.linkLabelTreeView);
             this.filterpanel.Controls.Add(this.labelSearchFilter);
             this.filterpanel.Controls.Add(this.textBoxSearchResults);
             this.filterpanel.Controls.Add(this.informationalcountlabel);
@@ -879,6 +895,17 @@ namespace CasabaSecurity.Web.Watcher
             this.filterpanel.TabIndex = 2;
             this.toolTipResultsControl.SetToolTip(this.filterpanel, "Clears any selected results, or all results if none are selected.");
             this.filterpanel.Paint += new System.Windows.Forms.PaintEventHandler(this.filterpanel_Paint);
+            // 
+            // linkLabelTreeView
+            // 
+            this.linkLabelTreeView.AutoSize = true;
+            this.linkLabelTreeView.Location = new System.Drawing.Point(442, 9);
+            this.linkLabelTreeView.Name = "linkLabelTreeView";
+            this.linkLabelTreeView.Size = new System.Drawing.Size(50, 13);
+            this.linkLabelTreeView.TabIndex = 11;
+            this.linkLabelTreeView.TabStop = true;
+            this.linkLabelTreeView.Text = "tree view";
+            this.linkLabelTreeView.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelTreeView_LinkClicked);
             // 
             // labelSearchFilter
             // 
@@ -1061,6 +1088,8 @@ namespace CasabaSecurity.Web.Watcher
         private LinkLabel reflinkLabel;
         private TextBox textBoxSearchResults;
         private Label labelSearchFilter;
+        private LinkLabel linkLabelTreeView;
+        private TreeView treeViewResults;
        
         public class AlertListViewItem : ListViewItem
         {

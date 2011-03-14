@@ -108,45 +108,51 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 error = error + "One or more errors were also found while validating the certificate chain for the server's SSL certificate.\r\n\r\n";
             }
-            if (filteroff)
+            try
             {
-                X509Chain certChain = chain;
+                if (filteroff)
+                {
+                    X509Chain certChain = chain;
 
-                // build the cert chain from the remote cert
-                certChain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
-                // this is a security auditing tool, check the whole chain
-                certChain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
-                certChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
-                certChain.ChainPolicy.VerificationTime = DateTime.Now;
-                // allow up to a minute for this
-                certChain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 30);
+                    // build the cert chain from the remote cert
+                    certChain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+                    // this is a security auditing tool, check the whole chain
+                    certChain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+                    certChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
+                    certChain.ChainPolicy.VerificationTime = DateTime.Now;
+                    // allow up to a minute for this
+                    certChain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 30);
 
-                try
-                {
-                    certChain.Build(new X509Certificate2(certificate));
-                }
-                catch (AuthenticationException)
-                {
-                    //ignore here, handled in the other check
-                }
-                foreach (X509ChainElement element in chain.ChainElements)
-                {
-                    if (certChain.ChainStatus.Length > 1)
+                    try
                     {
-                        error = error + "Certificate issuer name: " + element.Certificate.Issuer + "\r\n";
-                        error = error + "Certificate valid until: " + element.Certificate.NotAfter.ToString() + "\r\n";
-                        error = error + "Certificate is valid: " + element.Certificate.Verify().ToString() + "\r\n\r\n";
-                        for (int index = 0; index < element.ChainElementStatus.Length; index++)
+                        certChain.Build(new X509Certificate2(certificate));
+                    }
+                    catch (AuthenticationException)
+                    {
+                        //ignore here, handled in the other check
+                    }
+                    foreach (X509ChainElement element in chain.ChainElements)
+                    {
+                        if (certChain.ChainStatus.Length > 1)
                         {
-                            numfindings++;
-                            error = error + numfindings.ToString() + ") " + element.ChainElementStatus[index].Status.ToString() + "\r\n\r\n";
-                            error = error + element.ChainElementStatus[index].StatusInformation + "\r\n\r\n";
+                            error = error + "Certificate issuer name: " + element.Certificate.Issuer + "\r\n";
+                            error = error + "Certificate valid until: " + element.Certificate.NotAfter.ToString() + "\r\n";
+                            error = error + "Certificate is valid: " + element.Certificate.Verify().ToString() + "\r\n\r\n";
+                            for (int index = 0; index < element.ChainElementStatus.Length; index++)
+                            {
+                                numfindings++;
+                                error = error + numfindings.ToString() + ") " + element.ChainElementStatus[index].Status.ToString() + "\r\n\r\n";
+                                error = error + element.ChainElementStatus[index].StatusInformation + "\r\n\r\n";
+                            }
                         }
                     }
                 }
             }
-            throw new AuthenticationException(error);
-                // Do not allow this client to communicate with unauthenticated servers.
+            catch (AuthenticationException ex)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void DoCertValidation(IAsyncResult result)
