@@ -743,8 +743,8 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.treeViewResults);
             this.splitContainer.Panel1.Controls.Add(this.alertListView);
+            this.splitContainer.Panel1.Controls.Add(this.treeViewResults);
             this.splitContainer.Panel1.Controls.Add(this.buttonpanel);
             this.splitContainer.Panel1.Controls.Add(this.filterpanel);
             // 
@@ -763,8 +763,8 @@ namespace CasabaSecurity.Web.Watcher
             this.treeViewResults.Size = new System.Drawing.Size(851, 246);
             this.treeViewResults.TabIndex = 12;
             this.treeViewResults.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewResults_AfterSelect);
-            this.treeViewResults.NodeMouseClick +=
-                new TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseClick);
+            this.treeViewResults.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseClick);
+            this.treeViewResults.NodeMouseDoubleClick +=new TreeNodeMouseClickEventHandler(treeViewResults_NodeMouseDoubleClick);
             // 
             // alertListView
             // 
@@ -899,7 +899,7 @@ namespace CasabaSecurity.Web.Watcher
             // linkLabelTreeView
             // 
             this.linkLabelTreeView.AutoSize = true;
-            this.linkLabelTreeView.Location = new System.Drawing.Point(442, 9);
+            this.linkLabelTreeView.Location = new System.Drawing.Point(456, 9);
             this.linkLabelTreeView.Name = "linkLabelTreeView";
             this.linkLabelTreeView.Size = new System.Drawing.Size(50, 13);
             this.linkLabelTreeView.TabIndex = 11;
@@ -910,7 +910,7 @@ namespace CasabaSecurity.Web.Watcher
             // labelSearchFilter
             // 
             this.labelSearchFilter.AutoSize = true;
-            this.labelSearchFilter.Location = new System.Drawing.Point(147, 12);
+            this.labelSearchFilter.Location = new System.Drawing.Point(162, 12);
             this.labelSearchFilter.Name = "labelSearchFilter";
             this.labelSearchFilter.Size = new System.Drawing.Size(56, 13);
             this.labelSearchFilter.TabIndex = 10;
@@ -918,7 +918,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // textBoxSearchResults
             // 
-            this.textBoxSearchResults.Location = new System.Drawing.Point(208, 9);
+            this.textBoxSearchResults.Location = new System.Drawing.Point(233, 10);
             this.textBoxSearchResults.Name = "textBoxSearchResults";
             this.textBoxSearchResults.Size = new System.Drawing.Size(215, 20);
             this.textBoxSearchResults.TabIndex = 9;
@@ -985,7 +985,7 @@ namespace CasabaSecurity.Web.Watcher
             "High"});
             this.noisereductioncomboBox.Location = new System.Drawing.Point(65, 9);
             this.noisereductioncomboBox.Name = "noisereductioncomboBox";
-            this.noisereductioncomboBox.Size = new System.Drawing.Size(79, 21);
+            this.noisereductioncomboBox.Size = new System.Drawing.Size(91, 21);
             this.noisereductioncomboBox.TabIndex = 1;
             this.toolTipResultsControl.SetToolTip(this.noisereductioncomboBox, "Results of the selected value and higher only will be displayed.");
             this.noisereductioncomboBox.ValueMember = "Informational";

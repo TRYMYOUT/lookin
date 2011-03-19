@@ -311,6 +311,7 @@ namespace CasabaSecurity.Web.Watcher
         {
             int count = 0;
 
+
             this.alertListView.BeginUpdate();
             if (this.alertListView.SelectedItems.Count == 0)
             {
@@ -432,27 +433,7 @@ namespace CasabaSecurity.Web.Watcher
                 int sessionId = ((AlertListViewItem)this.alertListView.SelectedItems[0]).ID;
 
                 // Index of the Session ID in the Fiddler list
-                int index = 0;
-
-                // Clear any selected session in the session list
-                FiddlerApplication.UI.lvSessions.SelectedItems.Clear();
-
-                Session[] sessionArray = FiddlerApplication.UI.GetAllSessions();
-                for (int i = 0; i < sessionArray.Length; i++)
-                {
-                    if (sessionArray[i].id == sessionId)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-
-                FiddlerApplication.UI.lvSessions.Items[index].Focused = true;
-                FiddlerApplication.UI.lvSessions.Items[index].Selected = true;
-                // Active the Raw request/response inspector for this session
-                FiddlerApplication.UI.actInspectSession();
-                FiddlerApplication.UI.ActivateRequestInspector("Raw");
-                FiddlerApplication.UI.ActivateResponseInspector("Raw");
+                GoToFiddlerSessionInspector(sessionId);
             }
 
             catch (ArgumentOutOfRangeException)
@@ -462,6 +443,7 @@ namespace CasabaSecurity.Web.Watcher
 
             base.OnDoubleClick(e);
         }
+
 
         /// <summary>
         /// This event handler method is called when the user selects an item from the selectedResults list.
@@ -628,6 +610,10 @@ namespace CasabaSecurity.Web.Watcher
             {
                 this.noisereduction = WatcherResultSeverity.High;
             }
+            else
+            {
+                this.noisereduction = WatcherResultSeverity.Informational;
+            }
 
             this.alertListView.BeginUpdate();
             //foreach (ListViewItem item in this.alertListView.Items)
@@ -789,17 +775,21 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="filter">Apply the severity filter available through the UI.</param>
         public void RefreshTreeView(Int32 filter)
         {
+            
             treeViewResults.Nodes.Clear();
-
+            //DataTable copyOfResultsData = ResultsData.ResultsDataSet.Tables["Results"].Copy();
+            //copyOfResultsData.
             try
             {
-                foreach (DataRow row in ResultsData.ResultsDataSet.Tables["Results"].Rows)
+                DataView dv = new DataView(ResultsData.ResultsDataSet.Tables["Resuls"]);
+                foreach (DataRow row in ResultsData.ResultsDataSet.Tables["Results"].DefaultView.Table.Rows)
+                //foreach (DataRow row in dv.Table.Rows)
                 {
                     String url = row["Url"].ToString();
                     String checkName = row["Name"].ToString();
                     Int32 severity = (Int32)row["Severity"];
                     // Use the unique record ID to lookup description and reference
-                    Int32 id = (Int32)row["Id"];
+                    Int32 id = (Int32)row[0];
 
                     Uri uri;
                     String domain;
@@ -827,6 +817,13 @@ namespace CasabaSecurity.Web.Watcher
                     nodeDomain.Name = domain;
                     nodeType.Name = checkName;
                     nodeUrl.Name = url;
+
+                    // Tag these nodes so we can refer to them generically
+                    nodeDomain.Tag = "Domain";
+                    nodeType.Tag = "Type";
+                    // Ugh. Ugly hack to store the data table row id with the TreeNode.  
+                    // There should be a better way.
+                    nodeUrl.Tag = id;
 
                     // Color the Type node
                     if (severity == 0)
@@ -881,6 +878,11 @@ namespace CasabaSecurity.Web.Watcher
 
                 }
             }
+            catch(InvalidOperationException ex)
+            {
+                Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", ex.Message);
+                ExceptionLogger.HandleException(ex);
+            }
             catch (NullReferenceException ex)
             {
                 Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", ex.Message);
@@ -898,35 +900,109 @@ namespace CasabaSecurity.Web.Watcher
             {
                 alertListView.Hide();
                 treeViewResults.Show();
+                btnClearResults.Hide();
             }
             else
             {
                 alertListView.Show();
                 treeViewResults.Hide();
+                btnClearResults.Show();
             }
             
         }
 
         void treeViewResults_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            //this.alertTextBox.Text = treeViewResults.SelectedNode
-            try
-            {
-                if (this.treeViewResults.SelectedNode.Name == "URL")
-                {
-                    //this.reflinkLabel.Text = this.treeViewResults.SelectedNode
-                }
-            }
-            catch (Exception)
-            {
+            ////this.alertTextBox.Text = treeViewResults.SelectedNode
+            //try
+            //{
+            //    // Ugh. Ugly hack to store the data table row id with the TreeNode.  
+            //    // There should be a better way.
+            //    if (treeViewResults.SelectedNode.Tag.GetType() == typeof(Int32) )
+            //    {
+            //        Int32 id = (Int32)treeViewResults.SelectedNode.Tag;
+            //        this.reflinkLabel.Text = ResultsData.GetResultReferenceLink(id);
+            //        this.alertTextBox.Text = ResultsData.GetResultDescription(id);
+            //    }
+            //}
+            //catch (Exception)
+            //{
                 
-            }
-            //this.reflinkLabel.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).refLink;
+            //}
+            ////this.reflinkLabel.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).refLink;
         }
         
         private void treeViewResults_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            //this.alertTextBox.Text = treeViewResults.SelectedNode
+            try
+            {
+                // Ugh. Ugly hack to store the data table row id with the TreeNode.  
+                // There should be a better way.
+                if (treeViewResults.SelectedNode.Tag.GetType() == typeof(Int32))
+                {
+                    Int32 id = (Int32)treeViewResults.SelectedNode.Tag;
+                    this.reflinkLabel.Text = ResultsData.GetResultReferenceLink(id);
+                    this.alertTextBox.Text = ResultsData.GetResultDescription(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Warning: Watcher treeViewResults_AfterSelect check threw an unhandled exception: {0}", ex.Message);
+                ExceptionLogger.HandleException(ex);
 
+            }
+            //this.reflinkLabel.Text = ((AlertListViewItem)this.alertListView.SelectedItems[0]).refLink;
+        }
+
+        private void treeViewResults_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            try
+            {
+                if (treeViewResults.SelectedNode.Tag.GetType() == typeof(Int32))
+                {
+                    Int32 id = (Int32)treeViewResults.SelectedNode.Tag;
+                    Int32 sessionId = ResultsData.GetResultSessionId(id);
+                    GoToFiddlerSessionInspector(sessionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Warning: Watcher treeViewResults_NodeMouseDoubleClick check threw an unhandled exception: {0}", ex.Message);
+                ExceptionLogger.HandleException(ex);
+            }
+        }
+
+        private void GoToFiddlerSessionInspector(int sessionId)
+        {
+            try
+            {
+                int index = 0;
+
+                // Clear any selected session in the session list
+                FiddlerApplication.UI.lvSessions.SelectedItems.Clear();
+
+                Session[] sessionArray = FiddlerApplication.UI.GetAllSessions();
+                for (int i = 0; i < sessionArray.Length; i++)
+                {
+                    if (sessionArray[i].id == sessionId)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                FiddlerApplication.UI.lvSessions.Items[index].Focused = true;
+                FiddlerApplication.UI.lvSessions.Items[index].Selected = true;
+                // Active the Raw request/response inspector for this session
+                FiddlerApplication.UI.actInspectSession();
+                FiddlerApplication.UI.ActivateRequestInspector("Raw");
+                FiddlerApplication.UI.ActivateResponseInspector("Raw");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void alertTextBox_TextChanged(object sender, EventArgs e)

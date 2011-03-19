@@ -54,6 +54,7 @@ namespace CasabaSecurity.Web.Watcher
             DataColumn colId = new DataColumn("Id",typeof(Int32));
             // Column Id gives us a unique ID for each record
             colId.AutoIncrement = true;
+            colId.Unique = true;
             DataColumn colSessionId = new DataColumn("SessionId", typeof(Int32));
             DataColumn colSev = new DataColumn("Severity",typeof(Int32));
             DataColumn colUrl = new DataColumn("Url",typeof(String));
@@ -63,6 +64,10 @@ namespace CasabaSecurity.Web.Watcher
             DataColumn colRef = new DataColumn("Reference",typeof(String));
             resultsDataTable.Columns.AddRange(new DataColumn[] { colId, colSessionId,colSev,colUrl,colName,colDesc,colCount,colRef});
 
+            // Set the primary key 
+            DataColumn[] keys = new DataColumn[1];
+            keys[0] = colId;
+            resultsDataTable.PrimaryKey = keys;
             // Add the table to the dataset
             resultsDataSet.Tables.Add(resultsDataTable);
 
@@ -70,18 +75,64 @@ namespace CasabaSecurity.Web.Watcher
             resultsDataSet.ExtendedProperties["Initialized"] = true;
         }
 
+        /// <summary>
+        /// Build a Row and add it to the database.
+        /// </summary>
+        /// <param name="result"></param>
         public static void AddResult(Result result )
         {
-            // Build a row and add it
-            DataRow row = resultsDataTable.NewRow();
-            row["Id"] = result.Id;
-            row["Severity"] = result.Severity;
-            row["Url"] = result.URL;
-            row["Name"] = result.TypeX;
-            row["Description"] = result.Description;
-            row["Count"] = result.AlertCount;
-            row["Reference"] = result.refLink;
-            resultsDataTable.Rows.Add(row);
+            // Check if the result is unique and doesn't already exist in the database.
+            // Don't even create a row object until we know it's unique, otherwise
+            // the unique 'Id' column will have its value auto-incremented and results 
+            // will be off.
+
+            if (IsResultUnique(result))
+            {
+                resultsDataTable.BeginLoadData();
+                DataRow row = resultsDataTable.NewRow();
+                row["SessionId"] = result.SessionId;
+                row["Severity"] = result.Severity;
+                row["Url"] = result.URL;
+                row["Name"] = result.TypeX;
+                row["Description"] = result.Description;
+                row["Count"] = result.AlertCount;
+                row["Reference"] = result.refLink;
+
+                resultsDataTable.Rows.Add(row);
+
+                resultsDataTable.AcceptChanges();
+                resultsDataTable.EndLoadData();
+            }
+
+        }
+
+        private static bool IsResultUnique(Result result)
+        {
+            if (resultsDataTable.Rows != null)
+                foreach (DataRow row in resultsDataTable.Rows)
+                {
+                    if (row["Url"].ToString() == result.URL &&
+                        row["Description"].ToString() == result.Description)
+                    {
+                        return false;
+                    }
+                }
+            return true;
+        }
+
+        public static string GetResultDescription(Int32 id)
+        {
+            return resultsDataTable.Rows[id]["Description"].ToString();
+        }
+
+        public static string GetResultReferenceLink(Int32 id)
+        {
+            return resultsDataTable.Rows[id]["Reference"].ToString();
+        }
+
+        public static Int32 GetResultSessionId(Int32 id)
+        {
+            return (Int32)resultsDataTable.Rows[id]["SessionId"];
         }
 
     }
@@ -89,7 +140,7 @@ namespace CasabaSecurity.Web.Watcher
     public class Result
     {
         #region Fields
-        private Int32 _id;
+        private Int32 _sessionId;
         private WatcherResultSeverity _severity;
         private String _url;
         private String _name;
@@ -101,12 +152,12 @@ namespace CasabaSecurity.Web.Watcher
 
         #region Ctor(s)
 
-        public Result(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count)
-            : this(severity, id, name, url, description, count, WatcherCheckStandardsCompliance.None, String.Empty) { }
+        public Result(WatcherResultSeverity severity, Int32 sessionId, String name, String url, String description, int count)
+            : this(severity, sessionId, name, url, description, count, WatcherCheckStandardsCompliance.None, String.Empty) { }
 
-        public Result(WatcherResultSeverity severity, Int32 id, String name, String url, String description, int count, WatcherCheckStandardsCompliance compliance, String reflink)
+        public Result(WatcherResultSeverity severity, Int32 sessionId, String name, String url, String description, int count, WatcherCheckStandardsCompliance compliance, String reflink)
         {
-            _id = id;
+            _sessionId = sessionId;
             _severity = severity;
             _url = url;
             _name = name;
@@ -132,9 +183,9 @@ namespace CasabaSecurity.Web.Watcher
             get { return _count; }
         }
 
-        public Int32 Id
+        public Int32 SessionId
         {
-            get { return _id; }
+            get { return _sessionId; }
         }
 
         public String URL
@@ -170,7 +221,7 @@ namespace CasabaSecurity.Web.Watcher
         {
             string output = "";
             output = output + Severity.ToString() + "\t"
-                    + this.Id + "\t"
+                    + this.SessionId + "\t"
                     + this.TypeX + "\t"
                     + this.URL + "\r\n";
             return output;
