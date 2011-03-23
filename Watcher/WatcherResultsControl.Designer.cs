@@ -516,12 +516,12 @@ namespace CasabaSecurity.Web.Watcher
             this.copyrightlabel = new System.Windows.Forms.Label();
             this.lowerpanel = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.treeViewResults = new System.Windows.Forms.TreeView();
             this.alertListView = new System.Windows.Forms.ListView();
             this.severityColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sessionIdColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.typeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.urlColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.treeViewResults = new System.Windows.Forms.TreeView();
             this.buttonpanel = new System.Windows.Forms.Panel();
             this.exportlabel = new System.Windows.Forms.Label();
             this.cbExportMethod = new System.Windows.Forms.ComboBox();
@@ -755,17 +755,6 @@ namespace CasabaSecurity.Web.Watcher
             this.splitContainer.SplitterDistance = 338;
             this.splitContainer.TabIndex = 0;
             // 
-            // treeViewResults
-            // 
-            this.treeViewResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewResults.Location = new System.Drawing.Point(0, 63);
-            this.treeViewResults.Name = "treeViewResults";
-            this.treeViewResults.Size = new System.Drawing.Size(851, 246);
-            this.treeViewResults.TabIndex = 12;
-            this.treeViewResults.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewResults_AfterSelect);
-            this.treeViewResults.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseClick);
-            this.treeViewResults.NodeMouseDoubleClick +=new TreeNodeMouseClickEventHandler(treeViewResults_NodeMouseDoubleClick);
-            // 
             // alertListView
             // 
             this.alertListView.Activation = System.Windows.Forms.ItemActivation.OneClick;
@@ -812,6 +801,17 @@ namespace CasabaSecurity.Web.Watcher
             // 
             this.urlColumnHeader.Text = "URL";
             this.urlColumnHeader.Width = 420;
+            // 
+            // treeViewResults
+            // 
+            this.treeViewResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewResults.Location = new System.Drawing.Point(0, 63);
+            this.treeViewResults.Name = "treeViewResults";
+            this.treeViewResults.Size = new System.Drawing.Size(851, 246);
+            this.treeViewResults.TabIndex = 12;
+            this.treeViewResults.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewResults_AfterSelect);
+            this.treeViewResults.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseClick);
+            this.treeViewResults.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewResults_NodeMouseDoubleClick);
             // 
             // buttonpanel
             // 
@@ -899,18 +899,18 @@ namespace CasabaSecurity.Web.Watcher
             // linkLabelTreeView
             // 
             this.linkLabelTreeView.AutoSize = true;
-            this.linkLabelTreeView.Location = new System.Drawing.Point(456, 9);
+            this.linkLabelTreeView.Location = new System.Drawing.Point(8, 12);
             this.linkLabelTreeView.Name = "linkLabelTreeView";
-            this.linkLabelTreeView.Size = new System.Drawing.Size(50, 13);
+            this.linkLabelTreeView.Size = new System.Drawing.Size(61, 13);
             this.linkLabelTreeView.TabIndex = 11;
             this.linkLabelTreeView.TabStop = true;
-            this.linkLabelTreeView.Text = "tree view";
+            this.linkLabelTreeView.Text = "TreeView...";
             this.linkLabelTreeView.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelTreeView_LinkClicked);
             // 
             // labelSearchFilter
             // 
             this.labelSearchFilter.AutoSize = true;
-            this.labelSearchFilter.Location = new System.Drawing.Point(162, 12);
+            this.labelSearchFilter.Location = new System.Drawing.Point(241, 13);
             this.labelSearchFilter.Name = "labelSearchFilter";
             this.labelSearchFilter.Size = new System.Drawing.Size(56, 13);
             this.labelSearchFilter.TabIndex = 10;
@@ -918,7 +918,7 @@ namespace CasabaSecurity.Web.Watcher
             // 
             // textBoxSearchResults
             // 
-            this.textBoxSearchResults.Location = new System.Drawing.Point(233, 10);
+            this.textBoxSearchResults.Location = new System.Drawing.Point(303, 11);
             this.textBoxSearchResults.Name = "textBoxSearchResults";
             this.textBoxSearchResults.Size = new System.Drawing.Size(215, 20);
             this.textBoxSearchResults.TabIndex = 9;
@@ -955,7 +955,7 @@ namespace CasabaSecurity.Web.Watcher
             // noiselabel
             // 
             this.noiselabel.AutoSize = true;
-            this.noiselabel.Location = new System.Drawing.Point(3, 12);
+            this.noiselabel.Location = new System.Drawing.Point(73, 13);
             this.noiselabel.Name = "noiselabel";
             this.noiselabel.Size = new System.Drawing.Size(59, 13);
             this.noiselabel.TabIndex = 0;
@@ -983,7 +983,7 @@ namespace CasabaSecurity.Web.Watcher
             "Low",
             "Medium",
             "High"});
-            this.noisereductioncomboBox.Location = new System.Drawing.Point(65, 9);
+            this.noisereductioncomboBox.Location = new System.Drawing.Point(138, 10);
             this.noisereductioncomboBox.Name = "noisereductioncomboBox";
             this.noisereductioncomboBox.Size = new System.Drawing.Size(91, 21);
             this.noisereductioncomboBox.TabIndex = 1;

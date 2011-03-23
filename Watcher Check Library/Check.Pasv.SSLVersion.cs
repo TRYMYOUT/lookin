@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Fiddler;
 using System.IO;
@@ -83,10 +84,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 ssl.AuthenticateAsClient(session.host, null, SslProtocols.Ssl2, true);
             }
-            catch (AuthenticationException)
+            catch (AuthenticationException e)
             {
                 // we're letting CheckSSL() handle these instead
                 // if we hit this, then the SSLv2 handshaked pass, continue to AddAlert()
+                Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", e.Message);
+                ExceptionLogger.HandleException(e);
             }
             catch (IOException)
             {

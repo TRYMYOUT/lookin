@@ -893,20 +893,20 @@ namespace CasabaSecurity.Web.Watcher
         private void linkLabelTreeView_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             RefreshTreeView((Int32)this.noisereduction);
-            // Need to make the listview hide but not the export buttons
-            // need to make the treeview visible over listview, and auto size to window
-            // Then add items inside the AddAlert method
+
             if (alertListView.Visible)
             {
                 alertListView.Hide();
                 treeViewResults.Show();
                 btnClearResults.Hide();
+                linkLabelTreeView.Text = "ListView...";
             }
             else
             {
                 alertListView.Show();
                 treeViewResults.Hide();
                 btnClearResults.Show();
+                linkLabelTreeView.Text = "TreeView...";
             }
             
         }
