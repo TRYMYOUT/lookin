@@ -41,6 +41,7 @@ namespace CasabaSecurity.Web.Watcher
             }
         }
 
+
         public static void BuildTable()
         {
             // Don't build the table if it already exists

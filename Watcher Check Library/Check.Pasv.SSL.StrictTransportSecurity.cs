@@ -39,7 +39,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
             StandardsCompliance =
                 WatcherCheckStandardsCompliance.None;
 
-            configpanel = new EnableCheckConfigPanel(this, "Strict-Transport-Security", "Enable to only check once per unique domain name.  Otherwise checks will be performed on every response from the site.");
+            configpanel = new EnableCheckConfigPanel(this, "Strict-Transport-Security", "Enable this (the default) to only check once per unique domain name.  Otherwise checks will be performed on every response from the site.");
             configpanel.Init();
             
             CheckCategory = WatcherCheckCategory.Header;

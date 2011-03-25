@@ -793,6 +793,7 @@ namespace CasabaSecurity.Web.Watcher
 
                     Uri uri;
                     String domain;
+                    
 
                     // Skip this result if it doesn't match the filter
                     if (severity < filter) continue;
