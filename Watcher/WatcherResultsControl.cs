@@ -887,8 +887,10 @@ namespace CasabaSecurity.Web.Watcher
 
                 }
                 // End the update
-                treeViewResults.Sort();
                 treeViewResults.EndUpdate();
+                // Sort() causes too much flicker
+                //treeViewResults.Sort();
+                treeViewResults.Refresh();
             }
             catch (InvalidOperationException ex)
             {
