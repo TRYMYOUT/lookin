@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Text;
 
@@ -42,7 +43,18 @@ namespace CasabaSecurity.Web.Watcher
             
             // Add a result record to the database
             Result result = new Result(resultSeverity,sessionId,checkName,sessionUrl,resultDescription,count, compliesWith, refLink);
-            ResultsData.AddResult(result);
+            int resultId = ResultsData.AddResult(result);
+            DataRow row = null;
+            // Don't add results unless they were unique
+            if (resultId != -1)
+            {
+                // Get the Row data that was added
+                row = ResultsData.GetResultDataRow(resultId);
+                // Push the row to the TreeView
+                
+                // Call AddAlert with callback and pass the DataRow in there.  Change the AddAlert parameters to only take this one object.
+
+            }
 
             // TODO: ResultsData.cs Update: The AddAlert calls below should be changed to use the data from the data table.
 
@@ -55,13 +67,14 @@ namespace CasabaSecurity.Web.Watcher
             if (control.InvokeRequired)
             {
                 // We're not the UI thread: marshall an update to the control asynchronously
-                control.BeginInvoke(new AddAlertCallback(control.AddAlert), new Object[] { resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink });
-               // control.BeginInvoke(new AddResultCallback(control.AddResultToTreeView), result);
+                control.BeginInvoke(new AddAlertCallback(control.AddAlert), new Object[] { resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink, row });
+                
+                // control.BeginInvoke(new AddResultCallback(control.AddResultToTreeView), result);
             }
             else
             {
                 // We're the UI thread, update the control directly
-                control.AddAlert(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink);
+                control.AddAlert(resultSeverity, sessionId, sessionUrl, checkName, resultDescription, compliesWith, count, refLink, row);
                 //control.AddResultToTreeView(result);
             }
         }
@@ -102,7 +115,7 @@ namespace CasabaSecurity.Web.Watcher
         /// <summary>
         /// This callback is used to update UI controls from a non-UI thread.
         /// </summary>
-        private delegate void AddAlertCallback(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String checkDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink);
+        private delegate void AddAlertCallback(WatcherResultSeverity resultSeverity, Int32 sessionId, String sessionUrl, String checkName, String checkDescription, WatcherCheckStandardsCompliance compliesWith, Int32 count, String refLink, DataRow row);
         // TODO: Get rid of AddAlertCallback in place of AddResultCallback
         //private delegate void AddResultCallback(Result result);
 

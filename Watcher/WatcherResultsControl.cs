@@ -154,9 +154,12 @@ namespace CasabaSecurity.Web.Watcher
         /// <param name="resultDescription">The description of the finding.</param>
         /// <param name="compliesWith">Standards implemented by Watcher that this check conforms to.</param>
         /// <param name="count">The number of times the finding was discovered.</param>
-        public void AddAlert(WatcherResultSeverity resultSeverity, int sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, int count, String reflink)
+        public void AddAlert(WatcherResultSeverity resultSeverity, int sessionId, String sessionUrl, String checkName, String resultDescription, WatcherCheckStandardsCompliance compliesWith, int count, String reflink, DataRow row)
         {
             // Build a Result object and pass it to the treeview
+            // TODO This should be abstracted out and the ListView should be bound to the dataset!
+            AddResultToTreeView(row);
+
             //RefreshTreeView(new Result(resultSeverity,sessionId,checkName,sessionUrl,resultDescription,count,compliesWith,reflink));
             AlertListViewItem alvi = null;
 
@@ -785,101 +788,109 @@ namespace CasabaSecurity.Web.Watcher
                 foreach (DataRow row in ResultsData.ResultsDataSet.Tables["Results"].DefaultView.Table.Rows)
                 //foreach (DataRow row in dv.Table.Rows)
                 {
-                    String url = row["Url"].ToString();
-                    String checkName = row["Name"].ToString();
-                    Int32 severity = (Int32)row["Severity"];
-                    // Use the unique record ID to lookup description and reference
-                    Int32 id = (Int32)row[0];
+                    AddResultToTreeView(row);
+                }
+            }
+            catch(Exception ex)
+            {
+                Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", ex.Message);
+                ExceptionLogger.HandleException(ex);
+            }
+        }
 
-                    Uri uri;
-                    String domain;
-                    
+        public void AddResultToTreeView(DataRow row)
+        {
+            try
+            {
+                String url = row["Url"].ToString();
+                String checkName = row["Name"].ToString();
+                Int32 severity = (Int32)row["Severity"];
+                // Use the unique record ID to lookup description and reference
+                Int32 id = (Int32)row[0];
 
-                    // Skip this result if it doesn't match the filter
-                    if (severity < filter) continue;
+                Uri uri;
+                String domain;
 
-                    try
+                try
+                {
+                    uri = new Uri(url);
+                    // TreeView is organized by domain name first
+                    domain = uri.Host;
+                }
+                catch (UriFormatException ex)
+                {
+                    uri = new Uri("error://");
+                    domain = "error";
+                }
+
+
+                // Build the treenode
+                TreeNode nodeDomain = new TreeNode(domain);
+                TreeNode nodeType = new TreeNode(checkName);
+                TreeNode nodeUrl = new TreeNode(url);
+                nodeDomain.Name = domain;
+                nodeType.Name = checkName;
+                nodeUrl.Name = url;
+
+                // Tag these nodes so we can refer to them generically
+                nodeDomain.Tag = "Domain";
+                nodeType.Tag = "Type";
+                // Ugh. Ugly hack to store the data table row id with the TreeNode.  
+                // There should be a better way.
+                nodeUrl.Tag = id;
+
+                // Color the Type node
+                if (severity == 0)
+                {
+                    nodeType.ForeColor = Color.Green;
+                }
+                if (severity == 1)
+                {
+                    nodeType.ForeColor = Color.Blue;
+                }
+                if (severity == 2)
+                {
+                    nodeType.ForeColor = Color.Orange;
+                }
+                if (severity == 3)
+                {
+                    nodeType.ForeColor = Color.Red;
+                }
+
+                // Begin an update
+                treeViewResults.BeginUpdate();
+                // first check if subnode name exists
+                if (treeViewResults.Nodes.ContainsKey(domain))
+                {
+                    // if the domain key existed already did insert subnode data into it
+                    // first see if the same title already exists
+                    // if so insert the URL as as subnode of it
+                    if (treeViewResults.Nodes[domain].Nodes.ContainsKey(checkName))
                     {
-                        uri = new Uri(url);
-                        // TreeView is organized by domain name first
-                        domain = uri.Host;
+                        treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
                     }
-                    catch (UriFormatException ex)
-                    {
-                        uri = new Uri("error://");
-                        domain = "error";
-                    }
-
-
-                    // Build the treenode
-                    TreeNode nodeDomain = new TreeNode(domain);
-                    TreeNode nodeType = new TreeNode(checkName);
-                    TreeNode nodeUrl = new TreeNode(url);
-                    nodeDomain.Name = domain;
-                    nodeType.Name = checkName;
-                    nodeUrl.Name = url;
-
-                    // Tag these nodes so we can refer to them generically
-                    nodeDomain.Tag = "Domain";
-                    nodeType.Tag = "Type";
-                    // Ugh. Ugly hack to store the data table row id with the TreeNode.  
-                    // There should be a better way.
-                    nodeUrl.Tag = id;
-
-                    // Color the Type node
-                    if (severity == 0)
-                    {
-                        nodeType.ForeColor = Color.Green;
-                    }
-                    if (severity == 1)
-                    {
-                        nodeType.ForeColor = Color.Blue;
-                    }
-                    if (severity == 2)
-                    {
-                        nodeType.ForeColor = Color.Orange;
-                    }
-                    if (severity == 3)
-                    {
-                        nodeType.ForeColor = Color.Red;
-                    }
-
-                    // Begin an update
-                    treeViewResults.BeginUpdate();
-                    // first check if subnode name exists
-                    if (treeViewResults.Nodes.ContainsKey(domain))
-                    {
-                        // if the domain key existed already did insert subnode data into it
-                        // first see if the same title already exists
-                        // if so insert the URL as as subnode of it
-                        if (treeViewResults.Nodes[domain].Nodes.ContainsKey(checkName))
-                        {
-                            treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
-                        }
-                        else
-                        {
-                            // Insert new subnode and its subnode
-                            treeViewResults.Nodes[domain].Nodes.Add(nodeType);
-                            treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
-                        }
-
-                    }
-                    // only insert the node if one of the same name doesn't exist
                     else
                     {
-                        treeViewResults.Nodes.Add(nodeDomain);
                         // Insert new subnode and its subnode
                         treeViewResults.Nodes[domain].Nodes.Add(nodeType);
                         treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
-
                     }
-                    // End the update
-                    treeViewResults.Sort();
-                    treeViewResults.EndUpdate();
 
                 }
+                // only insert the node if one of the same name doesn't exist
+                else
+                {
+                    treeViewResults.Nodes.Add(nodeDomain);
+                    // Insert new subnode and its subnode
+                    treeViewResults.Nodes[domain].Nodes.Add(nodeType);
+                    treeViewResults.Nodes[domain].Nodes[checkName].Nodes.Add(nodeUrl);
+
+                }
+                // End the update
+                treeViewResults.Sort();
+                treeViewResults.EndUpdate();
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 Trace.TraceWarning("Warning: Watcher check threw an unhandled exception: {0}", ex.Message);
                 ExceptionLogger.HandleException(ex);
@@ -893,7 +904,7 @@ namespace CasabaSecurity.Web.Watcher
 
         private void linkLabelTreeView_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            RefreshTreeView((Int32)this.noisereduction);
+            //RefreshTreeView((Int32)this.noisereduction);
 
             if (alertListView.Visible)
             {

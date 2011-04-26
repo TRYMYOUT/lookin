@@ -80,7 +80,7 @@ namespace CasabaSecurity.Web.Watcher
         /// Build a Row and add it to the database.
         /// </summary>
         /// <param name="result"></param>
-        public static void AddResult(Result result )
+        public static int AddResult(Result result )
         {
             // Check if the result is unique and doesn't already exist in the database.
             // Don't even create a row object until we know it's unique, otherwise
@@ -103,7 +103,11 @@ namespace CasabaSecurity.Web.Watcher
 
                 resultsDataTable.AcceptChanges();
                 resultsDataTable.EndLoadData();
+                // This should always be a unique record ID
+                return (int) row["Id"];
             }
+            // Return an error of a new record was not added
+            return -1;
 
         }
 
@@ -134,6 +138,11 @@ namespace CasabaSecurity.Web.Watcher
         public static Int32 GetResultSessionId(Int32 id)
         {
             return (Int32)resultsDataTable.Rows[id]["SessionId"];
+        }
+
+        public static DataRow GetResultDataRow(Int32 id)
+        {
+            return resultsDataTable.Rows[id];
         }
 
     }
