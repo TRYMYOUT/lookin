@@ -930,7 +930,7 @@ namespace CasabaSecurity.Web.Watcher
             this.informationalcountlabel.AutoSize = true;
             this.informationalcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.informationalcountlabel.ForeColor = System.Drawing.Color.Green;
-            this.informationalcountlabel.Location = new System.Drawing.Point(401, 40);
+            this.informationalcountlabel.Location = new System.Drawing.Point(327, 40);
             this.informationalcountlabel.Name = "informationalcountlabel";
             this.informationalcountlabel.Size = new System.Drawing.Size(70, 13);
             this.informationalcountlabel.TabIndex = 5;
@@ -944,11 +944,10 @@ namespace CasabaSecurity.Web.Watcher
             this.btnClearResults.AutoSize = true;
             this.btnClearResults.Location = new System.Drawing.Point(6, 35);
             this.btnClearResults.Name = "btnClearResults";
-            this.btnClearResults.Size = new System.Drawing.Size(124, 23);
+            this.btnClearResults.Size = new System.Drawing.Size(60, 23);
             this.btnClearResults.TabIndex = 8;
-            this.btnClearResults.Text = "Clear Selected Results";
-            this.toolTipResultsControl.SetToolTip(this.btnClearResults, "Selected selectedResults will be removed. If none are selected all selectedResult" +
-                    "s will be removed.");
+            this.btnClearResults.Text = "Clear";
+            this.toolTipResultsControl.SetToolTip(this.btnClearResults, "All results will be removed.");
             this.btnClearResults.UseVisualStyleBackColor = true;
             this.btnClearResults.Click += new System.EventHandler(this.btnClearResults_Click);
             // 
@@ -966,7 +965,7 @@ namespace CasabaSecurity.Web.Watcher
             this.lowcountlabel.AutoSize = true;
             this.lowcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lowcountlabel.ForeColor = System.Drawing.Color.Blue;
-            this.lowcountlabel.Location = new System.Drawing.Point(321, 40);
+            this.lowcountlabel.Location = new System.Drawing.Point(247, 40);
             this.lowcountlabel.Name = "lowcountlabel";
             this.lowcountlabel.Size = new System.Drawing.Size(30, 13);
             this.lowcountlabel.TabIndex = 4;
@@ -996,7 +995,7 @@ namespace CasabaSecurity.Web.Watcher
             this.mediumcountlabel.AutoSize = true;
             this.mediumcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mediumcountlabel.ForeColor = System.Drawing.Color.Orange;
-            this.mediumcountlabel.Location = new System.Drawing.Point(230, 40);
+            this.mediumcountlabel.Location = new System.Drawing.Point(156, 40);
             this.mediumcountlabel.Name = "mediumcountlabel";
             this.mediumcountlabel.Size = new System.Drawing.Size(47, 13);
             this.mediumcountlabel.TabIndex = 3;
@@ -1009,7 +1008,7 @@ namespace CasabaSecurity.Web.Watcher
             this.highcountlabel.AutoSize = true;
             this.highcountlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.highcountlabel.ForeColor = System.Drawing.Color.Red;
-            this.highcountlabel.Location = new System.Drawing.Point(153, 40);
+            this.highcountlabel.Location = new System.Drawing.Point(79, 40);
             this.highcountlabel.Name = "highcountlabel";
             this.highcountlabel.Size = new System.Drawing.Size(35, 13);
             this.highcountlabel.TabIndex = 2;

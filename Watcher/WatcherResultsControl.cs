@@ -912,14 +912,14 @@ namespace CasabaSecurity.Web.Watcher
             {
                 alertListView.Hide();
                 treeViewResults.Show();
-                btnClearResults.Hide();
+                //btnClearResults.Hide();
                 linkLabelTreeView.Text = "ListView...";
             }
             else
             {
                 alertListView.Show();
                 treeViewResults.Hide();
-                btnClearResults.Show();
+                //btnClearResults.Show();
                 linkLabelTreeView.Text = "TreeView...";
             }
             
