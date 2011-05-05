@@ -760,7 +760,7 @@ namespace CasabaSecurity.Web.Watcher
 
             foreach (AlertListViewItem item in alerts)
             {
-                if(item.TypeX.Contains(search) || item.Description.Contains(search))
+                if(item.TypeX.Contains(search) || item.Description.Contains(search) && (item.Severity >= this.noisereduction))
                 {
                     this.alertListView.Items.Add(item);
                 }
