@@ -40,37 +40,34 @@ namespace CasabaSecurity.Web.Watcher.Checks
             {
                 text =
                     findingnum.ToString() + ") " +
-                    "The response to the following request did not set the X-CONTENT-TYPE-OPTIONS header value to 'nosniff'.  " +
+                    "The response to the following request did not set the X-Content-Type-Options header value to 'nosniff'.  " +
                     "The header was missing or the value was empty.";
             }
             else
             {
                 text =
                     findingnum.ToString() + ") " +
-                    "The response to the following request did not set the X-CONTENT-TYPE-OPTIONS header value to 'nosniff'.  " +
+                    "The response to the following request did not set the X-Content-Type-Options header value to 'nosniff'.  " +
                     "The value was set to:\r\n\r\n '" + value + "'\r\n\r\n";
             }
 
-            WatcherEngine.Results.Add(WatcherResultSeverity.Informational, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
+            WatcherEngine.Results.Add(WatcherResultSeverity.Low, session.id, session.fullUrl, name, text, StandardsCompliance, findingnum, Reference);
         }
 
         public override void Check(Session session)
         {
             findingnum = 0;
-            // The 'nosniff' header is supported by IE8 and Chrome currently.
-            if (session.oRequest.headers.ExistsAndContains("User-Agent", "MSIE 8.0") || session.oRequest.headers.ExistsAndContains("User-Agent", "Chrome"))
+            // The 'nosniff' header is in Internet draft
+            if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
             {
-                if (WatcherEngine.Configuration.IsOriginDomain(session.hostname))
+                if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
                 {
-                    if (session.responseCode == 200 && session.responseBodyBytes.Length > 0)
+                    // If Content-Type header doesn't exist, or if it's null/empty, or if it's text/plain, to reduce noise
+                    if (!session.oResponse.headers.Exists("Content-Type") || String.IsNullOrEmpty(session.oResponse.headers["Content-Type"].Trim().ToLower()) || Utility.IsResponsePlain(session) )
                     {
-                        // If Content-Type header doesn't exist, or if it's null/empty, or if it's text/plain
-                        if (!session.oResponse.headers.Exists("Content-Type") || String.IsNullOrEmpty(session.oResponse.headers["Content-Type"].Trim().ToLower()) || Utility.IsResponsePlain(session) )
+                        if (!session.oResponse.headers.ExistsAndEquals("X-Content-Type-Options", "nosniff"))
                         {
-                            if (!session.oResponse.headers.ExistsAndEquals("X-CONTENT-TYPE-OPTIONS", "nosniff"))
-                            {
-                                AddAlert(session, session.oResponse.headers["X-CONTENT-TYPE-OPTIONS"].ToString().ToLower());
-                            }
+                            AddAlert(session, session.oResponse.headers["X-Content-Type-Options"].ToString());
                         }
                     }
                 }

@@ -230,6 +230,12 @@ namespace CasabaSecurity.Web.Watcher
             return null;
         }
 
+        // A nullable bool to determine if the check has configurable properties.
+        public virtual bool? IsConfigurable()
+        {
+            return null;
+        }
+
         // This function should be thread safe
         // TODO: POTENTIALLY BREAKING CHANGE: Method signature: removal of Watcher parameter, UtilityHtmlParser parameter
         public abstract void Check(Session session);
