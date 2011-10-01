@@ -53,7 +53,7 @@ namespace CasabaSecurity.Web.Watcher
                 this.enableCheckBox.Checked = WatcherEngine.Configuration.Enabled;
                 this.originDomainTextBox.Text = WatcherEngine.Configuration.OriginDomain;
                 this.autosavecheckBox.Checked = WatcherEngine.Configuration.AutoSave;
-                this.autovercheckBox.Checked = WatcherEngine.Configuration.AutoVerCheck;
+                this.autovercheckBox.Checked = WatcherEngine.Configuration.AutoVerCheckDisabled;
 
                 //Set Background Color as configured
                 WatcherEngine.UI.watcherConfigTab.BackColor = WatcherEngine.Configuration.BackGroundColor;
@@ -64,7 +64,7 @@ namespace CasabaSecurity.Web.Watcher
                 InitializeTrustedDomainList();
 
                 // Check for new version of Watcher if AutoCheck is enabled
-                if (WatcherEngine.Configuration.AutoVerCheck)
+                if (!WatcherEngine.Configuration.AutoVerCheckDisabled)
                 {
                     _versionCheck.CheckForUpdate(false);
                 }
@@ -315,7 +315,7 @@ done:
 
         private void autovercheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            WatcherEngine.Configuration.AutoVerCheck = this.autovercheckBox.Checked;
+            WatcherEngine.Configuration.AutoVerCheckDisabled = this.autovercheckBox.Checked;
         }
 
         private void originDomainTextBox_TextChanged(object sender, EventArgs e)

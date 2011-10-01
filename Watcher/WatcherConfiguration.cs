@@ -115,9 +115,9 @@ namespace CasabaSecurity.Web.Watcher
         }
 
         /// <summary>
-        /// Returns True if Watcher is set to check for the latest version on start-up, False otherwise.
+        /// Returns True if Watcher auto-check is disabled, False otherwise.
         /// </summary>
-        public Boolean AutoVerCheck
+        public Boolean AutoVerCheckDisabled
         {
             get { return _autocheck; }
             set { 

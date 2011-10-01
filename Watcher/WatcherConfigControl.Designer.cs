@@ -239,8 +239,8 @@ namespace CasabaSecurity.Web.Watcher
             this.autovercheckBox.Name = "autovercheckBox";
             this.autovercheckBox.Size = new System.Drawing.Size(185, 17);
             this.autovercheckBox.TabIndex = 4;
-            this.autovercheckBox.Text = "Check for new version on start-up";
-            this.toolTipConfigControl.SetToolTip(this.autovercheckBox, "When checked Watcher will check for a newer version every time it is started.");
+            this.autovercheckBox.Text = "Disable update auto-check";
+            this.toolTipConfigControl.SetToolTip(this.autovercheckBox, "When checked Watcher will not check for a newer version automatically.");
             this.autovercheckBox.UseVisualStyleBackColor = true;
             this.autovercheckBox.CheckedChanged += new System.EventHandler(this.autovercheckbox_CheckedChanged);
             // 
