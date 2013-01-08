@@ -215,7 +215,18 @@ namespace CasabaSecurity.Web.Watcher
         /// <returns></returns>
         public static bool IsResponseJavascript(Session session)
         {
-            return (IsResponseContentType(session, "application/javascript") || IsResponseContentType(session, "application/x-javascript"));
+            return (IsResponseContentType(session, "application/javascript") 
+                || IsResponseContentType(session, "application/x-javascript"));
+        }
+
+        /// <summary>
+        /// TODO: Fix up to support other variations of javascript
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public static bool IsResponseJson(Session session)
+        {
+            return (IsResponseContentType(session, "application/json"));
         }
 
         /// <summary>
