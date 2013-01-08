@@ -1,7 +1,7 @@
 ﻿// WATCHER
 //
-// Check.Pasv.Header.Security.cs
-// Checks for HTTP responses for the X-FRAME-OPTIONS header and setting.
+// Check.Pasv.Header.InternalIp.cs
+// Checks for HTTP responses internal IP address disclosure.
 //
 // Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
