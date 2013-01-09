@@ -6,7 +6,7 @@
 // Copyright (c) 2010 Casaba Security, LLC
 // All Rights Reserved.
 //
-// Author: Chris Weber (chris@casabasecurity.com)
+// Author: Chris Weber (chris@casaba.com)
 
 using System;
 using System.Diagnostics;

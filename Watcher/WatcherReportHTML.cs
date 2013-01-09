@@ -215,6 +215,7 @@ namespace CasabaSecurity.Web.Watcher
             {
                 WatcherEngine.ProgressDialog.labelOperation.Text = "Saving Finding: " + item.Title;
                 WatcherEngine.ProgressDialog.UpdateProgress();
+                string resultTitle = System.Security.SecurityElement.Escape(item.Title);
 
                 level = doc.CreateElement("span");
                 level.SetAttribute("class", "level");
@@ -228,12 +229,12 @@ namespace CasabaSecurity.Web.Watcher
 
                 typex = doc.CreateElement("span");
                 typex.SetAttribute("class", "type");
-                // Safe from XSS, we control this and its treated as text.
-                typex.InnerXml = "<a name='content-" + x + "'>" + item.Title + "</a>";
+                // Safe from XSS? We don't control all of the titles - at least not the body regex one.
+                typex.InnerXml = "<a name='content-" + x + "'>" + resultTitle + "</a>";
 
                 // Update the string holding the TOC
                 // Link to anchor
-                contents = String.Concat(contents, String.Format("<li><a href='#content-{0}' class='list'>{1}</a></li>\r\n", x, item.Title));
+                contents = String.Concat(contents, String.Format("<li><a href='#content-{0}' class='list'>{1}</a></li>\r\n", x, resultTitle));
 
                 toggleHidden = doc.CreateElement("span");
                 toggleHidden.SetAttribute("class", "toggler");
