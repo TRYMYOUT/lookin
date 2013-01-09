@@ -20,7 +20,7 @@ Copyright (c) 2010 - 2013 Casaba Security, LLC.  All Rights Reserved.
     ! fixed minor bug
   !!! fixed major bug
 
-v1.5.5 2013-01-08
+v1.5.6 2013-01-08
    + New check allows for custom-defined regex patterns
    % Minor bugfixes 
 

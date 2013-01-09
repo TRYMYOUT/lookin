@@ -1,6 +1,6 @@
 ﻿// WATCHER
 //
-// Check.Pasv.Body.Grep.cs
+// Check.Pasv.Misc.Grep.cs
 // Checks user-supplied regex patterns in the HTTP response bodies.
 //
 // Copyright (c) 2010 Casaba Security, LLC
@@ -23,7 +23,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
     /// Check for dubious comments that warrant further attention.
     /// </summary>
     /// TODO: add finding count
-    public class CheckPasvBodyGrep : WatcherCheck
+    public class CheckPasvMiscGrep : WatcherCheck
     {
         private StringCheckConfigPanel configpanel;
         String[] defaultstrings = null;
@@ -36,14 +36,14 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
         private volatile List<string> wordlist = new List<string>();
 
-        public CheckPasvBodyGrep()
+        public CheckPasvMiscGrep()
         {
             configpanel = new StringCheckConfigPanel(this);
             configpanel.Init(defaultstrings, "Case-insensitive regex patterns currently monitored:", "Enter new, case-insensitive regex patterns to monitor for in HTTP response bodies.  NOTE: Watcher will not validate these patterns for you! Make sure they're correct before adding:");
             UpdateWordList();
 
             CheckCategory = WatcherCheckCategory.None;
-            LongName = "Body - Check HTTP response body for custom-defined regex patterns.";
+            LongName = "Miscellaneous - Check HTTP response body for custom-defined regex patterns.";
             LongDescription = "This check looks at the HTTP resposne body to find matches for your custom-defined regex patterns.  It's up to you to make sure the regex patterns are defined properly, and don't DoS Fiddler!";
             ShortName = "My custom regex match";
             ShortDescription = "Your custom-defined regex pattern had matches at the following URL:\r\n\r\n";

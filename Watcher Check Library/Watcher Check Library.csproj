@@ -100,7 +100,7 @@
     <Compile Include="Check.Pasv.Charset.Utf8.cs" />
     <Compile Include="Check.Pasv.Header.InternalIp.cs" />
     <Compile Include="Check.Pasv.SSL.StrictTransportSecurity.cs" />
-    <Compile Include="Check.Pasv.Body.Grep.cs" />
+    <Compile Include="Check.Pasv.Misc.Grep.cs" />
     <Compile Include="UI.Cookie.ConfigPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
