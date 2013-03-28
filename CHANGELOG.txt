@@ -1,7 +1,7 @@
 Program   Watcher
           Passive Web Security Tool for Fiddler 
-Version   1.5.5
-Release   08-January-2013
+Version   1.5.7
+Release   28-March-2013
 License   Custom Open Source
 Authors   Chris Weber
 Testers   Chris Weber
@@ -19,6 +19,9 @@ Copyright (c) 2010 - 2013 Casaba Security, LLC.  All Rights Reserved.
     % improved performance or quality
     ! fixed minor bug
   !!! fixed major bug
+
+v1.5.7 2013-03-28
+  !!! Bug fix in check for custom-defined regex patterns
 
 v1.5.6 2013-01-08
    + New check allows for custom-defined regex patterns

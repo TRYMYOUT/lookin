@@ -88,7 +88,9 @@ namespace CasabaSecurity.Web.Watcher.Checks
             List<string> list = new List<string>();
             foreach (ListViewItem item in configpanel.stringchecklistBox.Items)
             {
-                if (item != null)
+                // TODO: Why are we getting "" when first installed? 
+                // and when user hasn't entered any strings?
+                if (item != null && item.Text != "")
                 {
                     list.Add(item.Text);
                 }
@@ -103,6 +105,17 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             // modify this list of words to find what you want
             List<string> words;
+
+            lock (wordlist)
+            {
+                words = new List<string>(wordlist);
+            }
+
+            // TODO: HACK
+            // A quick hack to remove the empty string that keeps showing up
+            // in the words list, until I figure out why it's there.
+            if (words.Contains("")) words.Remove("");
+            if (words.Count == 0) return;
 
             // Figure out the response charset
             String charset = Utility.GetHtmlCharset(session);
@@ -124,10 +137,6 @@ namespace CasabaSecurity.Web.Watcher.Checks
                 body = System.Text.Encoding.UTF8.GetString(session.responseBodyBytes);
             }
 
-            lock (wordlist)
-            {
-                words = new List<string>(wordlist);
-            }
             foreach (String w in words)
             {
                 try

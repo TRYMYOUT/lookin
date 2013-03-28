@@ -165,9 +165,12 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     AddAlert(state.session, error);
                 }
             }
-            state.ssl.Flush();
-            state.ssl.Close();
-            state.client.Close();
+            finally
+            {
+                state.ssl.Flush();
+                state.ssl.Close();
+                state.client.Close();
+            }
         }
 
         private void CheckSSLCertificate(Session session)
