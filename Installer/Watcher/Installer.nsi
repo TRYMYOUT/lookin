@@ -4,7 +4,7 @@ RequestExecutionLevel "admin"
 ; Preprocessor definitions
 !define PUBLISHER "Casaba Security, LLC."
 !define APPNAME "Watcher Web Security Tool"
-!define APPVERSION "1.5.7"
+!define APPVERSION "1.5.8"
 !define ICONPATH "..\..\Watcher\Resources\WatcherInstaller.ico"
 
 ; Locations where previous versions of Watcher may be installed (not

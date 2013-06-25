@@ -165,6 +165,10 @@ namespace CasabaSecurity.Web.Watcher.Checks
                     AddAlert(state.session, error);
                 }
             }
+            catch (Exception e)
+            {
+                // TODO: Log the error
+            }
             finally
             {
                 state.ssl.Flush();
@@ -177,17 +181,17 @@ namespace CasabaSecurity.Web.Watcher.Checks
         {
             TcpClient client = new TcpClient(session.host, session.port);
             SslStream ssl = new SslStream(
-            client.GetStream(),
-            false,
-            new RemoteCertificateValidationCallback(ValidateServerCertificate),
-            null);
+                client.GetStream(),
+                false,
+                new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                null);
 
-            AsyncCallback callBack = new AsyncCallback(DoCertValidation);
-            SSLstate state = new SSLstate(ssl, client, session);
 
             // first do cert validation checks for SSLv3 and TLS
             try
             {
+                AsyncCallback callBack = new AsyncCallback(DoCertValidation);
+                SSLstate state = new SSLstate(ssl, client, session);
                 ssl.BeginAuthenticateAsClient(session.host, null, SslProtocols.Default, true, callBack, state);
             }
             catch (AuthenticationException e)
@@ -202,7 +206,7 @@ namespace CasabaSecurity.Web.Watcher.Checks
 
             catch (IOException)
             {
-                // Something went wrong.
+                // Something went wrong.  Silently continue.
                 return;
             }
 
